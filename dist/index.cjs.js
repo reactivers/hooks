@@ -591,19 +591,20 @@ var useApiContext = function () {
 };
 
 var useApi = function (parameterPayload) {
+    if (parameterPayload === void 0) { parameterPayload = {}; }
     var iFetch = useUtils().iFetch;
     var payloadRef = react.useRef(parameterPayload);
-    var _a = payloadRef.current, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, _c = _a.initialValue, initialValue = _c === void 0 ? {} : _c, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
-    var _d = useApiContext(), url = _d.url, contextOnSuccess = _d.onSuccess, contextOnError = _d.onError;
+    var _a = payloadRef.current, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
+    var _c = useApiContext(), url = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
     var token = useAuth().token;
-    var _e = react.useState(false), shouldFetch = _e[0], setShouldFetch = _e[1];
-    var _f = react.useState({
+    var _d = react.useState(false), shouldFetch = _d[0], setShouldFetch = _d[1];
+    var _e = react.useState({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
-        response: initialValue || {}
-    }), data = _f[0], setData = _f[1];
+        response: initialValue
+    }), data = _e[0], setData = _e[1];
     var controller = react.useMemo(function () { return new AbortController(); }, []);
     var signal = controller.signal;
     var onSuccess = react.useCallback(function (response) {
@@ -612,7 +613,7 @@ var useApi = function (parameterPayload) {
         if (payloadOnSuccess)
             payloadOnSuccess(response);
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: true, response: response, fetching: false, fetched: true, firstTimeFetched: true })); });
-    }, [payloadOnSuccess]);
+    }, [payloadOnSuccess, contextOnSuccess]);
     var onError = react.useCallback(function (response, responseJSON) {
         if (responseJSON === void 0) { responseJSON = {}; }
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: false, response: __assign({}, (responseJSON || response)), fetching: false, fetched: true, firstTimeFetched: true })); });
@@ -620,7 +621,7 @@ var useApi = function (parameterPayload) {
             contextOnError(responseJSON || response, response);
         if (payloadOnError)
             payloadOnError(responseJSON || response, response);
-    }, [payloadOnError]);
+    }, [payloadOnError, contextOnError]);
     var updateData = react.useCallback(function () {
         setData(function (oldData) { return (__assign(__assign({}, oldData), { fetching: true, fetched: false })); });
     }, []);

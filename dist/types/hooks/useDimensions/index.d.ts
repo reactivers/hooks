@@ -14,5 +14,5 @@ interface DimensionResponse extends Dimensions {
     isSizeSmallerThan: (size: Breakpoint) => boolean;
     isSizeEqualOrSmallerThan: (size: Breakpoint) => boolean;
 }
-declare const useDimensions: (payload: DimensionProps) => DimensionResponse;
+declare const useDimensions: (payload?: DimensionProps) => DimensionResponse;
 export default useDimensions;

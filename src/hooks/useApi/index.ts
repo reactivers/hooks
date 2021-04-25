@@ -3,32 +3,36 @@ import useAuth from "../useAuth";
 import useUtils from '../useUtils';
 import { useApiContext } from './context';
 
-interface ApiPayload {
+interface ApiPayload<T extends {}> {
     endpoint?: string;
     method?: string,
     params?: any;
-    initialValue?: any;
+    initialValue?: T;
     formData?: any,
     onSuccess?: (respose: any) => void;
     onError?: (responseJSON: any, response: any) => void;
 }
 
-interface ApiController {
+interface ApiController<T extends {}> {
     firstTimeFetched: boolean;
     fetched: boolean;
     fetching: boolean;
     success: boolean;
-    response: any;
+    response: T;
 }
 
-const useApi: (payload: ApiPayload) => ApiController = (parameterPayload: ApiPayload) => {
+interface Api<T extends {}> extends ApiController<T> {
+    load: (payload: ApiPayload<T>) => void
+}
+
+const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>(parameterPayload = {}) => {
     const { iFetch } = useUtils();
-    const payloadRef = useRef<ApiPayload>(parameterPayload);
+    const payloadRef = useRef<ApiPayload<T>>(parameterPayload);
     const {
         endpoint,
         method = 'GET',
         params,
-        initialValue = {},
+        initialValue,
         formData,
         onSuccess: payloadOnSuccess,
         onError: payloadOnError,
@@ -39,12 +43,12 @@ const useApi: (payload: ApiPayload) => ApiController = (parameterPayload: ApiPay
 
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    const [data, setData] = useState<ApiController>({
+    const [data, setData] = useState<ApiController<T>>({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
-        response: initialValue || {}
+        response: initialValue
     });
 
     const controller = useMemo(() => new AbortController(), []);
@@ -62,7 +66,7 @@ const useApi: (payload: ApiPayload) => ApiController = (parameterPayload: ApiPay
             fetched: true,
             firstTimeFetched: true
         }))
-    }, [payloadOnSuccess])
+    }, [payloadOnSuccess, contextOnSuccess])
 
     const onError = useCallback((response, responseJSON = {}) => {
         setData(oldData => ({
@@ -76,7 +80,7 @@ const useApi: (payload: ApiPayload) => ApiController = (parameterPayload: ApiPay
 
         if (contextOnError) contextOnError(responseJSON || response, response)
         if (payloadOnError) payloadOnError(responseJSON || response, response)
-    }, [payloadOnError])
+    }, [payloadOnError, contextOnError])
 
     const updateData = useCallback(() => {
         setData(oldData => ({
@@ -86,7 +90,7 @@ const useApi: (payload: ApiPayload) => ApiController = (parameterPayload: ApiPay
         }))
     }, [])
 
-    const load = useCallback((payload: ApiPayload = {}) => {
+    const load = useCallback((payload: ApiPayload<T> = {}) => {
         payloadRef.current = { ...payloadRef, ...payload }
         updateData()
         setShouldFetch(true)

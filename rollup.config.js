@@ -7,8 +7,8 @@ import typescript from 'rollup-plugin-typescript2';
 export default {
     input: pkg.source,
     output: [
-        { file: pkg.maines, format: 'es', },
-        { file: pkg.main, format: 'cjs', },
+        { file: pkg.maincjs, format: 'cjs', },
+        { file: pkg.main, format: 'es', },
         { file: pkg.module, format: 'esm' }
     ],
     watch: {
@@ -22,9 +22,6 @@ export default {
         resolve(),
         typescript({
             useTsconfigDeclarationDir: true,
-            tsconfigOverride: {
-                exclude: ['**/*.stories.*'],
-            },
         }),
         del({ targets: ['dist/*'] }),
     ],

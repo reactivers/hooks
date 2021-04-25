@@ -21,7 +21,7 @@ interface DimensionResponse extends Dimensions {
     isSizeEqualOrSmallerThan: (size: Breakpoint) => boolean
 }
 
-const useDimensions: (payload: DimensionProps) => DimensionResponse = ({ breakpoints }) => {
+const useDimensions: (payload?: DimensionProps) => DimensionResponse = ({ breakpoints }) => {
     const { sizes, widths } = useDimensionsContext()
     const { findLastIndex, takeIf } = useUtils();
 

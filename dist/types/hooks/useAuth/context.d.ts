@@ -1,6 +1,6 @@
 import { FC } from "react";
 interface AuthContextProps {
-    localStorageTokenKeyName?: string;
+    localStorageTokenKeyName: string;
     user?: UserInfo;
     setUser: (info: UserInfo) => void;
     setToken: (token: string) => void;
@@ -8,7 +8,7 @@ interface AuthContextProps {
     onLogout: () => void;
 }
 interface AuthProviderProps {
-    localStorageTokenKeyName: string;
+    localStorageTokenKeyName?: string;
     user?: UserInfo;
     onLogin?: (info: UserInfo) => void;
     onLogout?: () => void;
