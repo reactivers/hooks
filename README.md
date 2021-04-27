@@ -28,7 +28,7 @@ yarn add @reactivers/hooks
 
   
 
-```js
+```ts
 
 import { LocalesProvider, EventListenerProvider, SocketProvider, AuthProvider, ApiProvider, DimensionsProvider } from  '@reactivers/hooks';
 
@@ -98,7 +98,7 @@ interface  UserInfo {
 ## useAuth
 
 ### Interface
-```js
+```ts
 interface IUserHook {
 	//Call this on login
 	login: (data:any)=>void,
@@ -119,7 +119,7 @@ interface IUserHook {
 
 ### Sample
 
-```js
+```ts
 ...
 import { useAuth, useApi } from "@reactivers/hooks";
 ...
@@ -154,7 +154,7 @@ A context for ```useSocket``` hook. Has no props.
 
 ### Interface
 
-```js
+```ts
 interface  SocketProps {
 //Conntect url
 	url: string;
@@ -201,7 +201,7 @@ interface  SocketResponse  extends  SocketState {
 
 ### Sample
 
-```js
+```ts
 ...
 import { useSocket } from "@reactivers/hooks";
 ...
@@ -224,7 +224,7 @@ A context for ```useApi``` hook.
 
 ### Interface 
 
-```js
+```ts
 interface  ApiContextProps {
 	//Sets default url for useApi hook
 	url: string;
@@ -253,7 +253,7 @@ interface  ApiProviderProps {
 
 
 ### Interface
-```js
+```ts
   
 interface  ApiPayload<T  extends {}> {
 	//Overrides the url that passed to ApiProvider
@@ -276,7 +276,7 @@ interface  ApiPayload<T  extends {}> {
 }
 ```
 ### Sample
-```js
+```ts
 ...
 import { useApi } from  "@reactivers/hooks";
 ...
@@ -328,7 +328,7 @@ const ComponentWithUseApi = ({id})=>{
  A context for ```useDimensions``` hook.
 
 ### Interface
-```js
+```ts
 
 export  declare  type  Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "xxl"
   
@@ -362,7 +362,7 @@ const sizes = ["xs", "sm", "md", "lg", "xl", "xxl"];
 
 ### Interface
 
-```js
+```ts
 interface  DimensionProps {
 // Wathches the selected breakpoints. As default watches all breakpoints.
 	breakpoints?: Array<Breakpoint>,
@@ -382,7 +382,7 @@ interface  Dimensions {
 
 ### Sample
 
-```js
+```ts
 ...
 import { useDimensions } from  "@reactivers/hooks";
 ...
@@ -406,7 +406,7 @@ const ComponentWithUseDimensions = ()=>{
 Has to be wrapped by ```<EventListenerProvider/>```
 
 ### Interface 
-```js
+```ts
 interface IEventListener {
 //A group name for access it anywhere!
 	component: string
@@ -415,7 +415,7 @@ interface IEventListener {
 
 ### Sample
 
-```js
+```ts
 ...
 import { useEventListener } from "@reactivers/hooks";
 ...  
@@ -476,7 +476,7 @@ A context for ```useLocale``` hook.
 
 ### Interface
 
-```js
+```ts
 interface  LocalesContextProps {
 
 //Current language's values
@@ -501,7 +501,7 @@ interface  LocalesProviderProps {
 
 ### Sample
 
-```js
+```ts
 
 import { useLocale } from "@reactivers/hooks";
 
@@ -524,7 +524,7 @@ Consists lots of useful functions.
 
 ### Interface
 
-```js
+```ts
 export  declare  const  emptyFunction: () =>  void;
 
 export  declare  const  isEqualJSON: (json1?: {}, json2?: {}) =>  boolean;
@@ -678,7 +678,7 @@ export  declare  const  findLastIndex: (array: any, predicate: any) =>  number;
 
 ### Sample
 
-```js
+```ts
 ...
 import { useUtils } from "@reactivers/hooks";
 ...
