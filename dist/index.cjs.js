@@ -141,6 +141,12 @@ var useAuth = function () {
 };
 
 moment__default['default'].locale(navigator.language);
+var emptyFunction = function () { };
+var isEqualJSON = function (json1, json2) {
+    if (json1 === void 0) { json1 = {}; }
+    if (json2 === void 0) { json2 = {}; }
+    return JSON.stringify(json1) === JSON.stringify(json2);
+};
 var deepCopy = function (json) {
     if (json === void 0) { json = {}; }
     return JSON.parse(JSON.stringify(json));
@@ -528,6 +534,8 @@ var findLastIndex = function (array, predicate) {
 
 var utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    emptyFunction: emptyFunction,
+    isEqualJSON: isEqualJSON,
     deepCopy: deepCopy,
     combineReducers: combineReducers,
     transformObj: transformObj,
@@ -594,19 +602,21 @@ var useApi = function (parameterPayload) {
     if (parameterPayload === void 0) { parameterPayload = {}; }
     var iFetch = useUtils().iFetch;
     var payloadRef = react.useRef(parameterPayload);
-    var _a = payloadRef.current, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
-    var _c = useApiContext(), url = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
+    var _a = payloadRef.current, payloadURL = _a.url, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
+    var _c = useApiContext(), contextURL = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
+    var url = payloadURL || contextURL;
     var token = useAuth().token;
-    var _d = react.useState(false), shouldFetch = _d[0], setShouldFetch = _d[1];
-    var _e = react.useState({
+    var _d = react.useState({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
         response: initialValue
-    }), data = _e[0], setData = _e[1];
-    var controller = react.useMemo(function () { return new AbortController(); }, []);
-    var signal = controller.signal;
+    }), data = _d[0], setData = _d[1];
+    var fetching = data.fetching;
+    var shouldFetch = react.useRef(false);
+    var controller = react.useMemo(function () { return new AbortController(); }, [fetching]);
+    (new AbortController()).signal;
     var onSuccess = react.useCallback(function (response) {
         if (contextOnSuccess)
             contextOnSuccess(response);
@@ -626,13 +636,14 @@ var useApi = function (parameterPayload) {
         setData(function (oldData) { return (__assign(__assign({}, oldData), { fetching: true, fetched: false })); });
     }, []);
     var load = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = {}; }
-        payloadRef.current = __assign(__assign({}, payloadRef), payload);
+        if (payload === void 0) { payload = undefined; }
+        shouldFetch.current = true;
+        if (payload)
+            payloadRef.current = __assign({}, payload);
         updateData();
-        setShouldFetch(true);
-    }, [updateData, setShouldFetch]);
+    }, [updateData]);
     react.useEffect(function () {
-        if (shouldFetch) {
+        if (shouldFetch.current && fetching) {
             iFetch({
                 url: url,
                 endpoint: endpoint,
@@ -642,12 +653,14 @@ var useApi = function (parameterPayload) {
                 onSuccess: onSuccess,
                 onError: onError,
                 token: token,
-                signal: signal
+                signal: controller.signal
             });
-            setShouldFetch(false);
+            shouldFetch.current = false;
         }
     }, [
+        shouldFetch.current,
         url,
+        fetching,
         endpoint,
         params,
         method,
@@ -655,15 +668,13 @@ var useApi = function (parameterPayload) {
         onSuccess,
         onError,
         token,
-        signal,
-        shouldFetch,
-        setShouldFetch
+        controller.signal,
     ]);
     react.useEffect(function () {
         return function () {
             controller.abort();
         };
-    }, [controller]);
+    }, [controller.abort]);
     return __assign({ load: load }, data);
 };
 
@@ -680,32 +691,42 @@ var useDimensionsContext = function () {
     return context;
 };
 
-var useDimensions = function (_a) {
-    var breakpoints = _a.breakpoints;
-    var _b = useDimensionsContext(), sizes = _b.sizes, widths = _b.widths;
-    var _c = useUtils(), findLastIndex = _c.findLastIndex, takeIf = _c.takeIf;
+var defaultBreakPoints = ["xs", "sm", "md", "lg", "xl", "xxl"];
+var defaultPayload = { breakpoints: defaultBreakPoints, watchWindowSize: false };
+var useDimensions = function (payload) {
+    if (payload === void 0) { payload = defaultPayload; }
+    var breakpoints = react.useMemo(function () { return payload.breakpoints || defaultBreakPoints; }, [payload.breakpoints]);
+    var watchWindowSize = react.useMemo(function () { return payload.watchWindowSize; }, [payload.watchWindowSize]);
+    var _a = useDimensionsContext(), sizes = _a.sizes, widths = _a.widths;
+    var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON;
     var getSizeOfWindowWidth = react.useCallback(function (width) {
         var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
-    var _d = react.useState({
-        width: 0,
-        height: 0,
-        size: "xs"
-    }), dimensions = _d[0], setDimensions = _d[1];
+    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, []);
+    var _c = react.useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        size: initialSize
+    }), dimensions = _c[0], setDimensions = _c[1];
     var size = dimensions.size;
     var updateDimensions = react.useCallback(function (width, height) {
         var newSize = getSizeOfWindowWidth(width);
-        if (breakpoints.indexOf(newSize)) {
+        if (!breakpoints.length || breakpoints.indexOf(newSize)) {
             setDimensions(function (oldDimensions) {
                 var newDimensions = __assign({}, oldDimensions);
-                newDimensions.width = width;
-                newDimensions.height = height;
+                if (watchWindowSize) {
+                    newDimensions.width = width;
+                    newDimensions.height = height;
+                }
                 newDimensions.size = newSize;
+                if (isEqualJSON(oldDimensions, newDimensions)) {
+                    return oldDimensions;
+                }
                 return newDimensions;
             });
         }
-    }, [breakpoints, getSizeOfWindowWidth]);
+    }, [breakpoints, getSizeOfWindowWidth, watchWindowSize]);
     var getCurrentAndRequestedSizeIndex = react.useCallback(function (_size) {
         var indexOfCurrentSize = sizes.indexOf(size);
         var indexOfSize = sizes.indexOf(_size);
@@ -731,18 +752,15 @@ var useDimensions = function (_a) {
         var _a = getCurrentAndRequestedSizeIndex(_size), indexOfCurrentSize = _a[0], indexOfSize = _a[1];
         return indexOfCurrentSize <= indexOfSize;
     }, [getCurrentAndRequestedSizeIndex]);
-    var onResize = react.useCallback(function (_window) {
-        var innerWidth = _window.innerWidth, innerHeight = _window.innerHeight;
+    var onResize = react.useCallback(function (_a) {
+        var target = _a.target;
+        var innerWidth = target.innerWidth, innerHeight = target.innerHeight;
         updateDimensions(innerWidth, innerHeight);
     }, [updateDimensions]);
     react.useEffect(function () {
-        onResize(window);
-        var oldOnResize = window.onresize;
-        window.onresize = function (e) {
-            onResize(e.target);
-            //@ts-ignore
-            if (oldOnResize)
-                oldOnResize(e);
+        window.addEventListener("resize", onResize);
+        return function () {
+            window.removeEventListener('resize', onResize);
         };
     }, [onResize]);
     return __assign(__assign({}, dimensions), { isSizeEqualOrLargerThan: isSizeEqualOrLargerThan,
@@ -757,6 +775,8 @@ var EventListenerProvider = function (_a) {
     var children = _a.children;
     var events = react.useRef({}).current;
     var guid = useUtils().guid;
+    //@ts-ignore
+    window.hookEvents = events;
     var removeEvent = react.useCallback(function (component, name, id) {
         if (!!events)
             if (!!events[component])
@@ -821,9 +841,9 @@ var useEventListener = function (component) {
         if (_registerEvent)
             return _registerEvent(component, name, event);
     }, [_registerEvent, component]);
-    var registerEventById = react.useCallback(function (id, name, event) {
+    var registerEventById = react.useCallback(function (name, id, event) {
         if (_registerEventById)
-            return _registerEventById(component, id, name, event);
+            return _registerEventById(component, name, id, event);
     }, [_registerEventById, component]);
     var removeEvent = react.useCallback(function (name, id) { return _removeEvent && _removeEvent(component, name, id); }, [_removeEvent, component]);
     var callAllEvents = react.useCallback(function (name, parameters, callback) {
@@ -1037,60 +1057,106 @@ var useLocale = function () {
     return useLocalesContext();
 };
 
-var useSocket = function (_a) {
-    var onopen = _a.onopen, onclose = _a.onclose, onerror = _a.onerror, onmessage = _a.onmessage;
-    var user = useAuth().user;
-    var username = (user || {}).username;
-    //@ts-ignore
-    var _b = react.useState({}), socket = _b[0], setSocket = _b[1];
-    var connect = react.useCallback(function () {
+var SocketContext = react.createContext({});
+var SocketProvider = function (_a) {
+    var children = _a.children;
+    var sockets = react.useRef({});
+    var connect = react.useCallback(function (_a) {
+        var path = _a.path;
+        var socket = sockets.current[path] || {};
         var readyState = socket.readyState;
         if (readyState === WebSocket.OPEN || readyState === WebSocket.CONNECTING)
-            return;
-        var host = process.env.REACT_APP_PROXY_HOST;
-        var protocol = process.env.REACT_APP_USE_SSL === "1" ? "wss" : "ws";
-        var _socket = new WebSocket(protocol + "://" + host + "/ws?username=" + username);
-        setSocket(_socket);
-    }, [username, socket]);
+            return socket;
+        var _socket = new WebSocket(path);
+        sockets.current[path] = _socket;
+        return _socket;
+    }, [sockets.current]);
+    return (jsxRuntime.jsx(SocketContext.Provider, __assign({ value: { connect: connect } }, { children: children }), void 0));
+};
+var useSocketContext = function () {
+    var context = react.useContext(SocketContext);
+    if (context === undefined) {
+        throw new Error('useSocketContext must be used within an SocketContext.Provider');
+    }
+    return context;
+};
+
+var useSocket = function (_a) {
+    var url = _a.url, _b = _a.wss, wss = _b === void 0 ? false : _b, _c = _a.disconnectOnUnmount, disconnectOnUnmount = _c === void 0 ? true : _c, _d = _a.onOpen, onOpen = _d === void 0 ? emptyFunction : _d, _e = _a.onClose, onClose = _e === void 0 ? emptyFunction : _e, _f = _a.onError, onError = _f === void 0 ? emptyFunction : _f, _g = _a.onMessage, onMessage = _g === void 0 ? emptyFunction : _g;
+    var protocol = wss ? "wss" : "ws";
+    var path = protocol + "://" + url;
+    var connect = useSocketContext().connect;
+    //@ts-ignore
+    var socket = react.useRef({});
+    var _h = react.useState({ readyState: 0, lastData: undefined }), socketState = _h[0], setSocketState = _h[1];
     react.useEffect(function () {
-        connect();
-    }, [connect]);
+        socket.current = connect({ path: path });
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
+    }, [connect, path]);
+    var onopen = react.useCallback(function (event) {
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.OPEN })); });
+        onOpen(event);
+    }, [onOpen]);
+    var onmessage = react.useCallback(function (event) {
+        setSocketState(function (old) { return (__assign(__assign({}, old), { lastData: event.data })); });
+        var data = event.data;
+        try {
+            data = JSON.parse(data);
+        }
+        catch (e) {
+            //console.error("JSON PARSE error", e)
+        }
+        onMessage(event, data);
+    }, [onMessage]);
+    var onclose = react.useCallback(function (event) {
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.CLOSED })); });
+        onClose(event);
+    }, [onClose]);
+    var onerror = react.useCallback(function (event) {
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.CLOSING })); });
+        onError(event);
+    }, [onError]);
     react.useEffect(function () {
-        if (socket) {
-            socket.onopen = function (e) {
-                if (onopen)
-                    onopen(e);
-            };
-            socket.onmessage = function (event) {
-                var _data = event.data;
-                var data = _data;
-                try {
-                    data = JSON.parse(data);
+        if (socket.current)
+            socket.current.addEventListener('open', onopen);
+        return function () {
+            socket.current.removeEventListener('open', onopen);
+        };
+    }, [socket.current, onopen]);
+    react.useEffect(function () {
+        if (socket.current)
+            socket.current.addEventListener('close', onclose);
+        return function () {
+            socket.current.removeEventListener('close', onclose);
+        };
+    }, [socket.current, onclose]);
+    react.useEffect(function () {
+        if (socket.current)
+            socket.current.addEventListener('message', onmessage);
+        return function () {
+            socket.current.removeEventListener('message', onmessage);
+        };
+    }, [socket.current, onmessage]);
+    react.useEffect(function () {
+        if (socket.current)
+            socket.current.addEventListener('error', onerror);
+        return function () {
+            socket.current.removeEventListener('error', onerror);
+        };
+    }, [socket.current, onerror]);
+    react.useEffect(function () {
+        if (disconnectOnUnmount) {
+            return function () {
+                if (socket.current.close) {
+                    socket.current.close(1000, "User disconnected!");
                 }
-                catch (e) {
-                    console.error("JSON PARSE error", e);
-                }
-                onmessage(data);
-                //console.log(`[message] Data received from server`, data, _data);
-            };
-            socket.onclose = function (event) {
-                if (onclose)
-                    onclose(event);
-                if (event.wasClean) ;
-            };
-            socket.onerror = function (error) {
-                if (onerror)
-                    onerror(error);
             };
         }
-    }, [onclose, onerror, onmessage, onopen, socket]);
-    react.useEffect(function () {
-        return function () {
-            if (socket.close)
-                socket.close(1000, "User disconnected!");
-        };
-    }, [socket]);
-    return { connect: connect, socket: socket };
+    }, [socket.current, disconnectOnUnmount]);
+    var sendData = react.useCallback(function (data) {
+        socket.current.send(data);
+    }, [socket.current]);
+    return __assign({ connect: connect, socket: socket.current, sendData: sendData }, socketState);
 };
 
 exports.ApiProvider = ApiProvider;
@@ -1099,6 +1165,7 @@ exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
 exports.LoadingProvider = LoadingProvider;
 exports.LocalesProvider = LocalesProvider;
+exports.SocketProvider = SocketProvider;
 exports.useApi = useApi;
 exports.useAuth = useAuth;
 exports.useDimensions = useDimensions;

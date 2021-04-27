@@ -1,4 +1,5 @@
 interface ApiPayload<T extends {}> {
+    url?: string;
     endpoint?: string;
     method?: string;
     params?: any;
@@ -15,7 +16,7 @@ interface ApiController<T extends {}> {
     response: T;
 }
 interface Api<T extends {}> extends ApiController<T> {
-    load: (payload: ApiPayload<T>) => void;
+    load: (payload?: ApiPayload<T>) => void;
 }
 declare const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T>;
 export default useApi;

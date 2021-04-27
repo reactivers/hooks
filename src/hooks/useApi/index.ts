@@ -4,6 +4,7 @@ import useUtils from '../useUtils';
 import { useApiContext } from './context';
 
 interface ApiPayload<T extends {}> {
+    url?: string;
     endpoint?: string;
     method?: string,
     params?: any;
@@ -22,13 +23,14 @@ interface ApiController<T extends {}> {
 }
 
 interface Api<T extends {}> extends ApiController<T> {
-    load: (payload: ApiPayload<T>) => void
+    load: (payload?: ApiPayload<T>) => void
 }
 
 const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>(parameterPayload = {}) => {
     const { iFetch } = useUtils();
     const payloadRef = useRef<ApiPayload<T>>(parameterPayload);
     const {
+        url: payloadURL,
         endpoint,
         method = 'GET',
         params,
@@ -38,10 +40,10 @@ const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>
         onError: payloadOnError,
     } = payloadRef.current;
 
-    const { url, onSuccess: contextOnSuccess, onError: contextOnError } = useApiContext();
-    const { token } = useAuth()
+    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError } = useApiContext();
+    const url = payloadURL || contextURL;
 
-    const [shouldFetch, setShouldFetch] = useState(false);
+    const { token } = useAuth()
 
     const [data, setData] = useState<ApiController<T>>({
         success: undefined,
@@ -51,8 +53,12 @@ const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>
         response: initialValue
     });
 
-    const controller = useMemo(() => new AbortController(), []);
-    const { signal } = controller;
+    const { fetching } = data;
+    const shouldFetch = useRef(false);
+
+    const controller = useMemo(() => new AbortController(), [fetching]);
+
+    (new AbortController()).signal
 
     const onSuccess = useCallback((response) => {
         if (contextOnSuccess) contextOnSuccess(response)
@@ -90,15 +96,15 @@ const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>
         }))
     }, [])
 
-    const load = useCallback((payload: ApiPayload<T> = {}) => {
-        payloadRef.current = { ...payloadRef, ...payload }
+    const load = useCallback((payload: ApiPayload<T> = undefined) => {
+        shouldFetch.current = true
+        if (payload) payloadRef.current = { ...payload }
         updateData()
-        setShouldFetch(true)
-    }, [updateData, setShouldFetch])
+    }, [updateData])
 
 
     useEffect(() => {
-        if (shouldFetch) {
+        if (shouldFetch.current && fetching) {
             iFetch({
                 url,
                 endpoint,
@@ -108,13 +114,14 @@ const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>
                 onSuccess,
                 onError,
                 token,
-                signal
+                signal: controller.signal
             })
-            setShouldFetch(false);
+            shouldFetch.current = false;
         }
-
     }, [
+        shouldFetch.current,
         url,
+        fetching,
         endpoint,
         params,
         method,
@@ -122,16 +129,14 @@ const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>
         onSuccess,
         onError,
         token,
-        signal,
-        shouldFetch,
-        setShouldFetch
+        controller.signal,
     ])
 
     useEffect(() => {
         return () => {
             controller.abort()
         }
-    }, [controller])
+    }, [controller.abort])
 
     return { load, ...data }
 }

@@ -1,6 +1,7 @@
 import { Breakpoint } from './context';
 interface DimensionProps {
-    breakpoints: [Breakpoint];
+    breakpoints?: Array<Breakpoint>;
+    watchWindowSize?: boolean;
 }
 interface Dimensions {
     width: number;

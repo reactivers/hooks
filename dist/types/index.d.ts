@@ -10,6 +10,7 @@ export { default as useLoading } from "./hooks/useLoading/index";
 export { default as LoadingProvider } from "./hooks/useLoading/context";
 export { default as useLocales } from "./hooks/useLocales/index";
 export { default as LocalesProvider } from "./hooks/useLocales/context";
+export { default as useSocket } from "./hooks/useSocket";
+export { default as SocketProvider } from "./hooks/useSocket/context";
 export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useLocalStorage } from "./hooks/useLocalStorage";
-export { default as useSocket } from "./hooks/useSocket";

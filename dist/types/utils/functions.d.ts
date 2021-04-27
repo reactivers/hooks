@@ -5,6 +5,8 @@ declare global {
         revokeObjectURL: (object: any) => string;
     }
 }
+export declare const emptyFunction: () => void;
+export declare const isEqualJSON: (json1?: {}, json2?: {}) => boolean;
 export declare const deepCopy: (json?: {}) => any;
 export declare const combineReducers: (reducers: any) => (state: {}, action: any) => {};
 export declare const transformObj: (obj: any) => {};

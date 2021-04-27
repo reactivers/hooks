@@ -12,6 +12,12 @@ declare global {
 
 moment.locale(navigator.language)
 
+export const emptyFunction = () => { };
+
+export const isEqualJSON = (json1 = {}, json2 = {}) => {
+    return JSON.stringify(json1) === JSON.stringify(json2);
+}
+
 export const deepCopy = (json = {}) => {
     return JSON.parse(JSON.stringify(json));
 }
