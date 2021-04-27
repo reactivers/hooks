@@ -33,19 +33,21 @@ yarn add @reactivers/hooks
 import { LocalesProvider, EventListenerProvider, SocketProvider, AuthProvider, ApiProvider, DimensionsProvider } from  '@reactivers/hooks';
 
 const AppWrapper = ()=>{
-<LocalesProvider>
-	<EventListenerProvider>
-		<SocketProvider>
-			<AuthProvider>
-				<ApiProvider url={"https://jsonplaceholder.typicode.com"}>
-					<DimensionsProvider>
-						<App/>
-					</DimensionsProvider>
-				</ApiProvider>
-			</AuthProvider>
-		</SocketProvider>
-	</EventListenerProvider>
-</LocalesProvider>
+	return (
+		<LocalesProvider>
+			<EventListenerProvider>
+				<SocketProvider>
+					<AuthProvider>
+						<ApiProvider url={"https://jsonplaceholder.typicode.com"}>
+							<DimensionsProvider>
+								<App/>
+							</DimensionsProvider>
+						</ApiProvider>
+					</AuthProvider>
+				</SocketProvider>
+			</EventListenerProvider>
+		</LocalesProvider>
+	)
 }
 ```
 
