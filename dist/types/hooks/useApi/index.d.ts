@@ -13,7 +13,7 @@ interface ApiController<T extends {}> {
     fetched: boolean;
     fetching: boolean;
     success: boolean;
-    response: T;
+    response: T | any;
 }
 interface Api<T extends {}> extends ApiController<T> {
     load: (payload?: ApiPayload<T>) => void;

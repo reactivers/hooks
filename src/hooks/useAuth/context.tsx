@@ -41,7 +41,11 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const [user, setUser] = useState<UserInfo>(_user);
 
     const onLogin = useCallback((info) => {
-        setUser(info)
+        setUser({
+            ...(info || {}),
+            isLoggedIn: true,
+            checked: true
+        })
         if (_onLogin) _onLogin(info)
     }, [_onLogin])
 
