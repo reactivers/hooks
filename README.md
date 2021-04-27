@@ -28,7 +28,7 @@ yarn add @reactivers/hooks
 
   
 
-```ts
+```tsx
 
 import { LocalesProvider, EventListenerProvider, SocketProvider, AuthProvider, ApiProvider, DimensionsProvider } from  '@reactivers/hooks';
 
