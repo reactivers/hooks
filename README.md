@@ -1,6 +1,8 @@
 # @reactivers/hooks
 
+
 This package contains some useful hooks and functions that easier to develop awesome apps.
+
 
 [![npm version](https://badge.fury.io/js/@reactivers%2Fhooks.svg)](//www.npmjs.com/package/@reactivers/hooks)
 
@@ -8,12 +10,12 @@ This package contains some useful hooks and functions that easier to develop awe
 
 ### For npm
 ```sh
-	npm install --save @reactivers/hooks
+npm install --save @reactivers/hooks
 ```
 
 ### For yarn
 ```sh
-	yarn add @reactivers/hooks
+yarn add @reactivers/hooks
 ```
 
 
@@ -21,7 +23,6 @@ This package contains some useful hooks and functions that easier to develop awe
 
 # Usage
 
-  
 
 ## Sample App.js
 
@@ -52,9 +53,10 @@ const AppWrapper = ()=>{
 
 A context for ```useAuth``` hook.
 
+
 ### Interface
 
-```js
+```ts
 
 interface  AuthProviderProps {
 	//Reads and write from local storage by the key name
