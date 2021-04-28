@@ -36,19 +36,19 @@ import {
 
 const AppWrapper = ()=>{
 	return (
-		<LocalesProvider>
-			<EventListenerProvider>
-				<SocketProvider>
-					<AuthProvider>
-						<ApiProvider url={"https://jsonplaceholder.typicode.com"}>
-							<DimensionsProvider>
-								<App/>
-							</DimensionsProvider>
-						</ApiProvider>
-					</AuthProvider>
-				</SocketProvider>
-			</EventListenerProvider>
-		</LocalesProvider>
+    <LocalesProvider>
+      <EventListenerProvider>
+        <SocketProvider>
+          <AuthProvider>
+            <ApiProvider url={"https://jsonplaceholder.typicode.com"}>
+              <DimensionsProvider>
+                <App />
+              </DimensionsProvider>
+            </ApiProvider>
+          </AuthProvider>
+        </SocketProvider>
+      </EventListenerProvider>
+    </LocalesProvider>
 	)
 }
 ```
