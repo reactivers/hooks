@@ -6,6 +6,7 @@ This package contains some useful hooks and functions that easier to develop awe
 
 [![npm version](https://badge.fury.io/js/@reactivers%2Fhooks.svg)](//www.npmjs.com/package/@reactivers/hooks)
 
+
 # Installation
 
 ### For npm
@@ -16,21 +17,23 @@ npm install --save @reactivers/hooks
 ### For yarn
 ```sh
 yarn add @reactivers/hooks
-```
-
-
-  
+```  
 
 # Usage
 
 
 ## Sample App.js
 
-  
-
 ```tsx
 
-import { LocalesProvider, EventListenerProvider, SocketProvider, AuthProvider, ApiProvider, DimensionsProvider } from  '@reactivers/hooks';
+import { 
+		LocalesProvider,
+		EventListenerProvider,
+		SocketProvider,
+		AuthProvider,
+		ApiProvider,
+		DimensionsProvider 
+	} from '@reactivers/hooks';
 
 const AppWrapper = ()=>{
 	return (
@@ -51,6 +54,39 @@ const AppWrapper = ()=>{
 }
 ```
 
+## useLocalStorage
+
+### Interface
+```ts
+interface ILocalStorage{
+
+	//For key name of local storage item
+	key: string;
+
+	//If has no value returns this
+	defaultValue?: string;
+}
+```
+
+### Sample
+
+```tsx
+...
+import { useLocalStorage } from "@reactivers/hooks";
+...
+
+const ComponentWithUseLocalStorage = () => {
+	const { getItem, setItem, removeItem } = useLocalStorage("@reactivers/hooks");
+
+  setItem({ "@reactivers": "Awesome Hooks" });
+  console.log(getItem());
+  removeItem();
+
+  ...
+
+}
+```
+
 ## AuthProvider
 
 A context for ```useAuth``` hook.
@@ -61,8 +97,10 @@ A context for ```useAuth``` hook.
 ```ts
 
 interface  AuthProviderProps {
+
 	//Reads and write from local storage by the key name
 	localStorageTokenKeyName?: string; //as default token
+
 	//Default user object
 	/*
 		{
@@ -90,16 +128,16 @@ interface  UserInfo {
 
 	checked: boolean;
 	
-	//Extra info for user
+	//Extra info for user object
 	userInfo?: any;
 
 }
-
 ```
 
 ## useAuth
 
 ### Interface
+
 ```ts
 interface IUserHook {
 	//Call this on login
@@ -111,10 +149,10 @@ interface IUserHook {
 	//Update user data
 	setUser: (user:UserInfo)=>void,
 
-	//Return user object
+	//Returns user object
 	user: UserInfo,
 
-	//Return token
+	//Returns token
 	token: string
 }
 ```
@@ -130,7 +168,7 @@ const ComponentWithUseAuth = () => {
 	const { load } = useApi();
 	const { login } = useAuth();
 	
-	const onLogin = useCallback(()=>{
+	const onLogin = useCallback(() => {
 		load({
 			endpoint:'/signin',
 			method: "POST",
@@ -139,13 +177,150 @@ const ComponentWithUseAuth = () => {
 				password: "hooks"
 			},
 			onSuccess: response => login(response.data)
-	},[load, login])
+	}, [load, login])
 
 	...
+}
+```
+
+## useMeasure
+
+### Interface
+```ts
+interface UseMeasureProps {
+
+	//ref object for observe
+    ref: React.MutableRefObject<any>;
+
+	//If set true, will update on window resize
+    updateOnWindowResize?: boolean; // Default = false
+
+	//If passed, the hook doesn't return measures, calls only this function
+    onResize?: (measure: Measure) => void;
+}
+
+interface Measure {
+    left: number;
+    top: number;
+    width: number;
+    bottom: number;
+    right: number;
+    x: number;
+    y: number;
+    height: number;
+    offsetLeft: number;
+    offsetTop: number;
+}
+```
+
+### Sample
+
+```tsx
+...
+import { useMeasure } from "@reactivers/hooks";
+...
+
+
+const ComponentWithUseMeasure = ()=>{
+
+	const ref = useRef(null);
+	const {
+		left,
+		top,
+		width,
+		bottom,
+		right,
+		x
+		y,
+		height,
+		offsetLeft,
+		offsetTop,
+	} = useMeasure({
+		ref,
+		updateOnWindowResize: false
+	});
+
+	useMeasure({
+		ref,
+		updateOnWindowResize: true,
+		onResize: measure => console.log("MEASURES", measure);
+	});
+
+	return (
+		<div ref={ref}>
+			...
+		</div>
+	)
+
 }
 
 ```
 
+## useHover
+
+Watches mouse or touch position and returns ```isHover```
+
+### Interface
+
+```ts
+
+interface HoverProps {
+
+	//ref object for register
+    ref: MutableRefObject<any>;
+	
+	//If set false, doesn't watch hover action
+    active?: boolean;// Default = true
+	
+	// Axis for Mouse/Touch position. If both set true then watches inside of element.
+    axis?: { 
+		// Default = true
+		vertical?: boolean,
+		// Default = true
+		horizontal?: boolean
+	 };
+	
+	// Add extra values to real measures
+    offsets?: { top?: number, right?: number, bottom?: number, left?: number };
+	
+	//For touch enabled devices
+    updateOnTouchEnd?: boolean;// Default = true
+	
+	//If set true, checkes for the border values.
+    includeBorders?: boolean;// Default = true
+}
+
+interface HoverResponse {
+
+	//returns hover state
+    isHover: boolean;
+}
+```
+
+### Sample
+
+```tsx
+...
+import { useHover } from "@reactivers/hooks";
+...
+
+const ComponentWithUseHover = () => {
+	
+	const ref = useRef(null);
+	
+	const { isHover } = useHover({
+    	ref: buttonRef,
+    	axis: { horizontal: true }
+  	})
+	  
+	return(
+		<div ref={ref}>
+			...
+		</div>
+	)
+}
+
+```
 
 
 ## SocketProvider
@@ -158,7 +333,8 @@ A context for ```useSocket``` hook. Has no props.
 
 ```ts
 interface  SocketProps {
-//Conntect url
+	
+	//Conntect url
 	url: string;
 	
 	// wss://... 
@@ -181,8 +357,10 @@ interface  SocketProps {
 }
 
 interface  SocketState {
+
 	//Returns WebSocket status.
 	readyState: number;
+
 	//Returns the last data
 	lastData: any;
 }
@@ -197,17 +375,17 @@ interface  SocketResponse  extends  SocketState {
 	
 	//Function fro sending data
 	sendData: (p: any) =>  void;
-
 }
 ```
 
 ### Sample
 
-```ts
+```tsx
 ...
 import { useSocket } from "@reactivers/hooks";
 ...
 const ComponentWithUseSocket = ()=>{
+
 	const { readyState, lastData, sendData } = useSocket({
 		url:  'echo.websocket.org/',
 		wss:  true,
@@ -228,6 +406,7 @@ A context for ```useApi``` hook.
 
 ```ts
 interface  ApiContextProps {
+
 	//Sets default url for useApi hook
 	url: string;
 	
@@ -239,12 +418,13 @@ interface  ApiContextProps {
 }
 
 interface  ApiProviderProps {
+
 	// Return default url
 	url: string;
 
 	// Return global onSuccess callback
 	onSuccess?: (response: any) =>  void;
-	Ï
+	
 	// Return global onError callback
 	onError?: (response: any, responseJSON?: any) =>  void;
 
@@ -258,6 +438,7 @@ interface  ApiProviderProps {
 ```ts
   
 interface  ApiPayload<T  extends {}> {
+
 	//Overrides the url that passed to ApiProvider
 	url?: string;
 	
@@ -266,27 +447,31 @@ interface  ApiPayload<T  extends {}> {
 	method?: string,
 
 	params?: any;
+	
 	// Initial value for response object
 	initialValue?: T;
+	
 	// Use for form actions
 	formData?: any,
+	
 	// returns response onSuccess.
 	onSuccess?: (respose: any) =>  void;
+	
 	// returns responseJSON if the response is parsed successfully on error!
 	// returns response always on error.
 	onError?: (responseJSON: any, response: any) =>  void;
 }
 ```
 ### Sample
-```ts
+```tsx
 ...
 import { useApi } from  "@reactivers/hooks";
 ...
 
-const ComponentWithUseApi = ({id})=>{
+const ComponentWithUseApi = ({ id })=>{
 	const { load, response, fetching, firstTimeFetched, fetched } = useApi();
 
-	useEffect(()=>{
+	useEffect(() => {
 		load({
 			endpoint:`/products/${id}`,
 			method:"POST",
@@ -296,32 +481,27 @@ const ComponentWithUseApi = ({id})=>{
 			onSuccess: ()=>  console.log("Saved successfully!"),
 			onError: ()=>  console.log("Exception!");
 		})
-	},[load, id])
+	}, [load, id])
 
-	if(!firstTimeFetched){
-		return <ShowDummyShimmerList/>
+	if(!firstTimeFetched) return <ShowDummyShimmerList/>
 
-	const hasItems = response.data.length>0;
+	const hasItems = response.data.length > 0;
 
-	if(fetched && !hasItems)
-		return <EmptyResult/>
+	if(fetched && !hasItems) return <EmptyResult/>
 		
 	return (
-		<>
+		<div>
 			{
-				response.data.map((item)=>{
-					return <span key={item.id}>{item.name}</span>
+				response.data.map(( item ) => {
+					return <span key={item.id}> {item.name} </span>
 				})
-				{
-				fetching ?
-					<ShowShimmer/>
-				 	: null
-				}
 			}
-		</>
+			{
+				fetching ? <ShowShimmer/> : null
+			}
+		</div>
 	)
 }
-
 ```
 
 
@@ -332,7 +512,7 @@ const ComponentWithUseApi = ({id})=>{
 ### Interface
 ```ts
 
-export  declare  type  Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "xxl"
+declare  type  Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "xxl"
   
 
 interface  DimensionsContextProps {
@@ -366,17 +546,22 @@ const sizes = ["xs", "sm", "md", "lg", "xl", "xxl"];
 
 ```ts
 interface  DimensionProps {
-// Wathches the selected breakpoints. As default watches all breakpoints.
+
+	// Wathches the selected breakpoints. As default watches all breakpoints.
 	breakpoints?: Array<Breakpoint>,
-// Watches window resize event and set state.
+	
+	// Watches window resize event and set state.
 	watchWindowSize?: boolean;
 }
 
 interface  Dimensions {
+	
 	//Window width
 	width: number,
+	
 	//Window height
 	height: number,
+	
 	//Size as Breakpoint type
 	size: Breakpoint
 }
@@ -384,7 +569,7 @@ interface  Dimensions {
 
 ### Sample
 
-```ts
+```tsx
 ...
 import { useDimensions } from  "@reactivers/hooks";
 ...
@@ -393,9 +578,9 @@ const ComponentWithUseDimensions = ()=>{
 
 	const { width, height, size, isSizeEqualOrLargerThan } = useDimensions({ breakpoints: ["md"], watchWindowSize:  false });
 
-	const  showCancelButton = size === "xs";
+	const showCancelButton = size === "xs";
 
-	const  hideOnMobile = isSizeEqualOrLargerThan("md");
+	const hideOnMobile = isSizeEqualOrLargerThan("md");
 
 	if(hideOnMobile) return null;
 
@@ -410,28 +595,36 @@ Has to be wrapped by ```<EventListenerProvider/>```
 ### Interface 
 ```ts
 interface IEventListener {
-//A group name for access it anywhere!
+	
+	//A group name for access it anywhere!
 	component: string
 }
 ```
 
 ### Sample
 
-```ts
+```tsx
 ...
 import { useEventListener } from "@reactivers/hooks";
 ...  
 
 interface IApp {
+	
 	getCounter: ()=> number;
+	
 	counter: any;
+	
 	incrementCounter: () => void;
+	
 	decrementCounter: () => void;
+	
 	setCounter: () => void;
 }
 
 const ComponentWithUseEventListenerRegister = ()=>{
+	
 	const [counter, setCounter] = useState(0);
+	
 	const { registerEvent, registerEventById, callAllEvents } = useEventListener<IApp>("App");
 
 	useEffect(() => {
@@ -481,21 +674,22 @@ A context for ```useLocale``` hook.
 ```ts
 interface  LocalesContextProps {
 
-//Current language's values
+	//Current language's values
 	locale: any;
 
-//Gets current language's value by name
+	//Gets current language's value by name
 	getLocale: (payload: { name: string, params?: any }) =>  string;
 
-//Sets active language
+	//Sets active language
 	setActiveLanguage: (lang: string) =>  void;
 }
 
 interface  LocalesProviderProps {
-//Custom local json
+	
+	//Custom local json
 	locales?: any
 
-//Set active language as navigator.language
+	//Set active language as navigator.language
 	activeLanguage?: string
 }
 ```
@@ -503,7 +697,7 @@ interface  LocalesProviderProps {
 
 ### Sample
 
-```ts
+```tsx
 
 import { useLocale } from "@reactivers/hooks";
 
@@ -527,29 +721,29 @@ Consists lots of useful functions.
 ### Interface
 
 ```ts
-export  declare  const  emptyFunction: () =>  void;
+declare  const  emptyFunction: () =>  void;
 
-export  declare  const  isEqualJSON: (json1?: {}, json2?: {}) =>  boolean;
+declare  const  isEqualJSON: (json1?: {}, json2?: {}) =>  boolean;
 
-export  declare  const  deepCopy: (json?: {}) =>  any;
+declare  const  deepCopy: (json?: {}) =>  any;
 
-export  declare  const  combineReducers: (reducers: any) => (state: {}, action: any) => {};
+declare  const  combineReducers: (reducers: any) => (state: {}, action: any) => {};
 
-export  declare  const  transformObj: (obj: any) => {};
+declare  const  transformObj: (obj: any) => {};
 
-export  declare  const  JSONToArray: (json: {}, key: any, valueKey: any) =>  any[];
+declare  const  JSONToArray: (json: {}, key: any, valueKey: any) =>  any[];
 
-export  declare  const  EnumToArray: (enums: any, valueKey: any, descriptionKey: any) => {
+declare  const  EnumToArray: (enums: any, valueKey: any, descriptionKey: any) => {
 
 [x: number]: any;
 
 }[];
 
-export  declare  const  download: (newBlob: any, type: any) =>  void;
+declare  const  download: (newBlob: any, type: any) =>  void;
 
-export  declare  const  downloadQRCodeById: (id: any) =>  void;
+declare  const  downloadQRCodeById: (id: any) =>  void;
 
-export  declare  const  downloadQRCodeBySVGElement: (QRCodeSVGElement: any, type?: string, size?: {
+declare  const  downloadQRCodeBySVGElement: (QRCodeSVGElement: any, type?: string, size?: {
 
 width?: number;
 
@@ -557,130 +751,130 @@ height?: number;
 
 }) =>  void;
 
-export  declare  const  downloadByDataURL: (dataURL: any, type: any) =>  void;
+declare  const  downloadByDataURL: (dataURL: any, type: any) =>  void;
 
-export  declare  const  bytesToSize: (bytes: any) =>  string;
+declare  const  bytesToSize: (bytes: any) =>  string;
 
-export  declare  const  sum: (array?: any[]) =>  any;
+declare  const  sum: (array?: any[]) =>  any;
 
-export  declare  const  ArrayToJSON: (array: any, keyName: any, valueName: any) => {};
+declare  const  ArrayToJSON: (array: any, keyName: any, valueName: any) => {};
 
-export  declare  const  formatDate: (date: any, format?: string) =>  string;
+declare  const  formatDate: (date: any, format?: string) =>  string;
 
-export  declare  const  isJSONEmpty: (json?: {}) =>  boolean;
+declare  const  isJSONEmpty: (json?: {}) =>  boolean;
 
-export  declare  const  isArrayEmpty: (array?: any[]) =>  boolean;
+declare  const  isArrayEmpty: (array?: any[]) =>  boolean;
 
-export  declare  const  guid: () =>  string;
+declare  const  guid: () =>  string;
 
 interface  Province {
 
-name: string;
+	name: string;
 
 }
 
 interface  District {
 
-name: string;
+	name: string;	
 
 }
 
 interface  Address {
 
-province: Province;
+	province: Province;
 
-district: District;
+	district: District;
 
 }
 
-export  declare  const  getAddressText: (address: Address) =>  string;
+declare  const  getAddressText: (address: Address) =>  string;
 
-export  declare  const  getUriFromImageObject: (host: string, image?: {
+declare  const  getUriFromImageObject: (host: string, image?: {
 
-base64Data: any;
+	base64Data: any;
 
-fileType: any;
+	fileType: any;
 
-id: any;
+	id: any;
 
 }) =>  string;
 
-export  declare  const  updateObjectByName: (oldObject: {}, name: any, value: any) => {};
+declare  const  updateObjectByName: (oldObject: {}, name: any, value: any) => {};
 
-export  declare  const  getFirstLetters: (string?: string) =>  string;
+declare  const  getFirstLetters: (string?: string) =>  string;
 
-export  declare  const  hashCode: (str: any) =>  number;
+declare  const  hashCode: (str: any) =>  number;
 
-export  declare  const  generatedColorFromString: (_i: any) =>  string;
+declare  const  generatedColorFromString: (_i: any) =>  string;
 
-export  declare  const  destructArray: (array?: any[]) =>  any[];
+declare  const  destructArray: (array?: any[]) =>  any[];
 
-export  declare  const  takeUndefinedAsTrue: (parameter: any) =>  any;
+declare  const  takeUndefinedAsTrue: (parameter: any) =>  any;
 
 interface  FetchProps {
 
-url: string;
+	url: string;
 
-endpoint: string;
+	endpoint: string;
 
-params?: any;
+	params?: any;
 
-method: string;
+	method: string;
 
-formData?: any;
+	formData?: any;
 
-onSuccess: (response: any) =>  void;
+	onSuccess: (response: any) =>  void;
 
-onError: (error: any, errorJSON?: any) =>  void;
+	onError: (error: any, errorJSON?: any) =>  void;
 
-token?: string;
+	token?: string;
 
-signal: AbortSignal;
+	signal: AbortSignal;
 
 }
 
-export  declare  const  iFetch: (payload: FetchProps) =>  void;
+declare  const  iFetch: (payload: FetchProps) =>  void;
 
-export  declare  const  changeColor: (color: any, amt: any) =>  string;
+declare  const  changeColor: (color: any, amt: any) =>  string;
 
-export  declare  const  takeIf: (condition: any, value: any, defaultValue?: any) =>  any;
+declare  const  takeIf: (condition: any, value: any, defaultValue?: any) =>  any;
 
-export  declare  const  spliceString: (string: any, startCount: any, deleteCount: any) =>  any;
+declare  const  spliceString: (string: any, startCount: any, deleteCount: any) =>  any;
 
-export  declare  const  dateToDescription: (date: any) =>  string;
+declare  const  dateToDescription: (date: any) =>  string;
 
-export  declare  const  isNullOrUndefined: (item: any) =>  boolean;
+declare  const  isNullOrUndefined: (item: any) =>  boolean;
 
-export  declare  const  coalasce: (first: any, second: any) =>  any;
+declare  const  coalasce: (first: any, second: any) =>  any;
 
-export  declare  const  numberShouldStartWithZero: (number: any) =>  any;
+declare  const  numberShouldStartWithZero: (number: any) =>  any;
 
-export  declare  const  getTodayYear: () =>  number;
+declare  const  getTodayYear: () =>  number;
 
-export  declare  const  getTodayMonth: () =>  number;
+declare  const  getTodayMonth: () =>  number;
 
-export  declare  const  getMonthDescription: (_month: any) =>  string;
+declare  const  getMonthDescription: (_month: any) =>  string;
 
-export  declare  const  getDatesOfYear: (year: any) =>  any[];
+declare  const  getDatesOfYear: (year: any) =>  any[];
 
-export  declare  const  monthsNumberArray: number[];
+declare  const  monthsNumberArray: number[];
 
-export  declare  const  isArrayContains: (array: any, value: any, key: any) =>  boolean;
+declare  const  isArrayContains: (array: any, value: any, key: any) =>  boolean;
 
-export  declare  const  JSONArrayIndexOf: (array: any, value: any, key: any) =>  any;
+declare  const  JSONArrayIndexOf: (array: any, value: any, key: any) =>  any;
 
-export  declare  const  cos: (degree: number) =>  number;
+declare  const  cos: (degree: number) =>  number;
 
-export  declare  const  insertOrUpdateElementInArrayByKey: (array: any, idKey: any, id: any, item: any) =>  any;
+declare  const  insertOrUpdateElementInArrayByKey: (array: any, idKey: any, id: any, item: any) =>  any;
 
-export  declare  const  deleteElementFromArrayByKey: (array: any, idKey: any, id: any) =>  any;
+declare  const  deleteElementFromArrayByKey: (array: any, idKey: any, id: any) =>  any;
 
-export  declare  const  findLastIndex: (array: any, predicate: any) =>  number;
+declare  const  findLastIndex: (array: any, predicate: any) =>  number;
 ```
 
 ### Sample
 
-```ts
+```tsx
 ...
 import { useUtils } from "@reactivers/hooks";
 ...

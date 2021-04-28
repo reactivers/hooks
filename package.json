@@ -1,7 +1,7 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "maincjs": "dist/index.cjs.js",
   "mainiife": "dist/index.iife.js",

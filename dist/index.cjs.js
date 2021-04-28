@@ -70,7 +70,7 @@ var AuthProvider = function (_a) {
     } : _c, _onLogin = _a.onLogin, _onLogout = _a.onLogout, children = _a.children;
     var _d = react.useState(_user), user = _d[0], setUser = _d[1];
     var onLogin = react.useCallback(function (info) {
-        setUser(info);
+        setUser(__assign(__assign({}, (info || {})), { isLoggedIn: true, checked: true }));
         if (_onLogin)
             _onLogin(info);
     }, [_onLogin]);
@@ -142,6 +142,54 @@ var useAuth = function () {
 
 moment__default['default'].locale(navigator.language);
 var emptyFunction = function () { };
+var transform = function (value, actualRange, targetRange) {
+    var minActualRange = actualRange[0], maxActualRange = actualRange[1];
+    var minTargetRange = targetRange[0], maxTargetRange = targetRange[1];
+    if (value >= maxActualRange)
+        return maxTargetRange;
+    if (value <= minActualRange)
+        return minTargetRange;
+    var tranformedValue = ((value - minActualRange) / (maxActualRange - minActualRange)) *
+        (maxTargetRange - minTargetRange) +
+        minTargetRange;
+    return tranformedValue;
+};
+var memoComparer = function (prevProps, nextProps, props) {
+    if (Object.keys(prevProps).length !== Object.keys(nextProps).length)
+        return false;
+    var isEqual = true;
+    props.forEach(function (prop) {
+        if (isEqual) {
+            isEqual = prevProps[prop] === nextProps[prop];
+        }
+    });
+    return isEqual;
+};
+var isPointInRect = function (point, rect, includeBorders) {
+    if (includeBorders === void 0) { includeBorders = false; }
+    var x = point.x, y = point.y;
+    var top = rect.top, right = rect.right, bottom = rect.bottom, left = rect.left;
+    if (top === bottom || right === left)
+        return false;
+    if (includeBorders)
+        return x >= left && x <= right && y >= top && y <= bottom;
+    return x > left && x < right && y > top && y < bottom;
+};
+var isInRange = function (range, num, includeFrom, includeTo) {
+    if (includeFrom === void 0) { includeFrom = true; }
+    if (includeTo === void 0) { includeTo = true; }
+    var from = range[0], to = range[1];
+    var checkFrom = includeFrom ? num >= from : num > from;
+    var checkTo = includeTo ? num <= to : num < to;
+    return checkFrom && checkTo;
+};
+var deepCompare = function (obj1, obj2) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+};
+var getIsWebkit = function () {
+    var UA = navigator.userAgent;
+    return (/\b(iPad|iPhone|iPod)\b/.test(UA) && /WebKit/.test(UA) && !/Edge/.test(UA) && !window.MSStream);
+};
 var isEqualJSON = function (json1, json2) {
     if (json1 === void 0) { json1 = {}; }
     if (json2 === void 0) { json2 = {}; }
@@ -535,6 +583,12 @@ var findLastIndex = function (array, predicate) {
 var utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     emptyFunction: emptyFunction,
+    transform: transform,
+    memoComparer: memoComparer,
+    isPointInRect: isPointInRect,
+    isInRange: isInRange,
+    deepCompare: deepCompare,
+    getIsWebkit: getIsWebkit,
     isEqualJSON: isEqualJSON,
     deepCopy: deepCopy,
     combineReducers: combineReducers,
@@ -1159,6 +1213,106 @@ var useSocket = function (_a) {
     return __assign({ connect: connect, socket: socket.current, sendData: sendData }, socketState);
 };
 
+var defaultValue = {
+    left: 0,
+    top: 0,
+    width: 0,
+    bottom: 0,
+    right: 0,
+    x: 0,
+    y: 0,
+    height: 0,
+    offsetLeft: 0,
+    offsetTop: 0,
+};
+var useMeasure = function (_a) {
+    var ref = _a.ref, _b = _a.updateOnWindowResize, updateOnWindowResize = _b === void 0 ? false : _b, onResize = _a.onResize;
+    var _c = react.useState(defaultValue), bounds = _c[0], setBounds = _c[1];
+    var set = react.useCallback(function (newBounds) {
+        if (onResize)
+            onResize(newBounds);
+        else
+            setBounds(newBounds);
+    }, [setBounds, onResize]);
+    var registerObserver = react.useCallback(function (element) {
+        var observer = new ResizeObserver(function () {
+            var _a, _b;
+            if (ref.current) {
+                var newBounds = ref.current.getBoundingClientRect();
+                newBounds.offsetLeft = (_a = ref.current) === null || _a === void 0 ? void 0 : _a.offsetLeft;
+                newBounds.offsetTop = (_b = ref.current) === null || _b === void 0 ? void 0 : _b.offsetTop;
+                if (newBounds)
+                    set(newBounds);
+            }
+        });
+        observer.observe(element);
+        return function () { return observer.disconnect(); };
+    }, [set, ref.current]);
+    react.useEffect(function () {
+        if (updateOnWindowResize)
+            return registerObserver(document.body);
+    }, [updateOnWindowResize, registerObserver]);
+    react.useEffect(function () {
+        if (ref.current)
+            return registerObserver(ref.current);
+    }, [registerObserver, ref.current]);
+    return bounds;
+};
+
+var zeroOffset = { top: 0, right: 0, bottom: 0, left: 0 };
+var useHover = function (_a) {
+    var ref = _a.ref, _b = _a.active, active = _b === void 0 ? true : _b, _c = _a.axis, axis = _c === void 0 ? { vertical: true, horizontal: true } : _c, _d = _a.offsets, _offsets = _d === void 0 ? {} : _d, _e = _a.updateOnTouchEnd, updateOnTouchEnd = _e === void 0 ? true : _e, _f = _a.includeBorders, includeBorders = _f === void 0 ? true : _f;
+    var _g = useUtils(), isPointInRect = _g.isPointInRect, isInRange = _g.isInRange;
+    var _h = react.useState(false), isHover = _h[0], setIsHover = _h[1];
+    var checkInVertically = axis.vertical, checkInHorizontally = axis.horizontal;
+    var offsets = __assign(__assign({}, zeroOffset), _offsets);
+    var top = offsets.top, right = offsets.right, bottom = offsets.bottom, left = offsets.left;
+    var isMouseOver = react.useCallback(function (e) {
+        if (!ref.current)
+            return;
+        var event = e.touches ? e.touches[0] : e;
+        var clientX = event.clientX, clientY = event.clientY;
+        var point = { x: clientX, y: clientY };
+        var boundingRect = ref.current.getBoundingClientRect().toJSON();
+        boundingRect.top += top;
+        boundingRect.right += right;
+        boundingRect.bottom += bottom;
+        boundingRect.left += left;
+        var checkBoth = checkInVertically && checkInHorizontally;
+        var _isHover = checkBoth
+            ? isPointInRect(point, boundingRect, includeBorders) :
+            checkInVertically ?
+                isInRange([boundingRect.top, boundingRect.bottom], clientY, includeBorders, includeBorders)
+                : isInRange([boundingRect.left, boundingRect.right], clientX, includeBorders, includeBorders);
+        if (isHover !== _isHover)
+            setIsHover(_isHover);
+    }, [ref.current, isHover, includeBorders, checkInVertically, checkInHorizontally, top, right, bottom, left]);
+    var onTouchEnd = react.useCallback(function () {
+        setIsHover(false);
+    }, []);
+    react.useEffect(function () {
+        if (updateOnTouchEnd)
+            document.addEventListener('touchend', onTouchEnd, { passive: true });
+        return function () {
+            document.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [updateOnTouchEnd, onTouchEnd]);
+    react.useEffect(function () {
+        if (active) {
+            document.addEventListener('mousemove', isMouseOver, { passive: true });
+            document.addEventListener('touchmove', isMouseOver, { passive: true });
+        }
+        else {
+            setIsHover(false);
+        }
+        return function () {
+            document.removeEventListener('mousemove', isMouseOver);
+            document.removeEventListener('touchmove', isMouseOver);
+        };
+    }, [isMouseOver, active]);
+    return { isHover: isHover };
+};
+
 exports.ApiProvider = ApiProvider;
 exports.AuthProvider = AuthProvider;
 exports.DimensionsProvider = DimensionsProvider;
@@ -1170,8 +1324,10 @@ exports.useApi = useApi;
 exports.useAuth = useAuth;
 exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
+exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
 exports.useLocales = useLocale;
+exports.useMeasure = useMeasure;
 exports.useSocket = useSocket;
 exports.useUtils = useUtils;

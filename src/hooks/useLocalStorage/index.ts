@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 const useLocalStorage = (key: string, defaultValue?: string) => {
 
-    const getItem = useCallback((_defaultValue) => {
+    const getItem = useCallback((_defaultValue?: any) => {
         try {
             const value = JSON.parse(window.localStorage.getItem(key))
             return value || _defaultValue || defaultValue
@@ -11,7 +11,7 @@ const useLocalStorage = (key: string, defaultValue?: string) => {
         }
     }, [defaultValue, key])
 
-    const setItem = useCallback((_value) => {
+    const setItem = useCallback((_value: any) => {
         try {
             const value = JSON.stringify(_value);
             window.localStorage.setItem(key, value)

@@ -6,6 +6,26 @@ declare global {
     }
 }
 export declare const emptyFunction: () => void;
+export declare const transform: (value: number, actualRange: [number, number], targetRange: [number, number]) => number;
+export declare const memoComparer: <T>(prevProps: T, nextProps: T, props: Array<keyof T>) => boolean;
+export declare const isPointInRect: (point: {
+    x: number;
+    y: number;
+}, rect: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}, includeBorders?: boolean) => boolean;
+declare type Grow<T, A extends Array<T>> = ((x: T, ...xs: A) => void) extends (...a: infer X) => void ? X : never;
+declare type GrowToSize<T, A extends Array<T>, N extends number> = {
+    0: A;
+    1: GrowToSize<T, Grow<T, A>, N>;
+}[A['length'] extends N ? 0 : 1];
+export declare type FixedArray<T, N extends number> = GrowToSize<T, [], N>;
+export declare const isInRange: (range: FixedArray<number, 2>, num: number, includeFrom?: boolean, includeTo?: boolean) => boolean;
+export declare const deepCompare: (obj1: object | JSON | ArrayLike<JSON>, obj2: object | JSON | ArrayLike<JSON>) => boolean;
+export declare const getIsWebkit: () => boolean;
 export declare const isEqualJSON: (json1?: {}, json2?: {}) => boolean;
 export declare const deepCopy: (json?: {}) => any;
 export declare const combineReducers: (reducers: any) => (state: {}, action: any) => {};

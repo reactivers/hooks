@@ -13,4 +13,6 @@ export { default as LocalesProvider } from "./hooks/useLocales/context";
 export { default as useSocket } from "./hooks/useSocket";
 export { default as SocketProvider } from "./hooks/useSocket/context";
 export { default as useUtils } from "./hooks/useUtils/index";
+export { default as useMeasure } from "./hooks/useMeasure";
+export { default as useHover } from "./hooks/useHover";
 export { default as useLocalStorage } from "./hooks/useLocalStorage";
