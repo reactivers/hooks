@@ -34,8 +34,8 @@ import {
     DimensionsProvider
 } from '@reactivers/hooks';
 
-const AppWrapper = ()=>{
-	return (
+const AppWrapper = () => {
+  return (
     <LocalesProvider>
       <EventListenerProvider>
         <SocketProvider>
@@ -49,7 +49,7 @@ const AppWrapper = ()=>{
         </SocketProvider>
       </EventListenerProvider>
     </LocalesProvider>
-	)
+  )
 }
 ```
 
