@@ -3,6 +3,10 @@
   "description": "Awesome hooks for React",
   "version": "0.1.4",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reactivers/hooks"
+  }
   "maincjs": "dist/index.cjs.js",
   "mainiife": "dist/index.iife.js",
   "main": "dist/index.es.js",
