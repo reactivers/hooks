@@ -26,18 +26,18 @@ yarn add @reactivers/hooks
 
 ```tsx
 import {
-    LocalesProvider,
-    EventListenerProvider,
-    SocketProvider,
-    AuthProvider,
-    ApiProvider,
-    DimensionsProvider,
-	SafeAreaProvider
+  LocalesProvider,
+  EventListenerProvider,
+  SocketProvider,
+  AuthProvider,
+  ApiProvider,
+  DimensionsProvider,
+  SafeAreaProvider
 } from '@reactivers/hooks';
 
 const AppWrapper = () => {
   return (
-   <LocalesProvider>
+    <LocalesProvider>
       <EventListenerProvider>
         <SocketProvider>
           <AuthProvider>
