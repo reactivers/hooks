@@ -12,87 +12,90 @@ moment.locale(navigator.language)
 
 export const emptyFunction = () => { };
 
+export const setIfNotEqual = (variable: any, value: any) => {
+    if (variable !== value) variable = value;
+}
 
 export const transform = (
     value: number,
     actualRange: [number, number],
     targetRange: [number, number]
-  ) => {
+) => {
     const [minActualRange, maxActualRange] = actualRange;
     const [minTargetRange, maxTargetRange] = targetRange;
-  
+
     if (value >= maxActualRange) return maxTargetRange;
     if (value <= minActualRange) return minTargetRange;
-  
+
     const tranformedValue =
-      ((value - minActualRange) / (maxActualRange - minActualRange)) *
+        ((value - minActualRange) / (maxActualRange - minActualRange)) *
         (maxTargetRange - minTargetRange) +
-      minTargetRange;
+        minTargetRange;
     return tranformedValue;
-  };
-  
-  export const memoComparer: <T>(prevProps: T, nextProps: T, props: Array<keyof T>) => boolean = (
+};
+
+export const memoComparer: <T>(prevProps: T, nextProps: T, props: Array<keyof T>) => boolean = (
     prevProps,
     nextProps,
     props
-  ) => {
+) => {
     if (Object.keys(prevProps).length !== Object.keys(nextProps).length) return false;
     let isEqual = true;
     props.forEach((prop) => {
-      if (isEqual) {
-        isEqual = prevProps[prop] === nextProps[prop];
-      }
+        if (isEqual) {
+            isEqual = prevProps[prop] === nextProps[prop];
+        }
     });
     return isEqual;
-  };
-  
-  export const isPointInRect = (
+};
+
+export const isPointInRect = (
     point: { x: number; y: number },
     rect: { top: number; right: number; bottom: number; left: number },
     includeBorders = false
-  ) => {
+) => {
     const { x, y } = point;
     const { top, right, bottom, left } = rect;
     if (top === bottom || right === left) return false;
     if (includeBorders) return x >= left && x <= right && y >= top && y <= bottom;
     return x > left && x < right && y > top && y < bottom;
-  };
-  
-  type Grow<T, A extends Array<T>> = ((x: T, ...xs: A) => void) extends (...a: infer X) => void
+};
+
+type Grow<T, A extends Array<T>> = ((x: T, ...xs: A) => void) extends (...a: infer X) => void
     ? X
     : never;
-  type GrowToSize<T, A extends Array<T>, N extends number> = {
+type GrowToSize<T, A extends Array<T>, N extends number> = {
     0: A;
     1: GrowToSize<T, Grow<T, A>, N>;
-  }[A['length'] extends N ? 0 : 1];
-  
-  export type FixedArray<T, N extends number> = GrowToSize<T, [], N>;
-  
-  export const isInRange = (
+}[A['length'] extends N ? 0 : 1];
+
+export type FixedArray<T, N extends number> = GrowToSize<T, [], N>;
+
+export const isInRange = (
     range: FixedArray<number, 2>,
     num: number,
     includeFrom: boolean = true,
     includeTo: boolean = true
-  ) => {
+) => {
     const [from, to] = range;
     const checkFrom = includeFrom ? num >= from : num > from;
     const checkTo = includeTo ? num <= to : num < to;
     return checkFrom && checkTo;
-  };
-  
-  export const deepCompare = (
+};
+
+export const deepCompare = (
     obj1: object | JSON | ArrayLike<JSON>,
     obj2: object | JSON | ArrayLike<JSON>
-  ) => {
+) => {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
-  };
-  
-  export const getIsWebkit = () => {
+};
+
+export const getIsWebkit = () => {
     const UA = navigator.userAgent;
     return (
-      /\b(iPad|iPhone|iPod)\b/.test(UA) && /WebKit/.test(UA) && !/Edge/.test(UA) && !window.MSStream
+        /\b(iPad|iPhone|iPod)\b/.test(UA) && /WebKit/.test(UA) && !/Edge/.test(UA) && !window.MSStream
     );
-  };
+};
 
 export const isEqualJSON = (json1 = {}, json2 = {}) => {
     return JSON.stringify(json1) === JSON.stringify(json2);

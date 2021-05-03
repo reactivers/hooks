@@ -6,6 +6,7 @@ declare global {
     }
 }
 export declare const emptyFunction: () => void;
+export declare const setIfNotEqual: (variable: any, value: any) => void;
 export declare const transform: (value: number, actualRange: [number, number], targetRange: [number, number]) => number;
 export declare const memoComparer: <T>(prevProps: T, nextProps: T, props: Array<keyof T>) => boolean;
 export declare const isPointInRect: (point: {

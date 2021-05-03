@@ -31,7 +31,8 @@ import {
     SocketProvider,
     AuthProvider,
     ApiProvider,
-    DimensionsProvider
+    DimensionsProvider,
+	SafeAreaProvider
 } from '@reactivers/hooks';
 
 const AppWrapper = () => {
@@ -42,8 +43,10 @@ const AppWrapper = () => {
           <AuthProvider>
             <ApiProvider url={"https://jsonplaceholder.typicode.com"}>
               <DimensionsProvider>
-                <App />
-              </DimensionsProvider>
+				<SafeAreaProvider>
+					<App />
+				</DimensionsProvider>
+              </SafeAreaProvider>
             </ApiProvider>
           </AuthProvider>
         </SocketProvider>
@@ -52,6 +55,65 @@ const AppWrapper = () => {
   )
 }
 ```
+
+## SafeAreaProvider 
+A context for ```useSafeArea``` hook.
+
+### HTML Requirement
+#### For ```PWA```
+```html
+<meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover" />
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+```
+
+### Interface
+
+```ts
+interface ISafeArea {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+```
+
+
+## useSafeArea
+
+### Sample
+
+```tsx
+import { SafeAreaProvider, useSafeArea } from "@reactivers/hooks";
+
+const ComponentWithUseSafeArea = () => {
+ 
+ const safeArea = useSafeArea();
+  
+  return (
+    <div style={{ ...safeArea, position: "absolute" }}>
+      <div style={{ whiteSpace: 'pre-line' }}>
+        {JSON.stringify(safeArea, null, 2)}
+      </div>
+    </div>
+  );
+}
+
+const AppWrapper = () => {
+  return (
+    <SafeAreaProvider>
+      <ComponentWithUseSafeArea />
+    </SafeAreaProvider>
+  )
+}
+
+export default AppWrapper;
+
+```
+
+
 
 ## useLocalStorage
 

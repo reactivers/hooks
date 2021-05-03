@@ -142,6 +142,8 @@ var useAuth = function () {
 
 moment__default['default'].locale(navigator.language);
 var emptyFunction = function () { };
+var setIfNotEqual = function (variable, value) {
+};
 var transform = function (value, actualRange, targetRange) {
     var minActualRange = actualRange[0], maxActualRange = actualRange[1];
     var minTargetRange = targetRange[0], maxTargetRange = targetRange[1];
@@ -583,6 +585,7 @@ var findLastIndex = function (array, predicate) {
 var utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     emptyFunction: emptyFunction,
+    setIfNotEqual: setIfNotEqual,
     transform: transform,
     memoComparer: memoComparer,
     isPointInRect: isPointInRect,
@@ -1213,6 +1216,61 @@ var useSocket = function (_a) {
     return __assign({ connect: connect, socket: socket.current, sendData: sendData }, socketState);
 };
 
+var SafeAreaContext = react.createContext({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+});
+var SafeAreaProvider = function (_a) {
+    var children = _a.children;
+    var isEqualJSON = useUtils().isEqualJSON;
+    var _b = react.useState({ top: 0, right: 0, bottom: 0, left: 0 }), safeArea = _b[0], setSafeArea = _b[1];
+    var insets = ["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"];
+    react.useEffect(function () {
+        insets.forEach(function (inset) {
+            document.documentElement.style.setProperty("--" + inset, "env(" + inset + ")");
+        });
+    }, []);
+    var getOffsets = react.useCallback(function () {
+        var _a = insets.map(function (inset) { return parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--" + inset) || "0"); }), top = _a[0], right = _a[1], bottom = _a[2], left = _a[3];
+        var offsets = { top: top, bottom: bottom, left: left, right: right };
+        return offsets;
+    }, []);
+    var update = react.useCallback(function () {
+        setSafeArea(function (oldSafeArea) {
+            var newSafeArea = getOffsets();
+            if (!isEqualJSON(oldSafeArea, newSafeArea)) {
+                return __assign({}, newSafeArea);
+            }
+            return oldSafeArea;
+        });
+    }, [getOffsets]);
+    react.useEffect(function () {
+        update();
+        var body = new ResizeObserver(update);
+        window.visualViewport.addEventListener("resize", update);
+        window.addEventListener("orientationchange", update);
+        if (body)
+            body.observe(document.body);
+        return function () {
+            if (body)
+                body.disconnect();
+            window.visualViewport.removeEventListener("resize", update);
+            window.removeEventListener("orientationchange", update);
+        };
+    }, [update]);
+    return (jsxRuntime.jsx(SafeAreaContext.Provider, __assign({ value: safeArea }, { children: children }), void 0));
+};
+var useSafeAreaContext = function () {
+    var context = react.useContext(SafeAreaContext);
+    return context;
+};
+
+var useSafeArea = function () {
+    return useSafeAreaContext();
+};
+
 var defaultValue = {
     left: 0,
     top: 0,
@@ -1319,6 +1377,7 @@ exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
 exports.LoadingProvider = LoadingProvider;
 exports.LocalesProvider = LocalesProvider;
+exports.SafeAreaProvider = SafeAreaProvider;
 exports.SocketProvider = SocketProvider;
 exports.useApi = useApi;
 exports.useAuth = useAuth;
@@ -1329,5 +1388,6 @@ exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
 exports.useLocales = useLocale;
 exports.useMeasure = useMeasure;
+exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
 exports.useUtils = useUtils;
