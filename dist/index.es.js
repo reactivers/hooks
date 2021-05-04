@@ -1263,6 +1263,64 @@ var useSafeArea = function () {
     return useSafeAreaContext();
 };
 
+var DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
+var LIGHT_MEDIA_QUERY = "(prefers-color-scheme: light)";
+var AndroidDarkMode = "AndroidDarkMode";
+function createTheme() {
+    var ThemeContext = createContext({});
+    var ThemeProvider = function (_a) {
+        var _b = _a.theme, _theme = _b === void 0 ? "system" : _b, styles = _a.styles, _c = _a.onChange, onChange = _c === void 0 ? function (a) { } : _c, children = _a.children;
+        var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
+        var lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
+        var initialTheme = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme;
+        var _d = useState(initialTheme), currentTheme = _d[0], setCurrentTheme = _d[1];
+        var getCurrentTheme = useCallback(function (e) {
+            var userAgent = window.navigator.userAgent;
+            if (userAgent.includes(AndroidDarkMode)) {
+                setCurrentTheme('dark');
+                onChange('dark');
+            }
+            else if (e && e.matches) {
+                if (e.media === DARK_MEDIA_QUERY) {
+                    setCurrentTheme('dark');
+                    onChange('dark');
+                }
+                else {
+                    setCurrentTheme('light');
+                    onChange('light');
+                }
+            }
+        }, [onChange]);
+        useEffect(function () {
+            if (_theme === "system") {
+                darkMedia.addEventListener("change", getCurrentTheme);
+                lightMedia.addEventListener("change", getCurrentTheme);
+            }
+            else {
+                setCurrentTheme(_theme);
+            }
+            return function () {
+                darkMedia.removeEventListener("change", getCurrentTheme);
+                lightMedia.removeEventListener("change", getCurrentTheme);
+            };
+        }, [_theme, getCurrentTheme]);
+        var theme = styles[currentTheme];
+        var value = { theme: theme, current: currentTheme };
+        return (jsx(ThemeContext.Provider, __assign({ value: value }, { children: children }), void 0));
+    };
+    var useTheme = function () {
+        var context = useContext(ThemeContext);
+        if (context === undefined) {
+            throw new Error('useThemeContext must be used within an ThemeProvider');
+        }
+        return context;
+    };
+    return {
+        ThemeProvider: ThemeProvider,
+        useTheme: useTheme
+    };
+}
+
 var defaultValue = {
     left: 0,
     top: 0,
@@ -1363,4 +1421,4 @@ var useHover = function (_a) {
     return { isHover: isHover };
 };
 
-export { ApiProvider, AuthProvider, DimensionsProvider, EventListenerProvider, LoadingProvider, LocalesProvider, SafeAreaProvider, SocketProvider, useApi, useAuth, useDimensions, useEventListener, useHover, useLoading, useLocalStorage, useLocale as useLocales, useMeasure, useSafeArea, useSocket, useUtils };
+export { ApiProvider, AuthProvider, DimensionsProvider, EventListenerProvider, LoadingProvider, LocalesProvider, SafeAreaProvider, SocketProvider, createTheme, useApi, useAuth, useDimensions, useEventListener, useHover, useLoading, useLocalStorage, useLocale as useLocales, useMeasure, useSafeArea, useSocket, useUtils };

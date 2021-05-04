@@ -56,76 +56,275 @@ const AppWrapper = () => {
 }
 ```
 
-## SafeAreaProvider 
-A context for ```useSafeArea``` hook.
+## createTheme
+A factory function that created ```ThemeProvider``` and ```useTheme```
 
-### HTML Requirement
-#### For ```PWA```
-```html
-<meta name="viewport"
-    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover" />
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-```
+- ## ThemeProvider
 
 ### Interface
 
 ```ts
-interface ISafeArea {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
+declare type Themes = "light" | "dark";
+
+interface ThemeStyle<T> {
+    light: T
+    dark: T
 }
+
+interface ThemeContextCreater<T> {
+	// default = "system". 
+	//That means the hook will use the active theme on OS. 
+	//You can change it as "light" or "dark"
+    theme?: Themes | "system"; 
+    styles: ThemeStyle<T>,
+    onChange?: (theme: Themes) => void;
+}
+
+interface ThemeProviderProps<T> extends ThemeContextCreater<T> {
+    children: ReactNode
+}
+
 ```
 
+- ## useTheme 
 
-## useSafeArea
+```ts
+interface ThemeContextProps<T> {
+    theme: T;
+    current: Themes
+}
+```
 
 ### Sample
 
 ```tsx
-import { SafeAreaProvider, useSafeArea } from "@reactivers/hooks";
 
-const ComponentWithUseSafeArea = () => {
- 
- const safeArea = useSafeArea();
-  
+import { createTheme } from '@reactivers/hooks';
+import './App.css';
+
+interface ThemeStyle {
+  backgroundColor: string;
+  titleColor: string;
+  buttons: {
+    primary: string;
+    secondary: string;
+    danger: string;
+  }
+}
+interface AppStyles {
+  light: ThemeStyle;
+  dark: ThemeStyle;
+}
+
+const styles: AppStyles = {
+  light: {
+    backgroundColor: "#eeeeee",
+    titleColor: "black",
+    buttons: {
+      primary: "blue",
+      secondary: "cyan",
+      danger: "red"
+    }
+  },
+  dark: {
+    backgroundColor: "#a0a0a0",
+    titleColor: "white",
+    buttons: {
+      primary: "darkblue",
+      secondary: "darkcyan",
+      danger: "darkred"
+    }
+  }
+}
+
+
+const { ThemeProvider, useTheme } = createTheme<ThemeStyle>();
+
+const App = () => {
+  const { theme, current } = useTheme();
   return (
-    <div style={{ ...safeArea, position: "absolute" }}>
-      <div style={{ whiteSpace: 'pre-line' }}>
-        {JSON.stringify(safeArea, null, 2)}
-      </div>
+    <div className="App" style={{ backgroundColor: theme.backgroundColor }}>
+      <h1 style={{ color: theme.titleColor }}>Current Theme: {current}</h1>
+      <button style={{ backgroundColor: theme.buttons.primary }}>Primary</button>
+      <button style={{ backgroundColor: theme.buttons.secondary }}>Secondary</button>
+      <button style={{ backgroundColor: theme.buttons.danger }}>Danger</button>
     </div>
   );
 }
 
+
 const AppWrapper = () => {
   return (
-    <SafeAreaProvider>
-      <ComponentWithUseSafeArea />
-    </SafeAreaProvider>
+    <ThemeProvider styles={styles}>
+      <App />
+    </ThemeProvider>
   )
 }
 
 export default AppWrapper;
 
+
 ```
 
+## ApiProvider
 
+A context for ```useApi``` hook.
 
-## useLocalStorage
+### Interface 
+
+```ts
+interface  ApiContextProps {
+
+	//Sets default url for useApi hook
+	url: string;
+	
+	//Calls on every useApi success.
+	onSuccess?: (response: any) =>  void;
+
+	//Calls on every useApi error.
+	onError?: (response: any, responseJSON?: any) =>  void;
+}
+
+interface  ApiProviderProps {
+
+	// Return default url
+	url: string;
+
+	// Return global onSuccess callback
+	onSuccess?: (response: any) =>  void;
+	
+	// Return global onError callback
+	onError?: (response: any, responseJSON?: any) =>  void;
+
+}
+```
+
+## useApi
+
 
 ### Interface
 ```ts
-interface ILocalStorage{
+  
+interface  ApiPayload<T  extends {}> {
 
-	//For key name of local storage item
-	key: string;
+	//Overrides the url that passed to ApiProvider
+	url?: string;
+	
+	endpoint?: string;
 
-	//If has no value returns this
-	defaultValue?: string;
+	method?: string,
+
+	params?: any;
+	
+	// Initial value for response object
+	initialValue?: T;
+	
+	// Use for form actions
+	formData?: any,
+	
+	// returns response onSuccess.
+	onSuccess?: (respose: any) =>  void;
+	
+	// returns responseJSON if the response is parsed successfully on error!
+	// returns response always on error.
+	onError?: (responseJSON: any, response: any) =>  void;
+}
+```
+### Sample
+```tsx
+...
+import { useApi } from  "@reactivers/hooks";
+...
+
+const ComponentWithUseApi = ({ id })=>{
+	const { load, response, fetching, firstTimeFetched, fetched } = useApi();
+
+	useEffect(() => {
+		load({
+			endpoint:`/products/${id}`,
+			method:"POST",
+			params:{
+				name:"Product Name"
+			},
+			onSuccess: ()=>  console.log("Saved successfully!"),
+			onError: ()=>  console.log("Exception!");
+		})
+	}, [load, id])
+
+	if(!firstTimeFetched) return <ShowDummyShimmerList/>
+
+	const hasItems = response.data.length > 0;
+
+	if(fetched && !hasItems) return <EmptyResult/>
+		
+	return (
+		<div>
+			{
+				response.data.map(( item ) => {
+					return <span key={item.id}> {item.name} </span>
+				})
+			}
+			{
+				fetching ? <ShowShimmer/> : null
+			}
+		</div>
+	)
+}
+```
+
+
+## SocketProvider
+
+A context for ```useSocket``` hook. Has no props.
+
+## useSocket
+
+### Interface
+
+```ts
+interface  SocketProps {
+	
+	//Conntect url
+	url: string;
+	
+	// wss://... 
+	wss?: boolean; //false as default
+
+	//Disconnects connection if set True
+	disconnectOnUnmount?: boolean; //true as default
+
+	//Registers onopen event
+	onOpen?: (a: any) =>  void,
+
+	//Registers onclose event
+	onClose?: (a: any) =>  void,
+
+	//Registers onerror event
+	onError?: (a: any) =>  void,
+
+	//Registers onmessage event
+	onMessage?: (a: any, data: any) =>  void
+}
+
+interface  SocketState {
+
+	//Returns WebSocket status.
+	readyState: number;
+
+	//Returns the last data
+	lastData: any;
+}
+
+interface  SocketResponse  extends  SocketState {
+
+	//connects to url
+	connect: ({ path: string }) =>  WebSocket;
+	
+	//socket variable
+	socket: WebSocket,
+	
+	//Function fro sending data
+	sendData: (p: any) =>  void;
 }
 ```
 
@@ -133,115 +332,19 @@ interface ILocalStorage{
 
 ```tsx
 ...
-import { useLocalStorage } from "@reactivers/hooks";
+import { useSocket } from "@reactivers/hooks";
 ...
+const ComponentWithUseSocket = ()=>{
 
-const ComponentWithUseLocalStorage = () => {
-	const { getItem, setItem, removeItem } = useLocalStorage("@reactivers/hooks");
+	const { readyState, lastData, sendData } = useSocket({
+		url:  'echo.websocket.org/',
+		wss:  true,
+		disconnectOnUnmount:  false
+	})
 
-  setItem({ "@reactivers": "Awesome Hooks" });
-  console.log(getItem());
-  removeItem();
-
-  ...
-
-}
-```
-
-## AuthProvider
-
-A context for ```useAuth``` hook.
-
-
-### Interface
-
-```ts
-
-interface  AuthProviderProps {
-
-	//Reads and write from local storage by the key name
-	localStorageTokenKeyName?: string; //as default token
-
-	//Default user object
-	/*
-		{
-			isLoggedIn:  false,
-			checked:  false
-		}
-	*/
-	user?: UserInfo; 
-	
-	//Call this on login
-	onLogin?: (info: UserInfo) =>  void;
-
-	//Call this on logout
-	onLogout?: () =>  void;
-
+	return <>{readyState}</>
 }
 
-interface  UserInfo {
-
-	username?: string;
-
-	token?: string;
-
-	isLoggedIn: boolean;
-
-	checked: boolean;
-	
-	//Extra info for user object
-	userInfo?: any;
-
-}
-```
-
-## useAuth
-
-### Interface
-
-```ts
-interface IUserHook {
-	//Call this on login
-	login: (data:any)=>void,
-
-	//Call this on logout
-	logout: () => void,
-
-	//Update user data
-	setUser: (user:UserInfo)=>void,
-
-	//Returns user object
-	user: UserInfo,
-
-	//Returns token
-	token: string
-}
-```
-
-### Sample
-
-```ts
-...
-import { useAuth, useApi } from "@reactivers/hooks";
-...
-
-const ComponentWithUseAuth = () => {
-	const { load } = useApi();
-	const { login } = useAuth();
-	
-	const onLogin = useCallback(() => {
-		load({
-			endpoint:'/signin',
-			method: "POST",
-			params: { 
-				username: "reactivers",
-				password: "hooks"
-			},
-			onSuccess: response => login(response.data)
-	}, [load, login])
-
-	...
-}
 ```
 
 ## useMeasure
@@ -381,188 +484,6 @@ const ComponentWithUseHover = () => {
 	)
 }
 
-```
-
-
-## SocketProvider
-
-A context for ```useSocket``` hook. Has no props.
-
-## useSocket
-
-### Interface
-
-```ts
-interface  SocketProps {
-	
-	//Conntect url
-	url: string;
-	
-	// wss://... 
-	wss?: boolean; //false as default
-
-	//Disconnects connection if set True
-	disconnectOnUnmount?: boolean; //true as default
-
-	//Registers onopen event
-	onOpen?: (a: any) =>  void,
-
-	//Registers onclose event
-	onClose?: (a: any) =>  void,
-
-	//Registers onerror event
-	onError?: (a: any) =>  void,
-
-	//Registers onmessage event
-	onMessage?: (a: any, data: any) =>  void
-}
-
-interface  SocketState {
-
-	//Returns WebSocket status.
-	readyState: number;
-
-	//Returns the last data
-	lastData: any;
-}
-
-interface  SocketResponse  extends  SocketState {
-
-	//connects to url
-	connect: ({ path: string }) =>  WebSocket;
-	
-	//socket variable
-	socket: WebSocket,
-	
-	//Function fro sending data
-	sendData: (p: any) =>  void;
-}
-```
-
-### Sample
-
-```tsx
-...
-import { useSocket } from "@reactivers/hooks";
-...
-const ComponentWithUseSocket = ()=>{
-
-	const { readyState, lastData, sendData } = useSocket({
-		url:  'echo.websocket.org/',
-		wss:  true,
-		disconnectOnUnmount:  false
-	})
-
-	return <>{readyState}</>
-}
-
-```
-
-
-## ApiProvider
-
-A context for ```useApi``` hook.
-
-### Interface 
-
-```ts
-interface  ApiContextProps {
-
-	//Sets default url for useApi hook
-	url: string;
-	
-	//Calls on every useApi success.
-	onSuccess?: (response: any) =>  void;
-
-	//Calls on every useApi error.
-	onError?: (response: any, responseJSON?: any) =>  void;
-}
-
-interface  ApiProviderProps {
-
-	// Return default url
-	url: string;
-
-	// Return global onSuccess callback
-	onSuccess?: (response: any) =>  void;
-	
-	// Return global onError callback
-	onError?: (response: any, responseJSON?: any) =>  void;
-
-}
-```
-
-## useApi
-
-
-### Interface
-```ts
-  
-interface  ApiPayload<T  extends {}> {
-
-	//Overrides the url that passed to ApiProvider
-	url?: string;
-	
-	endpoint?: string;
-
-	method?: string,
-
-	params?: any;
-	
-	// Initial value for response object
-	initialValue?: T;
-	
-	// Use for form actions
-	formData?: any,
-	
-	// returns response onSuccess.
-	onSuccess?: (respose: any) =>  void;
-	
-	// returns responseJSON if the response is parsed successfully on error!
-	// returns response always on error.
-	onError?: (responseJSON: any, response: any) =>  void;
-}
-```
-### Sample
-```tsx
-...
-import { useApi } from  "@reactivers/hooks";
-...
-
-const ComponentWithUseApi = ({ id })=>{
-	const { load, response, fetching, firstTimeFetched, fetched } = useApi();
-
-	useEffect(() => {
-		load({
-			endpoint:`/products/${id}`,
-			method:"POST",
-			params:{
-				name:"Product Name"
-			},
-			onSuccess: ()=>  console.log("Saved successfully!"),
-			onError: ()=>  console.log("Exception!");
-		})
-	}, [load, id])
-
-	if(!firstTimeFetched) return <ShowDummyShimmerList/>
-
-	const hasItems = response.data.length > 0;
-
-	if(fetched && !hasItems) return <EmptyResult/>
-		
-	return (
-		<div>
-			{
-				response.data.map(( item ) => {
-					return <span key={item.id}> {item.name} </span>
-				})
-			}
-			{
-				fetching ? <ShowShimmer/> : null
-			}
-		</div>
-	)
-}
 ```
 
 
@@ -772,6 +693,195 @@ const ComponentWithUseLocale = ()=>{
 	)
 }
 
+```
+
+
+## SafeAreaProvider 
+A context for ```useSafeArea``` hook.
+
+### HTML Requirement
+#### For ```PWA```
+```html
+<meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover" />
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+```
+
+### Interface
+
+```ts
+interface ISafeArea {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+```
+
+
+## useSafeArea
+
+### Sample
+
+```tsx
+import { SafeAreaProvider, useSafeArea } from "@reactivers/hooks";
+
+const ComponentWithUseSafeArea = () => {
+ 
+ const safeArea = useSafeArea();
+  
+  return (
+    <div style={{ ...safeArea, position: "absolute" }}>
+      <div style={{ whiteSpace: 'pre-line' }}>
+        {JSON.stringify(safeArea, null, 2)}
+      </div>
+    </div>
+  );
+}
+
+const AppWrapper = () => {
+  return (
+    <SafeAreaProvider>
+      <ComponentWithUseSafeArea />
+    </SafeAreaProvider>
+  )
+}
+
+export default AppWrapper;
+
+```
+
+
+
+## useLocalStorage
+
+### Interface
+```ts
+interface ILocalStorage{
+
+	//For key name of local storage item
+	key: string;
+
+	//If has no value returns this
+	defaultValue?: string;
+}
+```
+
+### Sample
+
+```tsx
+...
+import { useLocalStorage } from "@reactivers/hooks";
+...
+
+const ComponentWithUseLocalStorage = () => {
+	const { getItem, setItem, removeItem } = useLocalStorage("@reactivers/hooks");
+
+  setItem({ "@reactivers": "Awesome Hooks" });
+  console.log(getItem());
+  removeItem();
+
+  ...
+
+}
+```
+
+## AuthProvider
+
+A context for ```useAuth``` hook.
+
+
+### Interface
+
+```ts
+
+interface  AuthProviderProps {
+
+	//Reads and write from local storage by the key name
+	localStorageTokenKeyName?: string; //as default token
+
+	//Default user object
+	/*
+		{
+			isLoggedIn:  false,
+			checked:  false
+		}
+	*/
+	user?: UserInfo; 
+	
+	//Call this on login
+	onLogin?: (info: UserInfo) =>  void;
+
+	//Call this on logout
+	onLogout?: () =>  void;
+
+}
+
+interface  UserInfo {
+
+	username?: string;
+
+	token?: string;
+
+	isLoggedIn: boolean;
+
+	checked: boolean;
+	
+	//Extra info for user object
+	userInfo?: any;
+
+}
+```
+
+## useAuth
+
+### Interface
+
+```ts
+interface IUserHook {
+	//Call this on login
+	login: (data:any)=>void,
+
+	//Call this on logout
+	logout: () => void,
+
+	//Update user data
+	setUser: (user:UserInfo)=>void,
+
+	//Returns user object
+	user: UserInfo,
+
+	//Returns token
+	token: string
+}
+```
+
+### Sample
+
+```ts
+...
+import { useAuth, useApi } from "@reactivers/hooks";
+...
+
+const ComponentWithUseAuth = () => {
+	const { load } = useApi();
+	const { login } = useAuth();
+	
+	const onLogin = useCallback(() => {
+		load({
+			endpoint:'/signin',
+			method: "POST",
+			params: { 
+				username: "reactivers",
+				password: "hooks"
+			},
+			onSuccess: response => login(response.data)
+	}, [load, login])
+
+	...
+}
 ```
 
 

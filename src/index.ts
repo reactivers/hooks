@@ -22,6 +22,8 @@ export { default as SocketProvider } from "./hooks/useSocket/context";
 export { default as useSafeArea } from "./hooks/useSafeArea";
 export { default as SafeAreaProvider } from "./hooks/useSafeArea/context";
 
+export { default as createTheme } from "./hooks/useTheme/context";
+
 
 export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useMeasure } from "./hooks/useMeasure";
