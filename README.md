@@ -1,4 +1,4 @@
-# @reactivers/hooks
+> # @reactivers/hooks
 
 
 This package contains some useful hooks and functions that easier to develop awesome apps.
@@ -9,20 +9,74 @@ This package contains some useful hooks and functions that easier to develop awe
 
 # Installation
 
-### For npm
+## For npm
 ```sh
 npm install --save @reactivers/hooks
 ```
 
-### For yarn
+## For yarn
 ```sh
 yarn add @reactivers/hooks
 ```  
 
+># Table of Contents
+- [Installation](#installation)
+	- [For npm](#for-npm)
+	- [For yarn](#for-yarn)
+- [Usage](#usage)
+	- [Getting Started](#getting-started)
+	- [createTheme](#createtheme)
+		- [Interface](#interface)
+		- [Sample](#sample)
+	- [ApiProvider](#apiprovider)
+		- [Interface](#interface-1)
+		- [Sample](#sample-1)
+	- [useApi](#useapi)
+		- [Interface](#interface-2)
+		- [Sample](#sample-2)
+	- [SocketProvider](#socketprovider)
+	- [useSocket](#usesocket)
+		- [Interface](#interface-3)
+		- [Sample](#sample-3)
+	- [useMeasure](#usemeasure)
+		- [Interface](#interface-4)
+		- [Sample](#sample-4)
+	- [useHover](#usehover)
+		- [Interface](#interface-5)
+		- [Sample](#sample-5)
+	- [DimensionsProvider](#dimensionsprovider)
+		- [Interface](#interface-6)
+	- [useDimensions](#usedimensions)
+		- [Interface](#interface-7)
+		- [Sample](#sample-6)
+	- [useEventListener](#useeventlistener)
+		- [Interface](#interface-8)
+		- [Sample](#sample-7)
+	- [LocalesProvider](#localesprovider)
+		- [Interface](#interface-9)
+		- [Sample](#sample-8)
+	- [SafeAreaProvider](#safeareaprovider)
+		- [HTML Requirement](#html-requirement)
+			- [For ```PWA```](#for-pwa)
+		- [Interface](#interface-10)
+	- [useSafeArea](#usesafearea)
+		- [Sample](#sample-9)
+	- [useLocalStorage](#uselocalstorage)
+		- [Interface](#interface-11)
+		- [Sample](#sample-10)
+	- [AuthProvider](#authprovider)
+		- [Interface](#interface-12)
+	- [useAuth](#useauth)
+		- [Interface](#interface-13)
+		- [Sample](#sample-11)
+	- [useUtils](#useutils)
+		- [Interface](#interface-14)
+		- [Sample](#sample-12)
+
 # Usage
 
 
-## Sample App.js
+## Getting Started
 
 ```tsx
 import {
@@ -197,6 +251,37 @@ interface  ApiProviderProps {
 	onError?: (response: any, responseJSON?: any) =>  void;
 
 }
+```
+
+### Sample
+
+```tsx
+...
+import { ApiProvider } from "@reactivers/hooks";
+...
+
+const ComponentWithApiProvider = () => {
+  const REST_SERVER = process.env.NODE_ENV === "production" ? "/api" : "http://reactivers.hooks.com/api";
+
+  const onSuccess = useCallback((response) => {
+    if (response.message) {
+      pushNotification({ type: 'info', message: response.message });
+    }
+  }, [pushNotification])
+
+  const onError = useCallback((response) => {
+    if (response.error) {
+      pushNotification({ type: 'error', message: response.error.message });
+    }
+  }, [pushNotification])
+
+  return (
+    <ApiProvider url={REST_SERVER} onError={onError} onSuccess={onSuccess}>
+      <App />
+    </ApiProvider>
+  )
+}
+
 ```
 
 ## useApi
