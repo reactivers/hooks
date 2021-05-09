@@ -5,6 +5,7 @@ declare global {
         revokeObjectURL: (object: any) => string;
     }
 }
+export declare const isBrowser: () => boolean;
 export declare const emptyFunction: () => void;
 export declare const setIfNotEqual: (variable: any, value: any) => void;
 export declare const transform: (value: number, actualRange: [number, number], targetRange: [number, number]) => number;

@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import useUtils from "../useUtils";
 
 declare type Themes = "light" | "dark";
 
@@ -31,11 +32,19 @@ function createTheme<T>() {
     const ThemeContext = createContext<ThemeContextProps<T>>({} as ThemeContextProps<T>)
 
     const ThemeProvider = ({ theme: _theme = "system", styles, onChange = (a: Themes) => { }, children }: ThemeProviderProps<T>) => {
-        const darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-        const lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
+        const { isBrowser } = useUtils();
 
-        const initialTheme: Themes = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme as Themes;
-        const [currentTheme, setCurrentTheme] = useState<Themes>(initialTheme);
+
+        const getInitialTheme = () => {
+            if (isBrowser()) {
+                const darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
+                const initialTheme: Themes = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme as Themes;
+                return initialTheme;
+            }
+            return "light";
+        }
+
+        const [currentTheme, setCurrentTheme] = useState<Themes>(getInitialTheme());
 
         const getCurrentTheme = useCallback((e) => {
             const { navigator: { userAgent } } = window;
@@ -54,6 +63,9 @@ function createTheme<T>() {
         }, [onChange]);
 
         useEffect(() => {
+            const darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
+            const lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
+
             if (_theme === "system") {
                 darkMedia.addEventListener("change", getCurrentTheme);
                 lightMedia.addEventListener("change", getCurrentTheme);
