@@ -7,8 +7,9 @@ declare global {
         revokeObjectURL: (object: any) => string;
     }
 }
-
-moment.locale(navigator.language)
+export const isBrowser = () => {
+    return typeof window !== "undefined"
+}
 
 export const emptyFunction = () => { };
 

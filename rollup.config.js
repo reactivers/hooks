@@ -7,9 +7,7 @@ import pkg from './package.json';
 export default {
     input: pkg.source,
     output: [
-        { file: pkg.maincjs, format: 'cjs', },
-        { file: pkg.main, format: 'es', },
-        { file: pkg.module, format: 'esm' }
+        { file: pkg.main, format: 'cjs', },
     ],
     watch: {
         include: [pkg.source, "src/*"],

@@ -140,7 +140,9 @@ var useAuth = function () {
     };
 };
 
-moment__default['default'].locale(navigator.language);
+var isBrowser = function () {
+    return typeof window !== "undefined";
+};
 var emptyFunction = function () { };
 var setIfNotEqual = function (variable, value) {
 };
@@ -584,6 +586,7 @@ var findLastIndex = function (array, predicate) {
 
 var utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    isBrowser: isBrowser,
     emptyFunction: emptyFunction,
     setIfNotEqual: setIfNotEqual,
     transform: transform,
@@ -1278,10 +1281,16 @@ function createTheme() {
     var ThemeContext = react.createContext({});
     var ThemeProvider = function (_a) {
         var _b = _a.theme, _theme = _b === void 0 ? "system" : _b, styles = _a.styles, _c = _a.onChange, onChange = _c === void 0 ? function (a) { } : _c, children = _a.children;
-        var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-        var lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
-        var initialTheme = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme;
-        var _d = react.useState(initialTheme), currentTheme = _d[0], setCurrentTheme = _d[1];
+        var isBrowser = useUtils().isBrowser;
+        var getInitialTheme = function () {
+            if (isBrowser()) {
+                var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
+                var initialTheme = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme;
+                return initialTheme;
+            }
+            return "light";
+        };
+        var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {
@@ -1300,6 +1309,8 @@ function createTheme() {
             }
         }, [onChange]);
         react.useEffect(function () {
+            var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
+            var lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
                 darkMedia.addEventListener("change", getCurrentTheme);
                 lightMedia.addEventListener("change", getCurrentTheme);
