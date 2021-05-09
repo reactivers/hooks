@@ -25,52 +25,54 @@ yarn add @reactivers/hooks
 	- [For yarn](#for-yarn)
 - [Usage](#usage)
 	- [Getting Started](#getting-started)
-	- [createTheme](#createtheme)
+	- [useTitle](#usetitle)
 		- [Interface](#interface)
+	- [createTheme](#createtheme)
+		- [Interface](#interface-1)
 		- [Sample](#sample)
 	- [ApiProvider](#apiprovider)
-		- [Interface](#interface-1)
+		- [Interface](#interface-2)
 		- [Sample](#sample-1)
 	- [useApi](#useapi)
-		- [Interface](#interface-2)
+		- [Interface](#interface-3)
 		- [Sample](#sample-2)
 	- [SocketProvider](#socketprovider)
 	- [useSocket](#usesocket)
-		- [Interface](#interface-3)
+		- [Interface](#interface-4)
 		- [Sample](#sample-3)
 	- [useMeasure](#usemeasure)
-		- [Interface](#interface-4)
+		- [Interface](#interface-5)
 		- [Sample](#sample-4)
 	- [useHover](#usehover)
-		- [Interface](#interface-5)
+		- [Interface](#interface-6)
 		- [Sample](#sample-5)
 	- [DimensionsProvider](#dimensionsprovider)
-		- [Interface](#interface-6)
-	- [useDimensions](#usedimensions)
 		- [Interface](#interface-7)
+	- [useDimensions](#usedimensions)
+		- [Interface](#interface-8)
 		- [Sample](#sample-6)
 	- [useEventListener](#useeventlistener)
-		- [Interface](#interface-8)
+		- [Interface](#interface-9)
 		- [Sample](#sample-7)
 	- [LocalesProvider](#localesprovider)
-		- [Interface](#interface-9)
+		- [Interface](#interface-10)
 		- [Sample](#sample-8)
 	- [SafeAreaProvider](#safeareaprovider)
 		- [HTML Requirement](#html-requirement)
 			- [For ```PWA```](#for-pwa)
-		- [Interface](#interface-10)
+		- [Interface](#interface-11)
 	- [useSafeArea](#usesafearea)
 		- [Sample](#sample-9)
 	- [useLocalStorage](#uselocalstorage)
-		- [Interface](#interface-11)
+		- [Interface](#interface-12)
 		- [Sample](#sample-10)
 	- [AuthProvider](#authprovider)
-		- [Interface](#interface-12)
-	- [useAuth](#useauth)
 		- [Interface](#interface-13)
+	- [useAuth](#useauth)
+		- [Interface](#interface-14)
 		- [Sample](#sample-11)
 	- [useUtils](#useutils)
-		- [Interface](#interface-14)
+		- [Interface](#interface-15)
 		- [Sample](#sample-12)
 
 # Usage
@@ -109,6 +111,39 @@ const AppWrapper = () => {
   )
 }
 ```
+## useTitle
+
+This controls page title.
+
+### Interface 
+```tsx
+interface ITitleProps {
+    title: string;
+    setOldTitleOnUnmount?: boolean; // Default = false
+}
+
+interface ITitleResponse {
+    title: string
+    setTitle: (newTitle: string) => void;
+}
+```
+
+```tsx
+import { useTitle } from "@reactivers/hooks";
+
+
+const ComponentWithUseTitle = () => {
+	useTitle({
+		title: "Awesome hooks",
+		setOldTitleOnUnmount:true
+	})
+	return(
+		...
+	)
+}
+
+```
+
 
 ## createTheme
 A factory function that created ```ThemeProvider``` and ```useTheme```
