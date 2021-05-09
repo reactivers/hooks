@@ -49,12 +49,9 @@ function createTheme<T>() {
 
         const [currentTheme, setCurrentTheme] = useState<Themes>(getInitialTheme());
 
-        useEffect(() => {
-            if (currentTheme === "system") {
-                setCurrentTheme(getInitialTheme());
-            }
-        }, [currentTheme, getInitialTheme])
-
+        if (currentTheme === "system") {
+            setCurrentTheme(getInitialTheme());
+        }
 
         const getCurrentTheme = useCallback((e) => {
             const { navigator: { userAgent } } = window;
