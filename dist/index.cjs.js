@@ -1282,15 +1282,30 @@ function createTheme() {
     var ThemeProvider = function (_a) {
         var _b = _a.theme, _theme = _b === void 0 ? "system" : _b, styles = _a.styles, _c = _a.onChange, onChange = _c === void 0 ? function (a) { } : _c, children = _a.children;
         var isBrowser = useUtils().isBrowser;
-        var getInitialTheme = function () {
+        var getInitialTheme = react.useCallback(function () {
             if (isBrowser()) {
                 var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-                var initialTheme = _theme === "system" ? darkMedia.matches ? "dark" : "light" : _theme;
-                return initialTheme;
+                if (_theme === "system")
+                    return darkMedia.matches ? "dark" : "light";
+                else
+                    return theme;
             }
-            return "light";
-        };
+            else {
+                return "system";
+            }
+        }, []);
         var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
+        var updateInitialTheme = react.useCallback(function () {
+            if (currentTheme === "system") {
+                setCurrentTheme(getInitialTheme());
+            }
+        }, [currentTheme, setCurrentTheme, getInitialTheme]);
+        react.useEffect(function () {
+            window.addEventListener('load', updateInitialTheme);
+            return function () {
+                window.removeEventListener('load', updateInitialTheme);
+            };
+        }, [updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {
@@ -1339,6 +1354,28 @@ function createTheme() {
         useTheme: useTheme
     };
 }
+
+var useTitle = function (_a) {
+    var title = _a.title, _b = _a.setOldTitleOnUnmount, setOldTitleOnUnmount = _b === void 0 ? false : _b;
+    var initialTitle = react.useRef();
+    var setTitle = react.useCallback(function (title) {
+        document.title = title;
+    }, []);
+    react.useEffect(function () {
+        initialTitle.current = document.title;
+    }, []);
+    react.useEffect(function () {
+        setTitle(title);
+        return function () {
+            if (setOldTitleOnUnmount)
+                setTitle(initialTitle.current);
+        };
+    }, [setTitle, title, initialTitle.current, setOldTitleOnUnmount]);
+    return {
+        title: title,
+        setTitle: setTitle
+    };
+};
 
 var defaultValue = {
     left: 0,
@@ -1460,4 +1497,5 @@ exports.useLocales = useLocale;
 exports.useMeasure = useMeasure;
 exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
+exports.useTitle = useTitle;
 exports.useUtils = useUtils;
