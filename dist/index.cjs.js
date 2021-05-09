@@ -1355,8 +1355,9 @@ function createTheme() {
     };
 }
 
-var useTitle = function (_a) {
-    var title = _a.title, _b = _a.setOldTitleOnUnmount, setOldTitleOnUnmount = _b === void 0 ? false : _b;
+var useTitle = function (props) {
+    if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
+    var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
     var initialTitle = react.useRef();
     var setTitle = react.useCallback(function (title) {
         document.title = title;
