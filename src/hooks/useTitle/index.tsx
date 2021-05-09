@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 interface ITitleProps {
-    title: string;
+    title?: string;
     setOldTitleOnUnmount?: boolean;
 }
 
@@ -23,7 +23,8 @@ const useTitle: (props: ITitleProps) => ITitleResponse = ({ title, setOldTitleOn
     }, [])
 
     useEffect(() => {
-        setTitle(title)
+        if (title)
+            setTitle(title)
         return () => {
             if (setOldTitleOnUnmount)
                 setTitle(initialTitle.current)
