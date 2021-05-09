@@ -11,7 +11,7 @@ interface ITitleResponse {
 }
 
 
-const useTitle: (props: ITitleProps) => ITitleResponse = ({ title, setOldTitleOnUnmount = false }) => {
+const useTitle: (props?: ITitleProps) => ITitleResponse = ({ title, setOldTitleOnUnmount = false }) => {
     const initialTitle = useRef<string>();
 
     const setTitle = useCallback((title) => {
