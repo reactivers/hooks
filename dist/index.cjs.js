@@ -1365,7 +1365,8 @@ var useTitle = function (_a) {
         initialTitle.current = document.title;
     }, []);
     react.useEffect(function () {
-        setTitle(title);
+        if (title)
+            setTitle(title);
         return function () {
             if (setOldTitleOnUnmount)
                 setTitle(initialTitle.current);
