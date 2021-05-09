@@ -118,7 +118,7 @@ This controls page title.
 ### Interface 
 ```tsx
 interface ITitleProps {
-    title: string;
+    title?: string;
     setOldTitleOnUnmount?: boolean; // Default = false
 }
 
