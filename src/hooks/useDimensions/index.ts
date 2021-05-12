@@ -49,6 +49,7 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
 
     const updateDimensions = useCallback((width, height) => {
         const newSize = getSizeOfWindowWidth(width)
+        console.log('newSize', newSize)
         if (!breakpoints.length || breakpoints.indexOf(newSize) > -1) {
             setDimensions(oldDimensions => {
                 const newDimensions = { ...oldDimensions };

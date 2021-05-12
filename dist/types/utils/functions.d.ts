@@ -101,5 +101,5 @@ export declare const JSONArrayIndexOf: (array: any, value: any, key: any) => any
 export declare const cos: (degree: number) => number;
 export declare const insertOrUpdateElementInArrayByKey: (array: any, idKey: any, id: any, item: any) => any;
 export declare const deleteElementFromArrayByKey: (array: any, idKey: any, id: any) => any;
-export declare const findLastIndex: (array: any, predicate: any) => number;
+export declare const findLastIndex: (array: Array<any>, predicate: (c: any) => boolean) => number;
 export {};
