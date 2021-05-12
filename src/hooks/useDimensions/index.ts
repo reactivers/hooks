@@ -38,7 +38,7 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)]
     }, [findLastIndex, widths, sizes, takeIf])
 
-    const initialSize = useMemo(() => getSizeOfWindowWidth(window.innerWidth), [])
+    const initialSize = useMemo(() => getSizeOfWindowWidth(window.innerWidth), [getSizeOfWindowWidth])
 
     const [dimensions, setDimensions] = useState<Dimensions>({
         width: window.innerWidth,
@@ -63,7 +63,7 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
                 return newDimensions;
             })
         }
-    }, [breakpoints, getSizeOfWindowWidth, watchWindowSize])
+    }, [breakpoints, getSizeOfWindowWidth, watchWindowSize, isEqualJSON])
 
     const getCurrentAndRequestedSizeIndex = useCallback((_size: Breakpoint) => {
         const indexOfCurrentSize = sizes.indexOf(size);
