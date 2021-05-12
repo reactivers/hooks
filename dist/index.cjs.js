@@ -582,7 +582,7 @@ var findLastIndex = function (array, predicate) {
             return i;
         }
     }
-    return index;
+    return -1;
 };
 
 var utils = /*#__PURE__*/Object.freeze({

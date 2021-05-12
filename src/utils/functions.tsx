@@ -534,5 +534,5 @@ export const findLastIndex = (array, predicate) => {
             return i;
         }
     }
-    return index;
+    return -1;
 }
