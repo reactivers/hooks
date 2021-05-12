@@ -525,12 +525,14 @@ export const deleteElementFromArrayByKey = (array, idKey, id) => {
     return array
 }
 
-export const findLastIndex = (array, predicate) => {
+export const findLastIndex = (array: Array<any>, predicate: (c: any) => boolean) => {
     if (!array) return -1;
     let index = array.length - 1
     if (!predicate) return index;
-    for (index; index--; index > -1) {
-        if (predicate(array[index])) break;
+    for (let i = index; i > -1; i--) {
+        if (predicate(array[i])) {
+            return i;
+        }
     }
-    return index;
+    return -1;
 }

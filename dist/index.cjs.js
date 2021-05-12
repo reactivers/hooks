@@ -577,11 +577,12 @@ var findLastIndex = function (array, predicate) {
     var index = array.length - 1;
     if (!predicate)
         return index;
-    for (index; index--; index > -1) {
-        if (predicate(array[index]))
-            break;
+    for (var i = index; i > -1; i--) {
+        if (predicate(array[i])) {
+            return i;
+        }
     }
-    return index;
+    return -1;
 };
 
 var utils = /*#__PURE__*/Object.freeze({
@@ -740,7 +741,7 @@ var useApi = function (parameterPayload) {
 
 var DimensionsContext = react.createContext({});
 var DimensionsProvider = function (_a) {
-    var _b = _a.widths, widths = _b === void 0 ? [576, 768, 992, 1200, 1600] : _b, _c = _a.sizes, sizes = _c === void 0 ? ["xs", "sm", "md", "lg", "xl", "xxl"] : _c, children = _a.children;
+    var _b = _a.widths, widths = _b === void 0 ? [576, 768, 992, 1200, 1600, 1800] : _b, _c = _a.sizes, sizes = _c === void 0 ? ["xs", "sm", "md", "lg", "xl", "xxl"] : _c, children = _a.children;
     return (jsxRuntime.jsx(DimensionsContext.Provider, __assign({ value: { sizes: sizes, widths: widths } }, { children: children }), void 0));
 };
 var useDimensionsContext = function () {
@@ -763,7 +764,7 @@ var useDimensions = function (payload) {
         var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
-    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, []);
+    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, [getSizeOfWindowWidth]);
     var _c = react.useState({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -772,7 +773,7 @@ var useDimensions = function (payload) {
     var size = dimensions.size;
     var updateDimensions = react.useCallback(function (width, height) {
         var newSize = getSizeOfWindowWidth(width);
-        if (!breakpoints.length || breakpoints.indexOf(newSize)) {
+        if (!breakpoints.length || breakpoints.indexOf(newSize) > -1) {
             setDimensions(function (oldDimensions) {
                 var newDimensions = __assign({}, oldDimensions);
                 if (watchWindowSize) {
@@ -786,7 +787,7 @@ var useDimensions = function (payload) {
                 return newDimensions;
             });
         }
-    }, [breakpoints, getSizeOfWindowWidth, watchWindowSize]);
+    }, [breakpoints, getSizeOfWindowWidth, watchWindowSize, isEqualJSON]);
     var getCurrentAndRequestedSizeIndex = react.useCallback(function (_size) {
         var indexOfCurrentSize = sizes.indexOf(size);
         var indexOfSize = sizes.indexOf(_size);
@@ -1088,7 +1089,7 @@ var AllLocales = {
 
 var LocalesContext = react.createContext({});
 var LocalesProvider = function (_a) {
-    var _b = _a.locales, locales = _b === void 0 ? AllLocales : _b, _c = _a.activeLanguage, _activeLanguage = _c === void 0 ? 'tr' : _c, children = _a.children;
+    var _b = _a.locales, locales = _b === void 0 ? AllLocales : _b, _c = _a.activeLanguage, _activeLanguage = _c === void 0 ? 'en' : _c, children = _a.children;
     var _d = react.useState(_activeLanguage), activeLanguage = _d[0], setActiveLanguage = _d[1];
     var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
     var getLocale = react.useCallback(function (_a) {
