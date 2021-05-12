@@ -773,7 +773,7 @@ var useDimensions = function (payload) {
     var size = dimensions.size;
     var updateDimensions = react.useCallback(function (width, height) {
         var newSize = getSizeOfWindowWidth(width);
-        if (!breakpoints.length || breakpoints.indexOf(newSize)) {
+        if (!breakpoints.length || breakpoints.indexOf(newSize) > -1) {
             setDimensions(function (oldDimensions) {
                 var newDimensions = __assign({}, oldDimensions);
                 if (watchWindowSize) {
