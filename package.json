@@ -1,7 +1,7 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "repository": {
     "type": "git",
