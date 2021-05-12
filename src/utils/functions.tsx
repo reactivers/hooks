@@ -529,7 +529,7 @@ export const findLastIndex = (array, predicate) => {
     if (!array) return -1;
     let index = array.length - 1
     if (!predicate) return index;
-    for (let i = index; i > -1; i > i--) {
+    for (let i = index; i > -1; i--) {
         if (predicate(array[i])) {
             return i;
         }
