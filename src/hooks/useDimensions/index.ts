@@ -34,11 +34,7 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
     const { findLastIndex, takeIf, isEqualJSON } = useUtils();
 
     const getSizeOfWindowWidth = useCallback((width) => {
-        const indexOfWidth = findLastIndex(widths, (c: number) => {
-            console.log("c", c)
-            return width >= c
-        });
-        console.log("width", width, indexOfWidth)
+        const indexOfWidth = findLastIndex(widths, (c: number) => width >= c);
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)]
     }, [findLastIndex, widths, sizes, takeIf])
 
@@ -53,7 +49,6 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
 
     const updateDimensions = useCallback((width, height) => {
         const newSize = getSizeOfWindowWidth(width)
-        console.log('newSize', newSize)
         if (!breakpoints.length || breakpoints.indexOf(newSize) > -1) {
             setDimensions(oldDimensions => {
                 const newDimensions = { ...oldDimensions };
