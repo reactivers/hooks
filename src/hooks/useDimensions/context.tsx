@@ -15,7 +15,7 @@ interface DimensionsProviderProps {
 const DimensionsContext = createContext({} as DimensionsContextProps);
 
 const DimensionsProvider: FC<DimensionsProviderProps> = ({
-    widths = [576, 768, 992, 1200, 1600],
+    widths = [576, 768, 992, 1200, 1600, 1800],
     sizes = ["xs", "sm", "md", "lg", "xl", "xxl"],
     children }) => {
     return (

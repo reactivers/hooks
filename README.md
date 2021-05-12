@@ -667,6 +667,18 @@ interface  Dimensions {
 	//Size as Breakpoint type
 	size: Breakpoint
 }
+
+interface DimensionResponse extends Dimensions {
+    isSizeEqualOrLargerThan: (size: Breakpoint) => boolean,
+    isSizeLargerThan: (size: Breakpoint) => boolean,
+    isSizeEqualTo: (size: Breakpoint) => boolean,
+    isSizeSmallerThan: (size: Breakpoint) => boolean,
+    isSizeEqualOrSmallerThan: (size: Breakpoint) => boolean
+}
+
+const defaultBreakPoints: Array<Breakpoint> = ["xs", "sm", "md", "lg", "xl", "xxl"];
+const defaultPayload: DimensionProps = { breakpoints: defaultBreakPoints, watchWindowSize: false };
+
 ```
 
 ### Sample
@@ -696,11 +708,20 @@ Has to be wrapped by ```<EventListenerProvider/>```
 
 ### Interface 
 ```ts
-interface IEventListener {
+interface EventListenerProps {
 	
 	//A group name for access it anywhere!
 	component: string
 }
+
+interface EventListenerResponse {
+    removeEvent: (component: string, name: any, id: string) => void;
+    registerEvent: (component: string, name: any, event: Function) => EffectCallback;
+    registerEventById: (component: string, name: any, id: string, event: any) => EffectCallback;
+    callEvent: (component: string, name: any, id: string, parameters?: any) => any;
+    callAllEvents: (component: string, name: any, parameters?: any, callback?: any) => any;
+}
+
 ```
 
 ### Sample

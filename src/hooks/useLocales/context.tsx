@@ -14,7 +14,7 @@ export interface LocalesProviderProps {
 
 const LocalesContext = createContext({} as LocalesContextProps);
 
-const LocalesProvider: FC<LocalesProviderProps> = ({ locales = AllLocales, activeLanguage: _activeLanguage = 'tr', children }) => {
+const LocalesProvider: FC<LocalesProviderProps> = ({ locales = AllLocales, activeLanguage: _activeLanguage = 'en', children }) => {
 
     const [activeLanguage, setActiveLanguage] = useState(_activeLanguage)
     const locale = useMemo(() => locales[activeLanguage], [locales, activeLanguage])
