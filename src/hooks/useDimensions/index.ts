@@ -34,7 +34,11 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
     const { findLastIndex, takeIf, isEqualJSON } = useUtils();
 
     const getSizeOfWindowWidth = useCallback((width) => {
-        const indexOfWidth = findLastIndex(widths, (c: number) => width >= c);
+        const indexOfWidth = findLastIndex(widths, (c: number) => {
+            console.log("c", c)
+            return width >= c
+        });
+        console.log("width", width, indexOfWidth)
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)]
     }, [findLastIndex, widths, sizes, takeIf])
 

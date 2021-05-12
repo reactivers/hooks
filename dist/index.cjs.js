@@ -761,7 +761,11 @@ var useDimensions = function (payload) {
     var _a = useDimensionsContext(), sizes = _a.sizes, widths = _a.widths;
     var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON;
     var getSizeOfWindowWidth = react.useCallback(function (width) {
-        var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
+        var indexOfWidth = findLastIndex(widths, function (c) {
+            console.log("c", c);
+            return width >= c;
+        });
+        console.log("width", width, indexOfWidth);
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
     var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, [getSizeOfWindowWidth]);
