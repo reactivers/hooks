@@ -116,7 +116,7 @@ const AppWrapper = () => {
 This controls page title.
 
 ### Interface 
-```tsx
+```ts
 interface ITitleProps {
     title?: string;
     setOldTitleOnUnmount?: boolean; // Default = false
