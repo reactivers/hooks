@@ -634,7 +634,7 @@ interface  DimensionsProviderProps {
 }
 
 //default sizes and widths
-const widths = [576, 768, 992, 1200, 1600];
+const widths = [576, 768, 992, 1200, 1600, 1800];
 const sizes = ["xs", "sm", "md", "lg", "xl", "xxl"];
 ```
 
