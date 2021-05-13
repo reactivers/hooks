@@ -37,9 +37,12 @@ const useSocket: (props: SocketProps) => SocketResponse = ({ url, wss = false, d
     useEffect(() => {
         socket.current = connect({ path });
         setSocketState(old => ({ ...old, readyState: socket.current.readyState }))
-        if (disconnectOnUnmount) {
-            return () => {
+        return () => {
+            console.log("on unmount")
+            if (disconnectOnUnmount) {
+                console.log("disconnectOnUnmount true")
                 if (socket.current.close) {
+                    console.log("closing")
                     socket.current.close(1000, "User disconnected!");
                 }
             }
@@ -63,6 +66,7 @@ const useSocket: (props: SocketProps) => SocketResponse = ({ url, wss = false, d
     }, [onMessage])
 
     const onclose = useCallback((event) => {
+        console.log("onclose ran")
         setSocketState(old => ({ ...old, readyState: WebSocket.CLOSED }))
         onClose(event)
     }, [onClose])
