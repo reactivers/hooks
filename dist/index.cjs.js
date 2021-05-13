@@ -1154,7 +1154,14 @@ var useSocket = function (_a) {
     react.useEffect(function () {
         socket.current = connect({ path: path });
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
-    }, [connect, path]);
+        if (disconnectOnUnmount) {
+            return function () {
+                if (socket.current.close) {
+                    socket.current.close(1000, "User disconnected!");
+                }
+            };
+        }
+    }, [connect, path, disconnectOnUnmount]);
     var onopen = react.useCallback(function (event) {
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.OPEN })); });
         onOpen(event);
@@ -1206,15 +1213,6 @@ var useSocket = function (_a) {
             socket.current.removeEventListener('error', onerror);
         };
     }, [socket.current, onerror]);
-    react.useEffect(function () {
-        if (disconnectOnUnmount) {
-            return function () {
-                if (socket.current.close) {
-                    socket.current.close(1000, "User disconnected!");
-                }
-            };
-        }
-    }, [socket.current, disconnectOnUnmount]);
     var sendData = react.useCallback(function (data) {
         socket.current.send(data);
     }, [socket.current]);
