@@ -26,7 +26,7 @@ interface Api<T extends {}> extends ApiController<T> {
     load: (payload?: ApiPayload<T>) => void
 }
 
-const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>(parameterPayload = {}) => {
+const useApi: <T extends {}>(payload?: ApiPayload<T>) => Api<T> = <T extends {}>(parameterPayload = { initialValue: {} as T }) => {
     const { iFetch } = useUtils();
     const payloadRef = useRef<ApiPayload<T>>(parameterPayload);
     const {

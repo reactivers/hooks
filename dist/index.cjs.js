@@ -661,7 +661,7 @@ var useApiContext = function () {
 };
 
 var useApi = function (parameterPayload) {
-    if (parameterPayload === void 0) { parameterPayload = {}; }
+    if (parameterPayload === void 0) { parameterPayload = { initialValue: {} }; }
     var iFetch = useUtils().iFetch;
     var payloadRef = react.useRef(parameterPayload);
     var _a = payloadRef.current, payloadURL = _a.url, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
