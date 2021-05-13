@@ -77,7 +77,7 @@ var AuthProvider = function (_a) {
     var onLogout = react.useCallback(function () {
         setUser({
             isLoggedIn: false,
-            checked: false
+            checked: true
         });
         if (_onLogout)
             _onLogout();
