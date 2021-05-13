@@ -51,6 +51,7 @@ const useAuth = () => {
     }, [onLogin, setToken])
 
     return {
+        setToken,
         login,
         logout,
         setUser,
