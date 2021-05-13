@@ -337,7 +337,7 @@ interface  ApiPayload<T  extends {}> {
 	params?: any;
 	
 	// Initial value for response object
-	initialValue?: T;
+	initialValue?: T; // default = {}
 	
 	// Use for form actions
 	formData?: any,
@@ -982,6 +982,10 @@ interface  UserInfo {
 
 ```ts
 interface IUserHook {
+
+	//Set only token
+	setToken: (token: string) => void,
+
 	//Call this on login
 	login: (data:any)=>void,
 

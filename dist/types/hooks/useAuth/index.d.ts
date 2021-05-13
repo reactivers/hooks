@@ -1,3 +1,4 @@
+import { UserInfo } from './context';
 declare global {
     interface Window {
         gapi: GoogleAuthApi;
@@ -10,11 +11,13 @@ interface GoogleAuthApi {
 interface FacebookAuthApi {
     logout: any;
 }
-declare const useAuth: () => {
+interface IUseAuth {
+    setToken: (token: string) => void;
     login: (data: any) => void;
     logout: () => void;
-    setUser: (info: import("./context").UserInfo) => void;
-    user: import("./context").UserInfo;
+    setUser: (user: UserInfo) => void;
+    user: UserInfo;
     token: string;
-};
+}
+declare const useAuth: () => IUseAuth;
 export default useAuth;

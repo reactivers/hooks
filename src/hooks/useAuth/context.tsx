@@ -52,7 +52,7 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const onLogout = useCallback(() => {
         setUser({
             isLoggedIn: false,
-            checked: false
+            checked: true
         })
         if (_onLogout) _onLogout()
     }, [_onLogout])

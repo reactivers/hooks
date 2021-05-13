@@ -77,7 +77,7 @@ var AuthProvider = function (_a) {
     var onLogout = react.useCallback(function () {
         setUser({
             isLoggedIn: false,
-            checked: false
+            checked: true
         });
         if (_onLogout)
             _onLogout();
@@ -132,6 +132,7 @@ var useAuth = function () {
         onLogin(data);
     }, [onLogin, setToken]);
     return {
+        setToken: setToken,
         login: login,
         logout: logout,
         setUser: setUser,
@@ -660,7 +661,7 @@ var useApiContext = function () {
 };
 
 var useApi = function (parameterPayload) {
-    if (parameterPayload === void 0) { parameterPayload = {}; }
+    if (parameterPayload === void 0) { parameterPayload = { initialValue: {} }; }
     var iFetch = useUtils().iFetch;
     var payloadRef = react.useRef(parameterPayload);
     var _a = payloadRef.current, payloadURL = _a.url, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
@@ -1153,7 +1154,17 @@ var useSocket = function (_a) {
     react.useEffect(function () {
         socket.current = connect({ path: path });
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
-    }, [connect, path]);
+        return function () {
+            console.log("on unmount");
+            if (disconnectOnUnmount) {
+                console.log("disconnectOnUnmount true");
+                if (socket.current.close) {
+                    console.log("closing");
+                    socket.current.close(1000, "User disconnected!");
+                }
+            }
+        };
+    }, [connect, path, disconnectOnUnmount]);
     var onopen = react.useCallback(function (event) {
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.OPEN })); });
         onOpen(event);
@@ -1170,6 +1181,7 @@ var useSocket = function (_a) {
         onMessage(event, data);
     }, [onMessage]);
     var onclose = react.useCallback(function (event) {
+        console.log("onclose ran");
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.CLOSED })); });
         onClose(event);
     }, [onClose]);
@@ -1205,15 +1217,6 @@ var useSocket = function (_a) {
             socket.current.removeEventListener('error', onerror);
         };
     }, [socket.current, onerror]);
-    react.useEffect(function () {
-        if (disconnectOnUnmount) {
-            return function () {
-                if (socket.current.close) {
-                    socket.current.close(1000, "User disconnected!");
-                }
-            };
-        }
-    }, [socket.current, disconnectOnUnmount]);
     var sendData = react.useCallback(function (data) {
         socket.current.send(data);
     }, [socket.current]);
