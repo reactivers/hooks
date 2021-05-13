@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useLocalStorage from "../useLocalStorage";
-import { useAuthContext } from './context';
+import { useAuthContext, UserInfo } from './context';
 
 declare global {
     interface Window {
@@ -17,7 +17,16 @@ interface FacebookAuthApi {
     logout: any
 }
 
-const useAuth = () => {
+interface IUseAuth {
+    setToken: (token: string) => void,
+    login: (data: any) => void,
+    logout: () => void,
+    setUser: (user: UserInfo) => void,
+    user: UserInfo,
+    token: string
+}
+
+const useAuth: () => IUseAuth = () => {
     const { localStorageTokenKeyName, onLogout, onLogin, setToken, setUser, user } = useAuthContext();
     const { token } = user;
     const { setItem } = useLocalStorage(localStorageTokenKeyName)

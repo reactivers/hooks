@@ -132,6 +132,7 @@ var useAuth = function () {
         onLogin(data);
     }, [onLogin, setToken]);
     return {
+        setToken: setToken,
         login: login,
         logout: logout,
         setUser: setUser,
