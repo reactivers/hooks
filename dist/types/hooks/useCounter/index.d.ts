@@ -2,7 +2,7 @@ declare const useCounter: (params?: {
     initial: number;
 }) => {
     counter: number;
-    increase: (by?: any) => void;
-    decrease: (by?: any) => void;
+    increase: (by?: number) => void;
+    decrease: (by?: number) => void;
 };
 export default useCounter;
