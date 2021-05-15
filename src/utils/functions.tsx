@@ -329,11 +329,13 @@ export const takeUndefinedAsTrue = (parameter: any) => {
     return parameter === undefined ? true : parameter;
 }
 
+export declare type HTTPMethods = 'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE'
+
 interface FetchProps {
     url: string,
     endpoint: string,
     params?: any,
-    method: string,
+    method: HTTPMethods,
     formData?: any,
     onSuccess: (response: any) => void,
     onError: (error: any, errorJSON?: any) => void,

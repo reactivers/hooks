@@ -1,4 +1,5 @@
-import { createContext, FC, useCallback, useContext, useState } from "react";
+import { createContext, FC, useCallback, useContext, useEffect, useState } from "react";
+import useLocalStorage from "../useLocalStorage";
 
 interface AuthContextProps {
     localStorageTokenKeyName: string;
@@ -11,6 +12,7 @@ interface AuthContextProps {
 
 interface AuthProviderProps {
     localStorageTokenKeyName?: string;
+    initialCheckToken?: boolean;
     user?: UserInfo;
     onLogin?: (info: UserInfo) => void;
     onLogout?: () => void;
@@ -26,22 +28,21 @@ export interface UserInfo {
 
 const AuthContext = createContext({} as AuthContextProps);
 
-
 const AuthProvider: FC<AuthProviderProps> = ({
     localStorageTokenKeyName = "token",
-    user: _user = {
-        isLoggedIn: false,
-        checked: false
-    },
+    user: _user,
     onLogin: _onLogin,
     onLogout: _onLogout,
+    initialCheckToken,
     children
 }) => {
 
     const [user, setUser] = useState<UserInfo>(_user);
+    const { getItem, setItem } = useLocalStorage(localStorageTokenKeyName)
 
     const onLogin = useCallback((info) => {
         setUser({
+            token: info.token,
             ...(info || {}),
             isLoggedIn: true,
             checked: true
@@ -59,7 +60,17 @@ const AuthProvider: FC<AuthProviderProps> = ({
 
     const setToken = useCallback((token: string) => {
         setUser((old) => ({ ...old, token }))
+        setItem("")
     }, [])
+
+    useEffect(() => {
+        if (initialCheckToken) {
+            const oldToken = getItem();
+            if (oldToken) {
+                onLogin({ token: oldToken })
+            }
+        }
+    }, [initialCheckToken, onLogin])
 
     return (
         <AuthContext.Provider value={{
@@ -82,5 +93,11 @@ export const useAuthContext = () => {
     }
     return context;
 };
+
+AuthProvider.defaultProps = {
+    localStorageTokenKeyName: "token",
+    user: { isLoggedIn: false, checked: false },
+    initialCheckToken: true,
+}
 
 export default AuthProvider;

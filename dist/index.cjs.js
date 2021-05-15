@@ -64,13 +64,11 @@ var useLocalStorage = function (key, defaultValue) {
 
 var AuthContext = react.createContext({});
 var AuthProvider = function (_a) {
-    var _b = _a.localStorageTokenKeyName, localStorageTokenKeyName = _b === void 0 ? "token" : _b, _c = _a.user, _user = _c === void 0 ? {
-        isLoggedIn: false,
-        checked: false
-    } : _c, _onLogin = _a.onLogin, _onLogout = _a.onLogout, children = _a.children;
-    var _d = react.useState(_user), user = _d[0], setUser = _d[1];
+    var _b = _a.localStorageTokenKeyName, localStorageTokenKeyName = _b === void 0 ? "token" : _b, _user = _a.user, _onLogin = _a.onLogin, _onLogout = _a.onLogout, initialCheckToken = _a.initialCheckToken, children = _a.children;
+    var _c = react.useState(_user), user = _c[0], setUser = _c[1];
+    var _d = useLocalStorage(localStorageTokenKeyName), getItem = _d.getItem, setItem = _d.setItem;
     var onLogin = react.useCallback(function (info) {
-        setUser(__assign(__assign({}, (info || {})), { isLoggedIn: true, checked: true }));
+        setUser(__assign(__assign({ token: info.token }, (info || {})), { isLoggedIn: true, checked: true }));
         if (_onLogin)
             _onLogin(info);
     }, [_onLogin]);
@@ -84,7 +82,16 @@ var AuthProvider = function (_a) {
     }, [_onLogout]);
     var setToken = react.useCallback(function (token) {
         setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
+        setItem("");
     }, []);
+    react.useEffect(function () {
+        if (initialCheckToken) {
+            var oldToken = getItem();
+            if (oldToken) {
+                onLogin({ token: oldToken });
+            }
+        }
+    }, [initialCheckToken, onLogin]);
     return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
             localStorageTokenKeyName: localStorageTokenKeyName,
             user: user,
@@ -101,36 +108,21 @@ var useAuthContext = function () {
     }
     return context;
 };
+AuthProvider.defaultProps = {
+    localStorageTokenKeyName: "token",
+    user: { isLoggedIn: false, checked: false },
+    initialCheckToken: true,
+};
 
 var useAuth = function () {
-    var _a = useAuthContext(), localStorageTokenKeyName = _a.localStorageTokenKeyName, onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, user = _a.user;
+    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, user = _a.user;
     var token = user.token;
-    var setItem = useLocalStorage(localStorageTokenKeyName).setItem;
     var logout = react.useCallback(function () {
-        setItem("");
-        var gapi = window.gapi;
-        if (gapi)
-            if (gapi.auth2) {
-                var auth2 = gapi.auth2.getAuthInstance();
-                if (auth2) {
-                    auth2.signOut().then(function () {
-                        console.log('User signed out.');
-                    });
-                }
-            }
-        var FB = window.FB;
-        if (FB) {
-            if (FB.logout) {
-                FB.logout(function (response) {
-                });
-            }
-        }
         onLogout();
-    }, [setItem, onLogout]);
+    }, [onLogout]);
     var login = react.useCallback(function (data) {
-        setToken(data.token);
         onLogin(data);
-    }, [onLogin, setToken]);
+    }, [onLogin]);
     return {
         setToken: setToken,
         login: login,
@@ -660,84 +652,89 @@ var useApiContext = function () {
     return context;
 };
 
-var useApi = function (parameterPayload) {
-    if (parameterPayload === void 0) { parameterPayload = { initialValue: {} }; }
+var useApi = function (_a) {
+    var _b = _a.abortOnUnmount, abortOnUnmount = _b === void 0 ? true : _b;
     var iFetch = useUtils().iFetch;
-    var payloadRef = react.useRef(parameterPayload);
-    var _a = payloadRef.current, payloadURL = _a.url, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
     var _c = useApiContext(), contextURL = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
-    var url = payloadURL || contextURL;
     var token = useAuth().token;
     var _d = react.useState({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
-        response: initialValue
+        response: {}
     }), data = _d[0], setData = _d[1];
     var fetching = data.fetching;
-    var shouldFetch = react.useRef(false);
-    var controller = react.useMemo(function () { return new AbortController(); }, [fetching]);
-    (new AbortController()).signal;
-    var onSuccess = react.useCallback(function (response) {
+    var _e = react.useMemo(function () { return new AbortController(); }, [fetching]), signal = _e.signal, abort = _e.abort;
+    var onSuccess = react.useCallback(function (_a) {
+        var payloadOnSuccess = _a.onSuccess, response = _a.response;
         if (contextOnSuccess)
             contextOnSuccess(response);
         if (payloadOnSuccess)
             payloadOnSuccess(response);
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: true, response: response, fetching: false, fetched: true, firstTimeFetched: true })); });
-    }, [payloadOnSuccess, contextOnSuccess]);
-    var onError = react.useCallback(function (response, responseJSON) {
-        if (responseJSON === void 0) { responseJSON = {}; }
+    }, [contextOnSuccess]);
+    var onError = react.useCallback(function (_a) {
+        var payloadOnError = _a.onError, response = _a.response, responseJSON = _a.responseJSON;
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: false, response: __assign({}, (responseJSON || response)), fetching: false, fetched: true, firstTimeFetched: true })); });
         if (contextOnError)
             contextOnError(responseJSON || response, response);
         if (payloadOnError)
             payloadOnError(responseJSON || response, response);
-    }, [payloadOnError, contextOnError]);
-    var updateData = react.useCallback(function () {
-        setData(function (oldData) { return (__assign(__assign({}, oldData), { fetching: true, fetched: false })); });
-    }, []);
-    var load = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = undefined; }
-        shouldFetch.current = true;
-        if (payload)
-            payloadRef.current = __assign({}, payload);
-        updateData();
-    }, [updateData]);
-    react.useEffect(function () {
-        if (shouldFetch.current && fetching) {
-            iFetch({
-                url: url,
-                endpoint: endpoint,
-                params: params,
-                method: method,
-                formData: formData,
-                onSuccess: onSuccess,
-                onError: onError,
-                token: token,
-                signal: controller.signal
-            });
-            shouldFetch.current = false;
-        }
-    }, [
-        shouldFetch.current,
-        url,
-        fetching,
-        endpoint,
-        params,
-        method,
-        formData,
-        onSuccess,
-        onError,
-        token,
-        controller.signal,
-    ]);
+    }, [contextOnError]);
+    var request = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        var _url = payload.url, endpoint = payload.endpoint, method = payload.method, payloadOnSuccess = payload.onSuccess, payloadOnError = payload.onError, formData = payload.formData, params = payload.params;
+        var url = _url || contextURL;
+        setData(function (old) { return (__assign(__assign({}, old), { fetching: true, fetched: false })); });
+        iFetch({
+            url: url,
+            endpoint: endpoint,
+            method: method,
+            formData: formData,
+            params: params,
+            onSuccess: function (response) { return onSuccess({
+                onSuccess: payloadOnSuccess,
+                response: response
+            }); },
+            onError: function (response, responseJSON) {
+                onError({
+                    onError: payloadOnError,
+                    response: response,
+                    responseJSON: responseJSON
+                });
+            },
+            token: token,
+            signal: signal
+        });
+    }, [token, contextURL, onSuccess, onError, setData]);
+    var getRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "GET" }));
+    }, [request]);
+    var postRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "POST" }));
+    }, [request]);
+    var deleteRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "DELETE" }));
+    }, [request]);
+    var putRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "PUT" }));
+    }, [request]);
     react.useEffect(function () {
         return function () {
-            controller.abort();
+            if (abortOnUnmount)
+                abort();
         };
-    }, [controller.abort]);
-    return __assign({ load: load }, data);
+    }, [abort, abortOnUnmount]);
+    return __assign({ request: request,
+        getRequest: getRequest,
+        postRequest: postRequest,
+        deleteRequest: deleteRequest,
+        putRequest: putRequest }, data);
 };
 
 var DimensionsContext = react.createContext({});

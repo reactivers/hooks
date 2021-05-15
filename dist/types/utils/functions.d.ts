@@ -72,11 +72,12 @@ export declare const hashCode: (str: any) => number;
 export declare const generatedColorFromString: (_i: any) => string;
 export declare const destructArray: (array?: any[]) => any[];
 export declare const takeUndefinedAsTrue: (parameter: any) => any;
+export declare type HTTPMethods = 'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE';
 interface FetchProps {
     url: string;
     endpoint: string;
     params?: any;
-    method: string;
+    method: HTTPMethods;
     formData?: any;
     onSuccess: (response: any) => void;
     onError: (error: any, errorJSON?: any) => void;
