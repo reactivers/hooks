@@ -66,7 +66,7 @@ var AuthContext = react.createContext({});
 var AuthProvider = function (_a) {
     var _b = _a.authTokenKeyName, authTokenKeyName = _b === void 0 ? 'token' : _b, _c = _a.localStorageTokenKeyName, localStorageTokenKeyName = _c === void 0 ? "token" : _c, _user = _a.user, _onLogin = _a.onLogin, _onLogout = _a.onLogout, initialCheckToken = _a.initialCheckToken, children = _a.children;
     var _d = react.useState(_user), user = _d[0], setUser = _d[1];
-    var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, setItem = _e.setItem;
+    var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, removeItem = _e.removeItem, setItem = _e.setItem;
     var onLogin = react.useCallback(function (info) {
         setItem(info[authTokenKeyName]);
         setUser(__assign(__assign({ token: info[authTokenKeyName] }, (info || {})), { isLoggedIn: true, checked: true }));
@@ -82,9 +82,14 @@ var AuthProvider = function (_a) {
             _onLogout();
     }, [_onLogout]);
     var setToken = react.useCallback(function (token) {
-        if (token === void 0) { token = ""; }
-        setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
-        setItem(token);
+        if (token === undefined) {
+            setUser(function (old) { return (__assign(__assign({}, old), { isLoggedIn: false, token: undefined })); });
+            removeItem();
+        }
+        else {
+            setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
+            setItem(token);
+        }
     }, []);
     react.useEffect(function () {
         if (initialCheckToken) {
