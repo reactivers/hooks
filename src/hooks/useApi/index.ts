@@ -68,8 +68,7 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
         response: {}
     });
 
-    const { fetching } = data;
-    const abortController = useMemo(() => new AbortController(), [fetching]);
+    const abortController = useMemo(() => new AbortController(), []);
 
     const onSuccess = useCallback(({ onSuccess: payloadOnSuccess, response }) => {
         if (contextOnSuccess) contextOnSuccess(response)

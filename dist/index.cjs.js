@@ -665,8 +665,7 @@ var useApi = function (params) {
         fetching: false,
         response: {}
     }), data = _b[0], setData = _b[1];
-    var fetching = data.fetching;
-    var abortController = react.useMemo(function () { return new AbortController(); }, [fetching]);
+    var abortController = react.useMemo(function () { return new AbortController(); }, []);
     var onSuccess = react.useCallback(function (_a) {
         var payloadOnSuccess = _a.onSuccess, response = _a.response;
         if (contextOnSuccess)
