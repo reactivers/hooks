@@ -68,7 +68,7 @@ var AuthProvider = function (_a) {
     var _d = react.useState(_user), user = _d[0], setUser = _d[1];
     var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, setItem = _e.setItem;
     var onLogin = react.useCallback(function (info) {
-        setToken(info[authTokenKeyName]);
+        setItem(info[authTokenKeyName]);
         setUser(__assign(__assign({ token: info[authTokenKeyName] }, (info || {})), { isLoggedIn: true, checked: true }));
         if (_onLogin)
             _onLogin(info);
@@ -82,8 +82,9 @@ var AuthProvider = function (_a) {
             _onLogout();
     }, [_onLogout]);
     var setToken = react.useCallback(function (token) {
+        if (token === void 0) { token = ""; }
         setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
-        setItem("");
+        setItem(token);
     }, []);
     react.useEffect(function () {
         if (initialCheckToken) {

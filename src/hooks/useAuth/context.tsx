@@ -43,7 +43,7 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const { getItem, setItem } = useLocalStorage(localStorageTokenKeyName)
 
     const onLogin = useCallback((info) => {
-        setToken(info[authTokenKeyName])
+        setItem(info[authTokenKeyName])
         setUser({
             token: info[authTokenKeyName],
             ...(info || {}),
@@ -61,9 +61,9 @@ const AuthProvider: FC<AuthProviderProps> = ({
         if (_onLogout) _onLogout()
     }, [_onLogout])
 
-    const setToken = useCallback((token: string) => {
+    const setToken = useCallback((token: string = "") => {
         setUser((old) => ({ ...old, token }))
-        setItem("")
+        setItem(token)
     }, [])
 
     useEffect(() => {
