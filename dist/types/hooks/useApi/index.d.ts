@@ -38,5 +38,5 @@ interface IUseApiResponse<T extends {}> extends ApiController<T> {
     deleteRequest: (params: DeleteRequestPayload) => void;
     putRequest: (params: PutRequestPayload) => void;
 }
-declare const useApi: <T extends {}>(params: IUseApiProps) => IUseApiResponse<T>;
+declare const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T>;
 export default useApi;
