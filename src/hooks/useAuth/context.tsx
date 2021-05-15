@@ -43,10 +43,20 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const { getItem, removeItem, setItem } = useLocalStorage(localStorageTokenKeyName)
 
     const onLogin = useCallback((info) => {
-        setItem(info[authTokenKeyName])
+        const oldToken = getItem();
+        const newToken = info[authTokenKeyName];
+
+        if (!oldToken || !!newToken) {
+            setItem(newToken)
+        }
+
+        const newUser = {
+            token: newToken || oldToken,
+            ...(info || {})
+        };
+
         setUser({
-            token: info[authTokenKeyName],
-            ...(info || {}),
+            ...newUser,
             isLoggedIn: true,
             checked: true
         })

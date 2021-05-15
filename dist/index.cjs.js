@@ -80,8 +80,13 @@ var AuthProvider = function (_a) {
     var _d = react.useState(_user), user = _d[0], setUser = _d[1];
     var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, removeItem = _e.removeItem, setItem = _e.setItem;
     var onLogin = react.useCallback(function (info) {
-        setItem(info[authTokenKeyName]);
-        setUser(__assign(__assign({ token: info[authTokenKeyName] }, (info || {})), { isLoggedIn: true, checked: true }));
+        var oldToken = getItem();
+        var newToken = info[authTokenKeyName];
+        if (!oldToken || !!newToken) {
+            setItem(newToken);
+        }
+        var newUser = __assign({ token: newToken || oldToken }, (info || {}));
+        setUser(__assign(__assign({}, newUser), { isLoggedIn: true, checked: true }));
         if (_onLogin)
             _onLogin(info);
     }, [_onLogin, authTokenKeyName]);
