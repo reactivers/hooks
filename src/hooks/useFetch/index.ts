@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HTTPMethods } from '../../utils/functions';
 import useAuth from "../useAuth";
 import useUtils from '../useUtils';
-import { useApiContext } from './context';
+import { useFetchContext } from './context';
 
 interface GenericRequestPayload {
     url?: string;
@@ -32,7 +32,7 @@ export interface RequestPayload extends GenericRequestPayload {
     formData?: any;
 }
 
-interface ApiController<T extends {}> {
+interface FetchController<T extends {}> {
     firstTimeFetched: boolean;
     fetched: boolean;
     fetching: boolean;
@@ -40,11 +40,11 @@ interface ApiController<T extends {}> {
     response: T | any;
 }
 
-interface IUseApiProps {
+interface IUseFetchProps {
     abortOnUnmount?: boolean
 }
 
-interface IUseApiResponse<T extends {}> extends ApiController<T> {
+interface IUseFetchResponse<T extends {}> extends FetchController<T> {
     request: (params: RequestPayload) => void;
     getRequest: (params: GetRequestPayload) => void;
     postRequest: (params: PostRequestPayload) => void;
@@ -52,15 +52,15 @@ interface IUseApiResponse<T extends {}> extends ApiController<T> {
     putRequest: (params: PutRequestPayload) => void;
 }
 
-const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
+const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
     const { abortOnUnmount } = params;
     const { iFetch } = useUtils();
 
-    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError, onRequest } = useApiContext();
+    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError, onRequest } = useFetchContext();
 
     const { token } = useAuth()
 
-    const [data, setData] = useState<ApiController<T>>({
+    const [data, setData] = useState<FetchController<T>>({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
@@ -171,4 +171,4 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
     }
 }
 
-export default useApi
+export default useFetch

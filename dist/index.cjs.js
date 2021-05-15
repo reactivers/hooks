@@ -666,24 +666,24 @@ var useUtils = function () {
     return utils;
 };
 
-var ApiContext = react.createContext({});
-var ApiProvider = function (_a) {
+var FetchContext = react.createContext({});
+var FetchProvider = function (_a) {
     var url = _a.url, onRequest = _a.onRequest, onSuccess = _a.onSuccess, onError = _a.onError, children = _a.children;
-    return (jsxRuntime.jsx(ApiContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onRequest: onRequest, onError: onError } }, { children: children }), void 0));
+    return (jsxRuntime.jsx(FetchContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onRequest: onRequest, onError: onError } }, { children: children }), void 0));
 };
-var useApiContext = function () {
-    var context = react.useContext(ApiContext);
+var useFetchContext = function () {
+    var context = react.useContext(FetchContext);
     if (context === undefined) {
-        throw new Error('useApiContext must be used within an ApiContext.Provider');
+        throw new Error('useFetchContext must be used within an FetchContext.Provider');
     }
     return context;
 };
 
-var useApi = function (params) {
+var useFetch = function (params) {
     if (params === void 0) { params = { abortOnUnmount: true }; }
     var abortOnUnmount = params.abortOnUnmount;
     var iFetch = useUtils().iFetch;
-    var _a = useApiContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError, onRequest = _a.onRequest;
+    var _a = useFetchContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError, onRequest = _a.onRequest;
     var token = useAuth().token;
     var _b = react.useState({
         success: undefined,
@@ -1364,20 +1364,20 @@ var useHover = function (_a) {
     return { isHover: isHover };
 };
 
-exports.ApiProvider = ApiProvider;
 exports.AuthProvider = AuthProvider;
 exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
+exports.FetchProvider = FetchProvider;
 exports.LoadingProvider = LoadingProvider;
 exports.SafeAreaProvider = SafeAreaProvider;
 exports.SocketProvider = SocketProvider;
 exports.createLocale = createLocale;
 exports.createTheme = createTheme;
-exports.useApi = useApi;
 exports.useAuth = useAuth;
 exports.useCounter = useCounter;
 exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
+exports.useFetch = useFetch;
 exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;

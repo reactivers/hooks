@@ -1,5 +1,5 @@
-export { default as useApi } from "./hooks/useApi/index";
-export { default as ApiProvider } from "./hooks/useApi/context";
+export { default as useFetch } from "./hooks/useFetch/index";
+export { default as FetchProvider } from "./hooks/useFetch/context";
 
 export { default as useAuth } from "./hooks/useAuth/index";
 export { default as AuthProvider } from "./hooks/useAuth/context";

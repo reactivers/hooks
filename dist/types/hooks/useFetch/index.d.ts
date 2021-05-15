@@ -21,22 +21,22 @@ export interface RequestPayload extends GenericRequestPayload {
     params?: any;
     formData?: any;
 }
-interface ApiController<T extends {}> {
+interface FetchController<T extends {}> {
     firstTimeFetched: boolean;
     fetched: boolean;
     fetching: boolean;
     success: boolean;
     response: T | any;
 }
-interface IUseApiProps {
+interface IUseFetchProps {
     abortOnUnmount?: boolean;
 }
-interface IUseApiResponse<T extends {}> extends ApiController<T> {
+interface IUseFetchResponse<T extends {}> extends FetchController<T> {
     request: (params: RequestPayload) => void;
     getRequest: (params: GetRequestPayload) => void;
     postRequest: (params: PostRequestPayload) => void;
     deleteRequest: (params: DeleteRequestPayload) => void;
     putRequest: (params: PutRequestPayload) => void;
 }
-declare const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T>;
-export default useApi;
+declare const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T>;
+export default useFetch;

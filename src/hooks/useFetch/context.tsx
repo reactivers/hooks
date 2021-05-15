@@ -1,36 +1,36 @@
 import { createContext, FC, useContext } from "react";
 import { RequestPayload } from ".";
 
-interface ApiContextProps {
+interface FetchContextProps {
     url?: string;
     onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
 
-interface ApiProviderProps {
+interface FetchProviderProps {
     url?: string;
     onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
 
-const ApiContext = createContext({} as ApiContextProps);
+const FetchContext = createContext({} as FetchContextProps);
 
-const ApiProvider: FC<ApiProviderProps> = ({ url, onRequest, onSuccess, onError, children }) => {
+const FetchProvider: FC<FetchProviderProps> = ({ url, onRequest, onSuccess, onError, children }) => {
     return (
-        <ApiContext.Provider value={{ url, onSuccess, onRequest, onError }}>
+        <FetchContext.Provider value={{ url, onSuccess, onRequest, onError }}>
             {children}
-        </ApiContext.Provider>
+        </FetchContext.Provider>
     )
 }
 
-export const useApiContext = () => {
-    const context = useContext(ApiContext);
+export const useFetchContext = () => {
+    const context = useContext(FetchContext);
     if (context === undefined) {
-        throw new Error('useApiContext must be used within an ApiContext.Provider');
+        throw new Error('useFetchContext must be used within an FetchContext.Provider');
     }
     return context;
 };
 
-export default ApiProvider;
+export default FetchProvider;

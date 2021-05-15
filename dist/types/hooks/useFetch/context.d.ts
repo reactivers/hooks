@@ -1,17 +1,17 @@
 import { FC } from "react";
 import { RequestPayload } from ".";
-interface ApiContextProps {
+interface FetchContextProps {
     url?: string;
     onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
-interface ApiProviderProps {
+interface FetchProviderProps {
     url?: string;
     onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
-declare const ApiProvider: FC<ApiProviderProps>;
-export declare const useApiContext: () => ApiContextProps;
-export default ApiProvider;
+declare const FetchProvider: FC<FetchProviderProps>;
+export declare const useFetchContext: () => FetchContextProps;
+export default FetchProvider;
