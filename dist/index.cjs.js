@@ -981,7 +981,7 @@ function createLocale() {
     var LocalesContext = react.createContext({});
     var LocalesProvider = function (_a) {
         var locales = _a.locales, _activeLanguage = _a.activeLanguage, children = _a.children;
-        var _b = react.useState(_activeLanguage), activeLanguage = _b[0], setActiveLanguage = _b[1];
+        var _b = react.useState(_activeLanguage || navigator.language), activeLanguage = _b[0], setActiveLanguage = _b[1];
         var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
         return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
                 locale: locale,

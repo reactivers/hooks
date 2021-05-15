@@ -31,7 +31,7 @@ function createLocale<T>() {
 
     const LocalesProvider: FC<LocalesProviderProps<T>> = ({ locales, activeLanguage: _activeLanguage, children }) => {
 
-        const [activeLanguage, setActiveLanguage] = useState<Languages>(_activeLanguage)
+        const [activeLanguage, setActiveLanguage] = useState<Languages>(_activeLanguage || (navigator.language as Languages))
         const locale = useMemo(() => locales[activeLanguage], [locales, activeLanguage])
 
         return (
