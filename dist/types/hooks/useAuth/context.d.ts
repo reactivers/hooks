@@ -9,6 +9,7 @@ interface AuthContextProps {
 }
 interface AuthProviderProps {
     localStorageTokenKeyName?: string;
+    authTokenKeyName?: string;
     initialCheckToken?: boolean;
     user?: UserInfo;
     onLogin?: (info: UserInfo) => void;

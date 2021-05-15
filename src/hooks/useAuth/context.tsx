@@ -12,6 +12,7 @@ interface AuthContextProps {
 
 interface AuthProviderProps {
     localStorageTokenKeyName?: string;
+    authTokenKeyName?: string;
     initialCheckToken?: boolean;
     user?: UserInfo;
     onLogin?: (info: UserInfo) => void;
@@ -29,6 +30,7 @@ export interface UserInfo {
 const AuthContext = createContext({} as AuthContextProps);
 
 const AuthProvider: FC<AuthProviderProps> = ({
+    authTokenKeyName = 'token',
     localStorageTokenKeyName = "token",
     user: _user,
     onLogin: _onLogin,
@@ -41,14 +43,15 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const { getItem, setItem } = useLocalStorage(localStorageTokenKeyName)
 
     const onLogin = useCallback((info) => {
+        setToken(info[authTokenKeyName])
         setUser({
-            token: info.token,
+            token: info[authTokenKeyName],
             ...(info || {}),
             isLoggedIn: true,
             checked: true
         })
         if (_onLogin) _onLogin(info)
-    }, [_onLogin])
+    }, [_onLogin, authTokenKeyName])
 
     const onLogout = useCallback(() => {
         setUser({
@@ -96,6 +99,7 @@ export const useAuthContext = () => {
 
 AuthProvider.defaultProps = {
     localStorageTokenKeyName: "token",
+    authTokenKeyName: "token",
     user: { isLoggedIn: false, checked: false },
     initialCheckToken: true,
 }
