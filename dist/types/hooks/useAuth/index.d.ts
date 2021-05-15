@@ -5,6 +5,8 @@ interface IUseAuth {
     logout: () => void;
     setUser: (user: UserInfo) => void;
     user: UserInfo;
+    checked: boolean;
+    isLoggedIn: boolean;
     token: string;
 }
 declare const useAuth: () => IUseAuth;

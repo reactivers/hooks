@@ -37,6 +37,18 @@ var __assign = function() {
     return __assign.apply(this, arguments);
 };
 
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+}
+
 var useLocalStorage = function (key, defaultValue) {
     var getItem = react.useCallback(function (_defaultValue) {
         try {
@@ -123,7 +135,8 @@ AuthProvider.defaultProps = {
 };
 
 var useAuth = function () {
-    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, user = _a.user;
+    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, contextUser = _a.user;
+    var checked = contextUser.checked, isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["checked", "isLoggedIn"]);
     var token = user.token;
     var logout = react.useCallback(function () {
         onLogout();
@@ -136,7 +149,9 @@ var useAuth = function () {
         login: login,
         logout: logout,
         setUser: setUser,
-        user: user,
+        user: contextUser,
+        checked: checked,
+        isLoggedIn: isLoggedIn,
         token: token
     };
 };
