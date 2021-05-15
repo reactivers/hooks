@@ -7,14 +7,13 @@ interface IUseAuth {
     logout: () => void,
     setUser: (user: UserInfo) => void,
     user: UserInfo,
-    checked: boolean;
     isLoggedIn: boolean;
     token: string
 }
 
 const useAuth: () => IUseAuth = () => {
     const { onLogout, onLogin, setToken, setUser, user: contextUser } = useAuthContext();
-    const { checked, isLoggedIn, ...user } = contextUser;
+    const { isLoggedIn, ...user } = contextUser;
     const { token } = user;
 
     const logout = useCallback(() => {
@@ -31,7 +30,6 @@ const useAuth: () => IUseAuth = () => {
         logout,
         setUser,
         user: contextUser,
-        checked,
         isLoggedIn,
         token
     }

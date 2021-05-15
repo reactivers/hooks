@@ -86,14 +86,13 @@ var AuthProvider = function (_a) {
             setItem(newToken);
         }
         var newUser = __assign({ token: newToken || oldToken }, (info || {}));
-        setUser(__assign(__assign({}, newUser), { isLoggedIn: true, checked: true }));
+        setUser(__assign(__assign({}, newUser), { isLoggedIn: true }));
         if (_onLogin)
             _onLogin(info);
     }, [_onLogin, authTokenKeyName]);
     var onLogout = react.useCallback(function () {
         setUser({
             isLoggedIn: false,
-            checked: true
         });
         removeItem();
         if (_onLogout)
@@ -136,13 +135,13 @@ var useAuthContext = function () {
 AuthProvider.defaultProps = {
     localStorageTokenKeyName: "token",
     authTokenKeyName: "token",
-    user: { isLoggedIn: false, checked: false },
+    user: { isLoggedIn: false },
     initialCheckToken: true,
 };
 
 var useAuth = function () {
     var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, contextUser = _a.user;
-    var checked = contextUser.checked, isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["checked", "isLoggedIn"]);
+    var isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["isLoggedIn"]);
     var token = user.token;
     var logout = react.useCallback(function () {
         onLogout();
@@ -156,7 +155,6 @@ var useAuth = function () {
         logout: logout,
         setUser: setUser,
         user: contextUser,
-        checked: checked,
         isLoggedIn: isLoggedIn,
         token: token
     };

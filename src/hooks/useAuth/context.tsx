@@ -23,7 +23,6 @@ export interface UserInfo {
     username?: string;
     token?: string;
     isLoggedIn: boolean;
-    checked: boolean;
     userInfo?: any;
 }
 
@@ -57,8 +56,7 @@ const AuthProvider: FC<AuthProviderProps> = ({
 
         setUser({
             ...newUser,
-            isLoggedIn: true,
-            checked: true
+            isLoggedIn: true
         })
         if (_onLogin) _onLogin(info)
     }, [_onLogin, authTokenKeyName])
@@ -66,7 +64,6 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const onLogout = useCallback(() => {
         setUser({
             isLoggedIn: false,
-            checked: true
         })
         removeItem()
         if (_onLogout) _onLogout()
@@ -120,7 +117,7 @@ export const useAuthContext = () => {
 AuthProvider.defaultProps = {
     localStorageTokenKeyName: "token",
     authTokenKeyName: "token",
-    user: { isLoggedIn: false, checked: false },
+    user: { isLoggedIn: false },
     initialCheckToken: true,
 }
 

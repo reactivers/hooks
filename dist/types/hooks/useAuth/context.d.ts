@@ -19,7 +19,6 @@ export interface UserInfo {
     username?: string;
     token?: string;
     isLoggedIn: boolean;
-    checked: boolean;
     userInfo?: any;
 }
 declare const AuthProvider: FC<AuthProviderProps>;
