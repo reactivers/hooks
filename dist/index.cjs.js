@@ -652,20 +652,21 @@ var useApiContext = function () {
     return context;
 };
 
-var useApi = function (_a) {
-    var _b = _a.abortOnUnmount, abortOnUnmount = _b === void 0 ? true : _b;
+var useApi = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var abortOnUnmount = params.abortOnUnmount;
     var iFetch = useUtils().iFetch;
-    var _c = useApiContext(), contextURL = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
+    var _a = useApiContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError;
     var token = useAuth().token;
-    var _d = react.useState({
+    var _b = react.useState({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
         response: {}
-    }), data = _d[0], setData = _d[1];
+    }), data = _b[0], setData = _b[1];
     var fetching = data.fetching;
-    var _e = react.useMemo(function () { return new AbortController(); }, [fetching]), signal = _e.signal, abort = _e.abort;
+    var _c = react.useMemo(function () { return new AbortController(); }, [fetching]), signal = _c.signal, abort = _c.abort;
     var onSuccess = react.useCallback(function (_a) {
         var payloadOnSuccess = _a.onSuccess, response = _a.response;
         if (contextOnSuccess)

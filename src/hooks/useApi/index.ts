@@ -52,7 +52,8 @@ interface IUseApiResponse<T extends {}> extends ApiController<T> {
     putRequest: (params: PutRequestPayload) => void;
 }
 
-const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T extends {}>({ abortOnUnmount = true }) => {
+const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
+    const { abortOnUnmount } = params;
     const { iFetch } = useUtils();
 
     const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError } = useApiContext();
