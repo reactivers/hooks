@@ -20,7 +20,7 @@ declare type Languages = "af" | "sq" | "ar-SA" | "ar-IQ" | "ar-EG" | "ar-LY" | "
 
 export interface LocalesProviderProps<T> {
     locales?: {
-        [language in Languages]: T
+        [language in Languages]?: T
     };
     activeLanguage?: Languages
 }
