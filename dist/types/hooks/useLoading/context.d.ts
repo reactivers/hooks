@@ -4,10 +4,6 @@ interface LoadingContextProps {
     increase: () => void;
     decrease: () => void;
 }
-interface LoadingProviderProps {
-    onIncrease?: (loading: number) => void;
-    onDecrease?: (loading: number) => void;
-}
-declare const LoadingProvider: FC<LoadingProviderProps>;
+declare const LoadingProvider: FC;
 export declare const useLoadingContext: () => LoadingContextProps;
 export default LoadingProvider;

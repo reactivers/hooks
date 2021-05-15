@@ -1,22 +1,25 @@
 import { createContext, FC, useContext } from "react";
+import { RequestPayload } from ".";
 
 interface ApiContextProps {
-    url: string;
+    url?: string;
+    onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
 
 interface ApiProviderProps {
-    url: string;
+    url?: string;
+    onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
 
 const ApiContext = createContext({} as ApiContextProps);
 
-const ApiProvider: FC<ApiProviderProps> = ({ url, onSuccess, onError, children }) => {
+const ApiProvider: FC<ApiProviderProps> = ({ url, onRequest, onSuccess, onError, children }) => {
     return (
-        <ApiContext.Provider value={{ url, onSuccess, onError }}>
+        <ApiContext.Provider value={{ url, onSuccess, onRequest, onError }}>
             {children}
         </ApiContext.Provider>
     )

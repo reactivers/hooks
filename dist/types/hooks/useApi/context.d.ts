@@ -1,11 +1,14 @@
 import { FC } from "react";
+import { RequestPayload } from ".";
 interface ApiContextProps {
-    url: string;
+    url?: string;
+    onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }
 interface ApiProviderProps {
-    url: string;
+    url?: string;
+    onRequest?: (response: RequestPayload) => void;
     onSuccess?: (response: any) => void;
     onError?: (response: any, responseJSON?: any) => void;
 }

@@ -16,7 +16,7 @@ interface DeleteRequestPayload extends GenericRequestPayload {
 interface PutRequestPayload extends GenericRequestPayload {
     params?: any;
 }
-interface RequestPayload extends GenericRequestPayload {
+export interface RequestPayload extends GenericRequestPayload {
     method?: HTTPMethods;
     params?: any;
     formData?: any;

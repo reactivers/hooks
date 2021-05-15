@@ -1,8 +1,15 @@
 import { useLoadingContext } from './context';
 
-const useLoading = () => {
+interface IUseLoading {
+    isLoading: boolean;
+    increase: () => void;
+    decrease: () => void;
+}
+
+const useLoading: () => IUseLoading = () => {
     const { loading, increase, decrease } = useLoadingContext();
     const isLoading = loading && loading > 0
     return { isLoading, increase, decrease };
 };
+
 export default useLoading;

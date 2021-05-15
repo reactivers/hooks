@@ -26,7 +26,7 @@ interface PutRequestPayload extends GenericRequestPayload {
     params?: any;
 }
 
-interface RequestPayload extends GenericRequestPayload {
+export interface RequestPayload extends GenericRequestPayload {
     method?: HTTPMethods;
     params?: any;
     formData?: any;
@@ -56,7 +56,7 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
     const { abortOnUnmount } = params;
     const { iFetch } = useUtils();
 
-    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError } = useApiContext();
+    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError, onRequest } = useApiContext();
 
     const { token } = useAuth()
 
@@ -110,6 +110,8 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
         } = payload;
         const url = _url || contextURL;
 
+        if (onRequest) onRequest({ ...payload, url })
+
         setData(old => ({ ...old, fetching: true, fetched: false }))
 
         iFetch({
@@ -132,7 +134,7 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
             token,
             signal: abortController.signal
         })
-    }, [token, contextURL, onSuccess, onError, setData, abortController.signal])
+    }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal])
 
 
     const getRequest = useCallback((payload: GetRequestPayload = {}) => {

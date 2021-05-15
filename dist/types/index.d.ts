@@ -19,4 +19,5 @@ export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useTitle } from "./hooks/useTitle/index";
 export { default as useMeasure } from "./hooks/useMeasure";
 export { default as useHover } from "./hooks/useHover";
+export { default as useCounter } from "./hooks/useCounter";
 export { default as useLocalStorage } from "./hooks/useLocalStorage";

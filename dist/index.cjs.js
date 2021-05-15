@@ -668,8 +668,8 @@ var useUtils = function () {
 
 var ApiContext = react.createContext({});
 var ApiProvider = function (_a) {
-    var url = _a.url, onSuccess = _a.onSuccess, onError = _a.onError, children = _a.children;
-    return (jsxRuntime.jsx(ApiContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onError: onError } }, { children: children }), void 0));
+    var url = _a.url, onRequest = _a.onRequest, onSuccess = _a.onSuccess, onError = _a.onError, children = _a.children;
+    return (jsxRuntime.jsx(ApiContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onRequest: onRequest, onError: onError } }, { children: children }), void 0));
 };
 var useApiContext = function () {
     var context = react.useContext(ApiContext);
@@ -683,7 +683,7 @@ var useApi = function (params) {
     if (params === void 0) { params = { abortOnUnmount: true }; }
     var abortOnUnmount = params.abortOnUnmount;
     var iFetch = useUtils().iFetch;
-    var _a = useApiContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError;
+    var _a = useApiContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError, onRequest = _a.onRequest;
     var token = useAuth().token;
     var _b = react.useState({
         success: undefined,
@@ -713,6 +713,8 @@ var useApi = function (params) {
         if (payload === void 0) { payload = {}; }
         var _url = payload.url, endpoint = payload.endpoint, method = payload.method, payloadOnSuccess = payload.onSuccess, payloadOnError = payload.onError, formData = payload.formData, params = payload.params;
         var url = _url || contextURL;
+        if (onRequest)
+            onRequest(__assign(__assign({}, payload), { url: url }));
         setData(function (old) { return (__assign(__assign({}, old), { fetching: true, fetched: false })); });
         iFetch({
             url: url,
@@ -734,7 +736,7 @@ var useApi = function (params) {
             token: token,
             signal: abortController.signal
         });
-    }, [token, contextURL, onSuccess, onError, setData, abortController.signal]);
+    }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal]);
     var getRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
         request(__assign(__assign({}, payload), { method: "GET" }));
@@ -941,27 +943,25 @@ var useEventListener = function (component) {
     return { registerEvent: registerEvent, registerEventById: registerEventById, removeEvent: removeEvent, callAllEvents: callAllEvents, callEvent: callEvent };
 };
 
+var useCounter = function (params) {
+    if (params === void 0) { params = { initial: 0 }; }
+    var _a = react.useState(params.initial), counter = _a[0], setCounter = _a[1];
+    var increase = react.useCallback(function (by) {
+        if (by === void 0) { by = 1; }
+        setCounter(function (old) { return old + by; });
+    }, []);
+    var decrease = react.useCallback(function (by) {
+        if (by === void 0) { by = 1; }
+        setCounter(function (old) { return old - by; });
+    }, []);
+    return { counter: counter, increase: increase, decrease: decrease };
+};
+
 var LoadingContext = react.createContext({});
 var LoadingProvider = function (_a) {
-    var onIncrease = _a.onIncrease, onDecrease = _a.onDecrease, children = _a.children;
-    var _b = react.useState(0), loading = _b[0], setLoading = _b[1];
-    var increase = react.useCallback(function () {
-        setLoading(function (old) {
-            var newLoading = old + 1;
-            if (onIncrease)
-                onIncrease(newLoading);
-            return newLoading;
-        });
-    }, [onIncrease]);
-    var decrease = react.useCallback(function () {
-        setLoading(function (old) {
-            var newLoading = old - 1;
-            if (onDecrease)
-                onDecrease(newLoading);
-            return newLoading;
-        });
-    }, [onDecrease]);
-    return (jsxRuntime.jsx(LoadingContext.Provider, __assign({ value: { loading: loading, increase: increase, decrease: decrease } }, { children: children }), void 0));
+    var children = _a.children;
+    var _b = useCounter(), counter = _b.counter, increase = _b.increase, decrease = _b.decrease;
+    return (jsxRuntime.jsx(LoadingContext.Provider, __assign({ value: { loading: counter, increase: increase, decrease: decrease } }, { children: children }), void 0));
 };
 var useLoadingContext = function () {
     var context = react.useContext(LoadingContext);
@@ -1517,6 +1517,7 @@ exports.SocketProvider = SocketProvider;
 exports.createTheme = createTheme;
 exports.useApi = useApi;
 exports.useAuth = useAuth;
+exports.useCounter = useCounter;
 exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
 exports.useHover = useHover;

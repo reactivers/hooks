@@ -1,4 +1,5 @@
 import { createContext, FC, useCallback, useContext, useState } from "react";
+import useCounter from "../useCounter";
 
 interface LoadingContextProps {
     loading: number;
@@ -6,35 +7,15 @@ interface LoadingContextProps {
     decrease: () => void;
 }
 
-interface LoadingProviderProps {
-    onIncrease?: (loading: number) => void;
-    onDecrease?: (loading: number) => void
-}
 
 const LoadingContext = createContext({} as LoadingContextProps);
 
-const LoadingProvider: FC<LoadingProviderProps> = ({ onIncrease, onDecrease, children }) => {
+const LoadingProvider: FC = ({ children }) => {
 
-    const [loading, setLoading] = useState(0);
-
-    const increase = useCallback(() => {
-        setLoading(old => {
-            const newLoading = old + 1;
-            if (onIncrease) onIncrease(newLoading)
-            return newLoading
-        })
-    }, [onIncrease])
-
-    const decrease = useCallback(() => {
-        setLoading(old => {
-            const newLoading = old - 1;
-            if (onDecrease) onDecrease(newLoading)
-            return newLoading
-        })
-    }, [onDecrease])
+    const { counter, increase, decrease } = useCounter();
 
     return (
-        <LoadingContext.Provider value={{ loading, increase, decrease }}>
+        <LoadingContext.Provider value={{ loading: counter, increase, decrease }}>
             {children}
         </LoadingContext.Provider>
     )
