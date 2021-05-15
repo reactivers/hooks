@@ -8,9 +8,7 @@ export interface LocalesContextProps<T> {
     setActiveLanguage: (lang: string) => void;
 }
 export interface LocalesProviderProps<T> {
-    locales?: {
-        [language: string]: T;
-    };
+    locales?: Record<string, T>;
     activeLanguage?: string;
 }
 declare function createLocale<T>(): {
