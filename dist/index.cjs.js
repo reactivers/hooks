@@ -954,7 +954,10 @@ var useCounter = function (params) {
         if (by === void 0) { by = 1; }
         setCounter(function (old) { return old - by; });
     }, []);
-    return { counter: counter, increase: increase, decrease: decrease };
+    var reset = react.useCallback(function () {
+        setCounter(params.initial);
+    }, [params.initial]);
+    return { counter: counter, setCounter: setCounter, reset: reset, increase: increase, decrease: decrease };
 };
 
 var LoadingContext = react.createContext({});

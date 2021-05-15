@@ -11,6 +11,10 @@ const useCounter = (params = { initial: 0 }) => {
         setCounter(old => old - by)
     }, [])
 
-    return { counter, increase, decrease };
+    const reset = useCallback(() => {
+        setCounter(params.initial)
+    }, [params.initial])
+
+    return { counter, setCounter, reset, increase, decrease };
 };
 export default useCounter;
