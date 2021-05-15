@@ -8,9 +8,7 @@ export interface LocalesContextProps<T> {
 }
 
 export interface LocalesProviderProps<T> {
-    locales?: {
-        [key: string]: T
-    };
+    locales?: Record<string, T>;
     activeLanguage?: string
 }
 
