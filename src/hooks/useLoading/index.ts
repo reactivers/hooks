@@ -8,7 +8,7 @@ interface IUseLoading {
 
 const useLoading: () => IUseLoading = () => {
     const { loading, increase, decrease } = useLoadingContext();
-    const isLoading = loading && loading > 0
+    const isLoading = loading > 0
     return { isLoading, increase, decrease };
 };
 

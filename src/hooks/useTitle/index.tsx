@@ -24,8 +24,7 @@ const useTitle: (props?: ITitleProps) => ITitleResponse = (props = { title: unde
     }, [])
 
     useEffect(() => {
-        if (title)
-            setTitle(title)
+        if (title) setTitle(title)
         return () => {
             if (setOldTitleOnUnmount)
                 setTitle(initialTitle.current)

@@ -973,7 +973,7 @@ var useLoadingContext = function () {
 
 var useLoading = function () {
     var _a = useLoadingContext(), loading = _a.loading, increase = _a.increase, decrease = _a.decrease;
-    var isLoading = loading && loading > 0;
+    var isLoading = loading > 0;
     return { isLoading: isLoading, increase: increase, decrease: decrease };
 };
 
