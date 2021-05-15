@@ -1112,36 +1112,38 @@ var AllLocales = {
     "en-en": __assign({}, enUSLocales),
 };
 
-var LocalesContext = react.createContext({});
-var LocalesProvider = function (_a) {
-    var _b = _a.locales, locales = _b === void 0 ? AllLocales : _b, _c = _a.activeLanguage, _activeLanguage = _c === void 0 ? 'en' : _c, children = _a.children;
-    var _d = react.useState(_activeLanguage), activeLanguage = _d[0], setActiveLanguage = _d[1];
-    var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
-    var getLocale = react.useCallback(function (_a) {
-        var name = _a.name, params = _a.params;
-        var localeValue = locale[name];
-        if (localeValue) {
-            return localeValue(params);
+function createLocale() {
+    var LocalesContext = react.createContext({});
+    var LocalesProvider = function (_a) {
+        var _b = _a.locales, locales = _b === void 0 ? AllLocales : _b, _activeLanguage = _a.activeLanguage, children = _a.children;
+        var _c = react.useState(_activeLanguage), activeLanguage = _c[0], setActiveLanguage = _c[1];
+        var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
+        var getLocale = react.useCallback(function (_a) {
+            var name = _a.name, params = _a.params;
+            var localeValue = locale[name];
+            if (localeValue) {
+                return localeValue(params);
+            }
+            return name;
+        }, [locale]);
+        return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
+                locale: locale,
+                getLocale: getLocale,
+                setActiveLanguage: setActiveLanguage,
+            } }, { children: children }), void 0));
+    };
+    var useLocale = function () {
+        var context = react.useContext(LocalesContext);
+        if (context === undefined) {
+            throw new Error('useLocalesContext must be used within an LocalesContext.Provider');
         }
-        return name;
-    }, [locale]);
-    return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
-            locale: locale,
-            getLocale: getLocale,
-            setActiveLanguage: setActiveLanguage,
-        } }, { children: children }), void 0));
-};
-var useLocalesContext = function () {
-    var context = react.useContext(LocalesContext);
-    if (context === undefined) {
-        throw new Error('useLocalesContext must be used within an LocalesContext.Provider');
-    }
-    return context;
-};
-
-var useLocale = function () {
-    return useLocalesContext();
-};
+        return context;
+    };
+    return {
+        LocalesProvider: LocalesProvider,
+        useLocale: useLocale
+    };
+}
 
 var SocketContext = react.createContext({});
 var SocketProvider = function (_a) {
@@ -1511,9 +1513,9 @@ exports.AuthProvider = AuthProvider;
 exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
 exports.LoadingProvider = LoadingProvider;
-exports.LocalesProvider = LocalesProvider;
 exports.SafeAreaProvider = SafeAreaProvider;
 exports.SocketProvider = SocketProvider;
+exports.createLocale = createLocale;
 exports.createTheme = createTheme;
 exports.useApi = useApi;
 exports.useAuth = useAuth;
@@ -1523,7 +1525,6 @@ exports.useEventListener = useEventListener;
 exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
-exports.useLocales = useLocale;
 exports.useMeasure = useMeasure;
 exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
