@@ -95,10 +95,10 @@ var AuthProvider = function (_a) {
         if (initialCheckToken) {
             var oldToken = getItem();
             if (oldToken) {
-                onLogin({ token: oldToken });
+                setToken(oldToken);
             }
         }
-    }, [initialCheckToken, onLogin]);
+    }, [initialCheckToken, setToken]);
     return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
             localStorageTokenKeyName: localStorageTokenKeyName,
             user: user,

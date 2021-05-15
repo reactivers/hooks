@@ -79,10 +79,10 @@ const AuthProvider: FC<AuthProviderProps> = ({
         if (initialCheckToken) {
             const oldToken = getItem();
             if (oldToken) {
-                onLogin({ token: oldToken })
+                setToken(oldToken)
             }
         }
-    }, [initialCheckToken, onLogin])
+    }, [initialCheckToken, setToken])
 
     return (
         <AuthContext.Provider value={{
