@@ -1478,8 +1478,7 @@ var useHover = function (_a) {
             checkInVertically ?
                 isInRange([boundingRect.top, boundingRect.bottom], clientY, includeBorders, includeBorders)
                 : isInRange([boundingRect.left, boundingRect.right], clientX, includeBorders, includeBorders);
-        if (isHover !== _isHover)
-            setIsHover(_isHover);
+        setIsHover(_isHover);
     }, [ref.current, isHover, includeBorders, checkInVertically, checkInHorizontally, top, right, bottom, left]);
     var onTouchEnd = react.useCallback(function () {
         setIsHover(false);
