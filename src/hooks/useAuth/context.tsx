@@ -68,6 +68,7 @@ const AuthProvider: FC<AuthProviderProps> = ({
             isLoggedIn: false,
             checked: true
         })
+        removeItem()
         if (_onLogout) _onLogout()
     }, [_onLogout])
 

@@ -95,6 +95,7 @@ var AuthProvider = function (_a) {
             isLoggedIn: false,
             checked: true
         });
+        removeItem();
         if (_onLogout)
             _onLogout();
     }, [_onLogout]);
