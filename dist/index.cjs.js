@@ -666,7 +666,7 @@ var useApi = function (params) {
         response: {}
     }), data = _b[0], setData = _b[1];
     var fetching = data.fetching;
-    var _c = react.useMemo(function () { return new AbortController(); }, [fetching]), signal = _c.signal, abort = _c.abort;
+    var abortController = react.useMemo(function () { return new AbortController(); }, [fetching]);
     var onSuccess = react.useCallback(function (_a) {
         var payloadOnSuccess = _a.onSuccess, response = _a.response;
         if (contextOnSuccess)
@@ -706,9 +706,9 @@ var useApi = function (params) {
                 });
             },
             token: token,
-            signal: signal
+            signal: abortController.signal
         });
-    }, [token, contextURL, onSuccess, onError, setData]);
+    }, [token, contextURL, onSuccess, onError, setData, abortController.signal]);
     var getRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
         request(__assign(__assign({}, payload), { method: "GET" }));
@@ -728,9 +728,9 @@ var useApi = function (params) {
     react.useEffect(function () {
         return function () {
             if (abortOnUnmount)
-                abort();
+                abortController.abort();
         };
-    }, [abort, abortOnUnmount]);
+    }, [abortController.abort, abortOnUnmount]);
     return __assign({ request: request,
         getRequest: getRequest,
         postRequest: postRequest,

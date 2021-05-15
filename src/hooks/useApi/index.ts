@@ -69,7 +69,7 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
     });
 
     const { fetching } = data;
-    const { signal, abort } = useMemo(() => new AbortController(), [fetching]);
+    const abortController = useMemo(() => new AbortController(), [fetching]);
 
     const onSuccess = useCallback(({ onSuccess: payloadOnSuccess, response }) => {
         if (contextOnSuccess) contextOnSuccess(response)
@@ -131,9 +131,9 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
                 })
             },
             token,
-            signal
+            signal: abortController.signal
         })
-    }, [token, contextURL, onSuccess, onError, setData])
+    }, [token, contextURL, onSuccess, onError, setData, abortController.signal])
 
 
     const getRequest = useCallback((payload: GetRequestPayload = {}) => {
@@ -156,9 +156,9 @@ const useApi: <T extends {}>(params?: IUseApiProps) => IUseApiResponse<T> = <T e
     useEffect(() => {
         return () => {
             if (abortOnUnmount)
-                abort()
+                abortController.abort()
         }
-    }, [abort, abortOnUnmount])
+    }, [abortController.abort, abortOnUnmount])
 
     return {
         request,
