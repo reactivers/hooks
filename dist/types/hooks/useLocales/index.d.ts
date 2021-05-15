@@ -1,10 +1,6 @@
 import { FC } from "react";
 export interface LocalesContextProps<T> {
     locale: T;
-    getLocale: (payload: {
-        name: keyof T;
-        params?: any;
-    }) => string;
     setActiveLanguage: (lang: string) => void;
 }
 export interface LocalesProviderProps<T> {
