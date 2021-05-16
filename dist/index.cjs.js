@@ -848,16 +848,18 @@ var useDimensions = function (payload) {
     var breakpoints = react.useMemo(function () { return payload.breakpoints || defaultBreakPoints; }, [payload.breakpoints]);
     var watchWindowSize = react.useMemo(function () { return payload.watchWindowSize; }, [payload.watchWindowSize]);
     var _a = useDimensionsContext(), sizes = _a.sizes, widths = _a.widths;
-    var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON;
+    var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON, isBrowser = _b.isBrowser;
     var getSizeOfWindowWidth = react.useCallback(function (width) {
         var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
     var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, [getSizeOfWindowWidth]);
-    var _c = react.useState({
+    var _c = react.useState(isBrowser() ? {
         width: window.innerWidth,
         height: window.innerHeight,
         size: initialSize
+    } : {
+        width: 0, height: 0, size: 'xxl'
     }), dimensions = _c[0], setDimensions = _c[1];
     var size = dimensions.size;
     var updateDimensions = react.useCallback(function (width, height) {
