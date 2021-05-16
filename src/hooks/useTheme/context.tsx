@@ -43,7 +43,7 @@ function createTheme<T>() {
                 else
                     return theme
             } else {
-                return "system"
+                return "light"
             }
         }, [])
 

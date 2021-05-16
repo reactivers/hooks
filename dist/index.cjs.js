@@ -1246,7 +1246,7 @@ function createTheme() {
                     return theme;
             }
             else {
-                return "system";
+                return "light";
             }
         }, []);
         var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
