@@ -1254,10 +1254,8 @@ function createTheme() {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
-            if (isBrowser()) {
-                updateInitialTheme();
-            }
-        }, [isBrowser, updateInitialTheme]);
+            updateInitialTheme();
+        }, [updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {

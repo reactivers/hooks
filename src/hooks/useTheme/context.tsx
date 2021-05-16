@@ -54,10 +54,8 @@ function createTheme<T>() {
         }, [setCurrentTheme, getInitialTheme])
 
         useEffect(() => {
-            if (isBrowser()) {
-                updateInitialTheme()
-            }
-        }, [isBrowser, updateInitialTheme])
+            updateInitialTheme()
+        }, [updateInitialTheme])
 
 
         const getCurrentTheme = useCallback((e) => {
