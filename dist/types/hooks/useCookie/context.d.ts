@@ -6,7 +6,7 @@ interface CookieContext {
     setItem: (params: CookieSetItem) => void;
 }
 declare const CookieContext: import("react").Context<CookieContext>;
-interface LocalStorateProviderProps {
+interface CookieProviderProps {
     withState?: boolean;
     onChange?: (cookie: Record<string, any>) => void;
 }
@@ -18,6 +18,6 @@ export interface CookieSetItem {
     expire?: string;
     path?: string;
 }
-declare const CookieProvider: FC<LocalStorateProviderProps>;
+declare const CookieProvider: FC<CookieProviderProps>;
 export declare const useCookieContext: () => CookieContext;
 export default CookieProvider;

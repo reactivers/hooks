@@ -7,9 +7,10 @@ interface CookieContext {
     removeItem: (key: string) => void;
     setItem: (params: CookieSetItem) => void;
 }
+
 const CookieContext = createContext({} as CookieContext);
 
-interface LocalStorateProviderProps {
+interface CookieProviderProps {
     withState?: boolean;
     onChange?: (cookie: Record<string, any>) => void;
 }
@@ -23,7 +24,7 @@ export interface CookieSetItem {
     path?: string
 }
 
-const CookieProvider: FC<LocalStorateProviderProps> = ({ withState = true, onChange, children }) => {
+const CookieProvider: FC<CookieProviderProps> = ({ withState = true, onChange, children }) => {
     const { tryJSONparse, tryJSONStringify } = useUtils();
 
     const getCookies = useCallback(() => {

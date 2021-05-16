@@ -1,5 +1,6 @@
-declare const useGlobalState: () => {
+interface IUseGlobalState {
     globalState: Record<string, any>;
-    setGlobalState: (param: any) => void;
-};
+    setGlobalState: any;
+}
+declare const useGlobalState: () => IUseGlobalState;
 export default useGlobalState;

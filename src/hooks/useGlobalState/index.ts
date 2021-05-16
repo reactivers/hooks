@@ -1,6 +1,11 @@
 import { useGlobalStateContext } from './context';
 
-const useGlobalState = () => {
+interface IUseGlobalState {
+    globalState: Record<string, any>;
+    setGlobalState: any;
+}
+
+const useGlobalState: () => IUseGlobalState = () => {
     const { globalState, setGlobalState } = useGlobalStateContext()
     return { globalState, setGlobalState }
 }
