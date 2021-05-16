@@ -1095,31 +1095,35 @@ var useSocket = function (_a) {
         onError(event);
     }, [onError]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('open', onopen);
         return function () {
-            socket.current.removeEventListener('open', onopen);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('open', onopen);
         };
     }, [socket.current, onopen]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('close', onclose);
         return function () {
-            socket.current.removeEventListener('close', onclose);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('close', onclose);
         };
     }, [socket.current, onclose]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('message', onmessage);
         return function () {
-            socket.current.removeEventListener('message', onmessage);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('message', onmessage);
         };
     }, [socket.current, onmessage]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('error', onerror);
         return function () {
-            socket.current.removeEventListener('error', onerror);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('error', onerror);
         };
     }, [socket.current, onerror]);
     var sendData = react.useCallback(function (data) {

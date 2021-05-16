@@ -78,30 +78,34 @@ const useSocket: (props: SocketProps) => SocketResponse = ({ url, wss = false, d
     }, [onError])
 
     useEffect(() => {
-        if (socket.current) socket.current.addEventListener('open', onopen)
+        if (socket.current.addEventListener) socket.current.addEventListener('open', onopen)
         return () => {
-            socket.current.removeEventListener('open', onopen);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('open', onopen);
         }
     }, [socket.current, onopen])
 
     useEffect(() => {
-        if (socket.current) socket.current.addEventListener('close', onclose)
+        if (socket.current.addEventListener) socket.current.addEventListener('close', onclose)
         return () => {
-            socket.current.removeEventListener('close', onclose);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('close', onclose);
         }
     }, [socket.current, onclose])
 
     useEffect(() => {
-        if (socket.current) socket.current.addEventListener('message', onmessage)
+        if (socket.current.addEventListener) socket.current.addEventListener('message', onmessage)
         return () => {
-            socket.current.removeEventListener('message', onmessage);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('message', onmessage);
         }
     }, [socket.current, onmessage])
 
     useEffect(() => {
-        if (socket.current) socket.current.addEventListener('error', onerror)
+        if (socket.current.addEventListener) socket.current.addEventListener('error', onerror)
         return () => {
-            socket.current.removeEventListener('error', onerror);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('error', onerror);
         }
     }, [socket.current, onerror])
 
