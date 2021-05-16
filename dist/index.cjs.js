@@ -1260,13 +1260,10 @@ function createTheme() {
         }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
             if (isBrowser()) {
+                document.addEventListener("DOMContentLoaded", updateInitialTheme);
                 if (!isChanged.current) {
                     updateInitialTheme();
-                    document.addEventListener("DOMContentLoaded", updateInitialTheme);
                 }
-                return function () {
-                    document.removeEventListener("DOMContentLoaded", updateInitialTheme);
-                };
             }
         }, [isChanged.current, updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {

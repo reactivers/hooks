@@ -59,12 +59,9 @@ function createTheme<T>() {
 
         useEffect(() => {
             if (isBrowser()) {
+                document.addEventListener("DOMContentLoaded", updateInitialTheme);
                 if (!isChanged.current) {
                     updateInitialTheme()
-                    document.addEventListener("DOMContentLoaded", updateInitialTheme);
-                }
-                return () => {
-                    document.removeEventListener("DOMContentLoaded", updateInitialTheme);
                 }
             }
         }, [isChanged.current, updateInitialTheme])
