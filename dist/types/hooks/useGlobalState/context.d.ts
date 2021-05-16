@@ -1,17 +1,12 @@
 import { FC } from "react";
-interface LocalStorageContext {
-    localStorage: Record<string, any>;
-    getItem: (key: string) => any;
-    removeItem: (key: string) => void;
-    setItem: (params: {
-        key: string;
-        value: any;
-    }) => void;
+interface GlobalStateContext {
+    globalState: Record<string, any>;
+    setGlobalState: (param: any) => void;
 }
-declare const LocalStorageContext: import("react").Context<LocalStorageContext>;
-interface LocalStorateProviderProps {
-    onChange?: (localStorage: Record<string, any>) => void;
+declare const GlobalStateContext: import("react").Context<GlobalStateContext>;
+interface GlobalStateProviderProps {
+    onChange?: (GlobalState: Record<string, any>) => void;
 }
-declare const LocalStorageProvider: FC<LocalStorateProviderProps>;
-export declare const useLocalStorageContext: () => LocalStorageContext;
-export default LocalStorageProvider;
+declare const GlobalStateProvider: FC<GlobalStateProviderProps>;
+export declare const useGlobalStateContext: () => GlobalStateContext;
+export default GlobalStateProvider;

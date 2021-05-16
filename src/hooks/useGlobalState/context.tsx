@@ -1,80 +1,35 @@
-import { createContext, FC, useCallback, useContext, useState } from "react";
-import useUtils from "../useUtils";
+import { createContext, FC, useContext, useState } from "react";
 
-
-interface LocalStorageContext {
-    localStorage: Record<string, any>;
-    getItem: (key: string) => any;
-    removeItem: (key: string) => void;
-    setItem: (params: { key: string, value: any }) => void;
+interface GlobalStateContext {
+    globalState: Record<string, any>;
+    setGlobalState: (param: any) => void;
 }
-const LocalStorageContext = createContext({} as LocalStorageContext);
+const GlobalStateContext = createContext({} as GlobalStateContext);
 
-interface LocalStorateProviderProps {
-    onChange?: (localStorage: Record<string, any>) => void;
+interface GlobalStateProviderProps {
+    onChange?: (GlobalState: Record<string, any>) => void;
 }
 
-const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) => {
-    const { tryJSONparse, tryJSONStringify } = useUtils();
-    
-    const getLocalStorage = useCallback(() => {
-        const localStorageKeys = Object.keys(window.localStorage);
-        const localStorage = {};
-        localStorageKeys.forEach(key => {
-            let value = window.localStorage[key];
-            localStorage[key] = tryJSONparse(value);
-        })
-        return localStorage;
-    }, [])
+const GlobalStateProvider: FC<GlobalStateProviderProps> = ({ children }) => {
 
-    const [localStorage, setLocalStorage] = useState(getLocalStorage());
-
-
-    const setItem: (params: { key: string, value: any }) => void = useCallback(({ key, value: _value }) => {
-        if (!key) throw new Error("No key passed");
-        setLocalStorage(old => {
-            const value = tryJSONparse(_value);
-            window.localStorage.setItem(key, tryJSONStringify(_value));
-            const newLocalStorage = { ...old, [key]: value };
-            if (onChange) onChange(newLocalStorage)
-            return newLocalStorage;
-        })
-    }, [onChange])
-
-    const getItem: (key: string) => void = useCallback(key => {
-        if (!key) throw new Error("No key passed");
-        return localStorage[key];
-    }, [localStorage])
-
-    const removeItem: (key: string) => void = useCallback(key => {
-        if (!key) throw new Error("No key passed");
-        setLocalStorage(old => {
-            const newLocalStorage = { ...old };
-            window.localStorage.removeItem(key);
-            delete newLocalStorage[key];
-            if (onChange) onChange(newLocalStorage)
-            return newLocalStorage;
-        })
-    }, [onChange])
+    const [globalState, setGlobalState] = useState({});
 
     return (
-        <LocalStorageContext.Provider value={{
-            localStorage,
-            getItem,
-            setItem,
-            removeItem
+        <GlobalStateContext.Provider value={{
+            globalState,
+            setGlobalState
         }}>
             {children}
-        </LocalStorageContext.Provider>
+        </GlobalStateContext.Provider>
     )
 }
 
-export const useLocalStorageContext = () => {
-    const context = useContext(LocalStorageContext);
+export const useGlobalStateContext = () => {
+    const context = useContext(GlobalStateContext);
     if (context === undefined) {
-        throw new Error('useLocalStorageContext must be used within an LocalStorageContext.Provider');
+        throw new Error('useGlobalStateContext must be used within an GlobalStateContext.Provider');
     }
     return context;
 };
 
-export default LocalStorageProvider;
+export default GlobalStateProvider;

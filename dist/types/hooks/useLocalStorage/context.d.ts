@@ -9,10 +9,10 @@ interface LocalStorageContext {
     }) => void;
 }
 declare const LocalStorageContext: import("react").Context<LocalStorageContext>;
-interface LocalStorateProviderProps {
+interface LocalStorageProviderProps {
     withState?: boolean;
     onChange?: (localStorage: Record<string, any>) => void;
 }
-declare const LocalStorageProvider: FC<LocalStorateProviderProps>;
+declare const LocalStorageProvider: FC<LocalStorageProviderProps>;
 export declare const useLocalStorageContext: () => LocalStorageContext;
 export default LocalStorageProvider;

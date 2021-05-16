@@ -10,12 +10,12 @@ interface LocalStorageContext {
 }
 const LocalStorageContext = createContext({} as LocalStorageContext);
 
-interface LocalStorateProviderProps {
+interface LocalStorageProviderProps {
     withState?: boolean;
     onChange?: (localStorage: Record<string, any>) => void;
 }
 
-const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ withState = true, onChange, children }) => {
+const LocalStorageProvider: FC<LocalStorageProviderProps> = ({ withState = true, onChange, children }) => {
     const { tryJSONparse, tryJSONStringify } = useUtils();
 
     const getLocalStorage = useCallback(() => {
