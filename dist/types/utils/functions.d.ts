@@ -1,4 +1,3 @@
-import 'moment/min/locales.min';
 declare global {
     interface Window {
         createObjectURL: (object: any) => string;
@@ -8,6 +7,8 @@ declare global {
 export declare const isBrowser: () => boolean;
 export declare const emptyFunction: () => void;
 export declare const setIfNotEqual: (variable: any, value: any) => void;
+export declare const tryJSONparse: (obj: any) => any;
+export declare const tryJSONStringify: (obj: any) => any;
 export declare const transform: (value: number, actualRange: [number, number], targetRange: [number, number]) => number;
 export declare const memoComparer: <T>(prevProps: T, nextProps: T, props: Array<keyof T>) => boolean;
 export declare const isPointInRect: (point: {
@@ -46,7 +47,6 @@ export declare const downloadByDataURL: (dataURL: any, type: any) => void;
 export declare const bytesToSize: (bytes: any) => string;
 export declare const sum: (array?: any[]) => any;
 export declare const ArrayToJSON: (array: any, keyName: any, valueName: any) => {};
-export declare const formatDate: (date: any, format?: string) => string;
 export declare const isJSONEmpty: (json?: {}) => boolean;
 export declare const isArrayEmpty: (array?: any[]) => boolean;
 export declare const guid: () => string;
@@ -88,14 +88,11 @@ export declare const iFetch: (payload: FetchProps) => void;
 export declare const changeColor: (color: any, amt: any) => string;
 export declare const takeIf: (condition: any, value: any, defaultValue?: any) => any;
 export declare const spliceString: (string: any, startCount: any, deleteCount: any) => any;
-export declare const dateToDescription: (date: any) => string;
 export declare const isNullOrUndefined: (item: any) => boolean;
 export declare const coalasce: (first: any, second: any) => any;
 export declare const numberShouldStartWithZero: (number: any) => any;
 export declare const getTodayYear: () => number;
 export declare const getTodayMonth: () => number;
-export declare const getMonthDescription: (_month: any) => string;
-export declare const getDatesOfYear: (year: any) => any[];
 export declare const monthsNumberArray: number[];
 export declare const isArrayContains: (array: any, value: any, key: any) => boolean;
 export declare const JSONArrayIndexOf: (array: any, value: any, key: any) => any;

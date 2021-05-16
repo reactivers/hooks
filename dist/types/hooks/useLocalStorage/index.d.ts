@@ -1,6 +1,8 @@
-declare const useLocalStorage: (key: string, defaultValue?: string) => {
-    getItem: (_defaultValue?: any) => any;
-    setItem: (_value: any) => void;
-    removeItem: () => void;
+declare const useLocalStorage: (key?: string) => {
+    getItem: (_key?: any) => any;
+    setItem: (value: any) => void;
+    removeItem: (_key?: any) => void;
+    setItemWithKey: (_key: any, value: any) => void;
+    localStorage: Record<string, any>;
 };
 export default useLocalStorage;

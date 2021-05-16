@@ -1,6 +1,3 @@
-import moment from "moment";
-import 'moment/min/locales.min'
-
 declare global {
     interface Window {
         createObjectURL: (object: any) => string;
@@ -15,6 +12,21 @@ export const emptyFunction = () => { };
 
 export const setIfNotEqual = (variable: any, value: any) => {
     if (variable !== value) variable = value;
+}
+
+export const tryJSONparse = (obj: any) => {
+    try {
+        return JSON.parse(obj);
+    } catch {
+        return obj;
+    }
+}
+export const tryJSONStringify = (obj: any) => {
+    try {
+        return JSON.stringify(obj);
+    } catch {
+        return obj;
+    }
 }
 
 export const transform = (
@@ -240,10 +252,6 @@ export const ArrayToJSON = (array, keyName, valueName) => {
     return json
 }
 
-export const formatDate = (date, format = "DD MMMM YYYY") => {
-    return moment(date).format(format)
-}
-
 export const isJSONEmpty = (json = {}) => {
     return !Object.keys(json).length
 }
@@ -442,19 +450,6 @@ export const spliceString = (string, startCount, deleteCount) => {
     return string.split("").splice(startCount, deleteCount).join("");
 }
 
-export const dateToDescription = (date) => {
-    const momentDay = moment(date, "YYYY-MM-DD");
-    const momentToday = moment(new Date(), "YYYY-MM-DD");
-    const dayDiff = momentToday.diff(momentDay, 'days');
-    const monthDiff = momentToday.diff(momentDay, 'month');
-    if (dayDiff === 1)
-        return `Dün`;
-    else if (dayDiff) {
-        return `${monthDiff || dayDiff} ${monthDiff ? "ay" : "gün"} önce`
-    } else {
-        return "Bugün"
-    }
-}
 
 export const isNullOrUndefined = item => {
     return item === null || item === undefined
@@ -478,22 +473,6 @@ export const getTodayMonth = () => {
     return new Date().getMonth() + 1;
 }
 
-export const getMonthDescription = _month => {
-    const month = numberShouldStartWithZero(_month);
-    return moment(`2020-${month}-01`).format("MMMM");
-}
-
-export const getDatesOfYear = year => {
-    let date = moment(`${year}-01-01`);
-    let currentYear = year;
-    const dates = [];
-    while (currentYear === year) {
-        dates.push(date.format("YYYY-MM-DD"));
-        date = moment(date).add(1, 'day')
-        currentYear = date.get("year");
-    }
-    return dates;
-}
 export const monthsNumberArray = Array(12).fill(0).map((_, index) => ((index) % 12) + 1)
 
 export const isArrayContains = (array, value, key) => {

@@ -27,6 +27,12 @@ export { default as SafeAreaProvider } from "./hooks/useSafeArea/context";
 
 export { default as createTheme } from "./hooks/useTheme/context";
 
+export { default as LocalStorageProvider } from "./hooks/useLocalStorage/context";
+export { default as useLocalStorage } from "./hooks/useLocalStorage";
+
+export { default as CookieProvider } from "./hooks/useCookie/context";
+export { default as useCookie } from "./hooks/useCookie";
+
 
 export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useTitle } from "./hooks/useTitle/index";
@@ -34,4 +40,3 @@ export { default as useMeasure } from "./hooks/useMeasure";
 export { default as useHover } from "./hooks/useHover";
 export { default as useCounter } from "./hooks/useCounter";
 
-export { default as useLocalStorage } from "./hooks/useLocalStorage";

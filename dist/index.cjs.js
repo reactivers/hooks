@@ -4,12 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var react = require('react');
 var jsxRuntime = require('react/jsx-runtime');
-var moment = require('moment');
-require('moment/min/locales.min');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -49,122 +43,27 @@ function __rest(s, e) {
     return t;
 }
 
-var useLocalStorage = function (key, defaultValue) {
-    var getItem = react.useCallback(function (_defaultValue) {
-        try {
-            var value = JSON.parse(window.localStorage.getItem(key));
-            return value || _defaultValue || defaultValue;
-        }
-        catch (e) {
-            return defaultValue;
-        }
-    }, [defaultValue, key]);
-    var setItem = react.useCallback(function (_value) {
-        try {
-            var value = JSON.stringify(_value);
-            window.localStorage.setItem(key, value);
-        }
-        catch (e) {
-            window.localStorage.setItem(key, defaultValue || '{}');
-        }
-    }, [defaultValue, key]);
-    var removeItem = react.useCallback(function () {
-        window.localStorage.removeItem(key);
-    }, [key]);
-    return { getItem: getItem, setItem: setItem, removeItem: removeItem };
-};
-
-var AuthContext = react.createContext({});
-var AuthProvider = function (_a) {
-    var _b = _a.authTokenKeyName, authTokenKeyName = _b === void 0 ? 'token' : _b, _c = _a.localStorageTokenKeyName, localStorageTokenKeyName = _c === void 0 ? "token" : _c, _user = _a.user, _onLogin = _a.onLogin, _onLogout = _a.onLogout, initialCheckToken = _a.initialCheckToken, children = _a.children;
-    var _d = react.useState(_user), user = _d[0], setUser = _d[1];
-    var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, removeItem = _e.removeItem, setItem = _e.setItem;
-    var onLogin = react.useCallback(function (info) {
-        var oldToken = getItem();
-        var newToken = info[authTokenKeyName];
-        if (!oldToken || !!newToken) {
-            setItem(newToken);
-        }
-        var newUser = __assign({ token: newToken || oldToken }, (info || {}));
-        setUser(__assign(__assign({}, newUser), { isLoggedIn: true }));
-        if (_onLogin)
-            _onLogin(info);
-    }, [_onLogin, authTokenKeyName]);
-    var onLogout = react.useCallback(function () {
-        setUser({
-            isLoggedIn: false,
-        });
-        removeItem();
-        if (_onLogout)
-            _onLogout();
-    }, [_onLogout]);
-    var setToken = react.useCallback(function (token) {
-        if (token === undefined) {
-            setUser(function (old) { return (__assign(__assign({}, old), { isLoggedIn: false, token: undefined })); });
-            removeItem();
-        }
-        else {
-            setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
-            setItem(token);
-        }
-    }, []);
-    react.useEffect(function () {
-        if (initialCheckToken) {
-            var oldToken = getItem();
-            if (oldToken) {
-                setToken(oldToken);
-            }
-        }
-    }, [initialCheckToken, setToken]);
-    return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
-            localStorageTokenKeyName: localStorageTokenKeyName,
-            user: user,
-            setUser: setUser,
-            setToken: setToken,
-            onLogin: onLogin,
-            onLogout: onLogout
-        } }, { children: children }), void 0));
-};
-var useAuthContext = function () {
-    var context = react.useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuthContext must be used within an AuthContext.Provider');
-    }
-    return context;
-};
-AuthProvider.defaultProps = {
-    localStorageTokenKeyName: "token",
-    authTokenKeyName: "token",
-    user: { isLoggedIn: false },
-    initialCheckToken: true,
-};
-
-var useAuth = function () {
-    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, contextUser = _a.user;
-    var isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["isLoggedIn"]);
-    var token = user.token;
-    var logout = react.useCallback(function () {
-        onLogout();
-    }, [onLogout]);
-    var login = react.useCallback(function (data) {
-        onLogin(data);
-    }, [onLogin]);
-    return {
-        setToken: setToken,
-        login: login,
-        logout: logout,
-        setUser: setUser,
-        user: contextUser,
-        isLoggedIn: isLoggedIn,
-        token: token
-    };
-};
-
 var isBrowser = function () {
     return typeof window !== "undefined";
 };
 var emptyFunction = function () { };
 var setIfNotEqual = function (variable, value) {
+};
+var tryJSONparse = function (obj) {
+    try {
+        return JSON.parse(obj);
+    }
+    catch (_a) {
+        return obj;
+    }
+};
+var tryJSONStringify = function (obj) {
+    try {
+        return JSON.stringify(obj);
+    }
+    catch (_a) {
+        return obj;
+    }
 };
 var transform = function (value, actualRange, targetRange) {
     var minActualRange = actualRange[0], maxActualRange = actualRange[1];
@@ -348,10 +247,6 @@ var ArrayToJSON = function (array, keyName, valueName) {
     });
     return json;
 };
-var formatDate = function (date, format) {
-    if (format === void 0) { format = "DD MMMM YYYY"; }
-    return moment__default['default'](date).format(format);
-};
 var isJSONEmpty = function (json) {
     if (json === void 0) { json = {}; }
     return !Object.keys(json).length;
@@ -518,20 +413,6 @@ var takeIf = function (condition, value, defaultValue) {
 var spliceString = function (string, startCount, deleteCount) {
     return string.split("").splice(startCount, deleteCount).join("");
 };
-var dateToDescription = function (date) {
-    var momentDay = moment__default['default'](date, "YYYY-MM-DD");
-    var momentToday = moment__default['default'](new Date(), "YYYY-MM-DD");
-    var dayDiff = momentToday.diff(momentDay, 'days');
-    var monthDiff = momentToday.diff(momentDay, 'month');
-    if (dayDiff === 1)
-        return "D\u00FCn";
-    else if (dayDiff) {
-        return (monthDiff || dayDiff) + " " + (monthDiff ? "ay" : "gün") + " \u00F6nce";
-    }
-    else {
-        return "Bugün";
-    }
-};
 var isNullOrUndefined = function (item) {
     return item === null || item === undefined;
 };
@@ -548,21 +429,6 @@ var getTodayYear = function () {
 };
 var getTodayMonth = function () {
     return new Date().getMonth() + 1;
-};
-var getMonthDescription = function (_month) {
-    var month = numberShouldStartWithZero(_month);
-    return moment__default['default']("2020-" + month + "-01").format("MMMM");
-};
-var getDatesOfYear = function (year) {
-    var date = moment__default['default'](year + "-01-01");
-    var currentYear = year;
-    var dates = [];
-    while (currentYear === year) {
-        dates.push(date.format("YYYY-MM-DD"));
-        date = moment__default['default'](date).add(1, 'day');
-        currentYear = date.get("year");
-    }
-    return dates;
 };
 var monthsNumberArray = Array(12).fill(0).map(function (_, index) { return ((index) % 12) + 1; });
 var isArrayContains = function (array, value, key) {
@@ -610,6 +476,8 @@ var utils = /*#__PURE__*/Object.freeze({
     isBrowser: isBrowser,
     emptyFunction: emptyFunction,
     setIfNotEqual: setIfNotEqual,
+    tryJSONparse: tryJSONparse,
+    tryJSONStringify: tryJSONStringify,
     transform: transform,
     memoComparer: memoComparer,
     isPointInRect: isPointInRect,
@@ -629,7 +497,6 @@ var utils = /*#__PURE__*/Object.freeze({
     bytesToSize: bytesToSize,
     sum: sum,
     ArrayToJSON: ArrayToJSON,
-    formatDate: formatDate,
     isJSONEmpty: isJSONEmpty,
     isArrayEmpty: isArrayEmpty,
     guid: guid,
@@ -645,14 +512,11 @@ var utils = /*#__PURE__*/Object.freeze({
     changeColor: changeColor,
     takeIf: takeIf,
     spliceString: spliceString,
-    dateToDescription: dateToDescription,
     isNullOrUndefined: isNullOrUndefined,
     coalasce: coalasce,
     numberShouldStartWithZero: numberShouldStartWithZero,
     getTodayYear: getTodayYear,
     getTodayMonth: getTodayMonth,
-    getMonthDescription: getMonthDescription,
-    getDatesOfYear: getDatesOfYear,
     monthsNumberArray: monthsNumberArray,
     isArrayContains: isArrayContains,
     JSONArrayIndexOf: JSONArrayIndexOf,
@@ -664,6 +528,171 @@ var utils = /*#__PURE__*/Object.freeze({
 
 var useUtils = function () {
     return utils;
+};
+
+var LocalStorageContext = react.createContext({});
+var LocalStorageProvider = function (_a) {
+    var onChange = _a.onChange, children = _a.children;
+    var _b = useUtils(), tryJSONparse = _b.tryJSONparse, tryJSONStringify = _b.tryJSONStringify;
+    var getLocalStorage = react.useCallback(function () {
+        var localStorageKeys = Object.keys(window.localStorage);
+        var localStorage = {};
+        localStorageKeys.forEach(function (key) {
+            var value = window.localStorage[key];
+            localStorage[key] = tryJSONparse(value);
+        });
+        return localStorage;
+    }, []);
+    var _c = react.useState(getLocalStorage()), localStorage = _c[0], setLocalStorage = _c[1];
+    var setItem = react.useCallback(function (_a) {
+        var key = _a.key, _value = _a.value;
+        if (!key)
+            throw new Error("No key passed");
+        setLocalStorage(function (old) {
+            var _a;
+            var value = tryJSONparse(_value);
+            window.localStorage.setItem(key, tryJSONStringify(_value));
+            var newLocalStorage = __assign(__assign({}, old), (_a = {}, _a[key] = value, _a));
+            if (onChange)
+                onChange(newLocalStorage);
+            return newLocalStorage;
+        });
+    }, [onChange]);
+    var getItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        return localStorage[key];
+    }, [localStorage]);
+    var removeItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        setLocalStorage(function (old) {
+            var newLocalStorage = __assign({}, old);
+            window.localStorage.removeItem(key);
+            delete newLocalStorage[key];
+            if (onChange)
+                onChange(newLocalStorage);
+            return newLocalStorage;
+        });
+    }, [onChange]);
+    return (jsxRuntime.jsx(LocalStorageContext.Provider, __assign({ value: {
+            localStorage: localStorage,
+            getItem: getItem,
+            setItem: setItem,
+            removeItem: removeItem
+        } }, { children: children }), void 0));
+};
+var useLocalStorageContext = function () {
+    var context = react.useContext(LocalStorageContext);
+    if (context === undefined) {
+        throw new Error('useLocalStorageContext must be used within an LocalStorageContext.Provider');
+    }
+    return context;
+};
+
+var useLocalStorage = function (key) {
+    var _a = useLocalStorageContext(), _getItem = _a.getItem, _setItem = _a.setItem, _removeItem = _a.removeItem, localStorage = _a.localStorage;
+    var getItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _getItem(key || _key);
+    }, [_getItem]);
+    var setItem = react.useCallback(function (value) {
+        return _setItem({ key: key, value: value });
+    }, [_setItem]);
+    var setItemWithKey = react.useCallback(function (_key, value) {
+        return _setItem({ key: key || _key, value: value });
+    }, [_setItem]);
+    var removeItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _removeItem(key || _key);
+    }, [_removeItem]);
+    return { getItem: getItem, setItem: setItem, removeItem: removeItem, setItemWithKey: setItemWithKey, localStorage: localStorage };
+};
+
+var AuthContext = react.createContext({});
+var AuthProvider = function (_a) {
+    var _b = _a.authTokenKeyName, authTokenKeyName = _b === void 0 ? 'token' : _b, _c = _a.localStorageTokenKeyName, localStorageTokenKeyName = _c === void 0 ? "token" : _c, _user = _a.user, _onLogin = _a.onLogin, _onLogout = _a.onLogout, initialCheckToken = _a.initialCheckToken, children = _a.children;
+    var _d = react.useState(_user), user = _d[0], setUser = _d[1];
+    var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, removeItem = _e.removeItem, setItem = _e.setItem;
+    var onLogin = react.useCallback(function (info) {
+        var oldToken = getItem();
+        var newToken = info[authTokenKeyName];
+        if (!oldToken || !!newToken) {
+            setItem(newToken);
+        }
+        var newUser = __assign({ token: newToken || oldToken }, (info || {}));
+        setUser(__assign(__assign({}, newUser), { isLoggedIn: true }));
+        if (_onLogin)
+            _onLogin(info);
+    }, [_onLogin, authTokenKeyName]);
+    var onLogout = react.useCallback(function () {
+        setUser({
+            isLoggedIn: false,
+        });
+        removeItem();
+        if (_onLogout)
+            _onLogout();
+    }, [_onLogout]);
+    var setToken = react.useCallback(function (token) {
+        if (token === undefined) {
+            setUser(function (old) { return (__assign(__assign({}, old), { isLoggedIn: false, token: undefined })); });
+            removeItem();
+        }
+        else {
+            setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
+            setItem(token);
+        }
+    }, []);
+    react.useEffect(function () {
+        if (initialCheckToken) {
+            var oldToken = getItem();
+            if (oldToken) {
+                setToken(oldToken);
+            }
+        }
+    }, [initialCheckToken, setToken]);
+    return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
+            localStorageTokenKeyName: localStorageTokenKeyName,
+            user: user,
+            setUser: setUser,
+            setToken: setToken,
+            onLogin: onLogin,
+            onLogout: onLogout
+        } }, { children: children }), void 0));
+};
+var useAuthContext = function () {
+    var context = react.useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuthContext must be used within an AuthContext.Provider');
+    }
+    return context;
+};
+AuthProvider.defaultProps = {
+    localStorageTokenKeyName: "token",
+    authTokenKeyName: "token",
+    user: { isLoggedIn: false },
+    initialCheckToken: true,
+};
+
+var useAuth = function () {
+    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, contextUser = _a.user;
+    var isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["isLoggedIn"]);
+    var token = user.token;
+    var logout = react.useCallback(function () {
+        onLogout();
+    }, [onLogout]);
+    var login = react.useCallback(function (data) {
+        onLogin(data);
+    }, [onLogin]);
+    return {
+        setToken: setToken,
+        login: login,
+        logout: logout,
+        setUser: setUser,
+        user: contextUser,
+        isLoggedIn: isLoggedIn,
+        token: token
+    };
 };
 
 var FetchContext = react.createContext({});
@@ -1268,6 +1297,84 @@ function createTheme() {
     };
 }
 
+var CookieContext = react.createContext({});
+var CookieProvider = function (_a) {
+    _a.onChange; var children = _a.children;
+    var _b = useUtils(), tryJSONparse = _b.tryJSONparse, tryJSONStringify = _b.tryJSONStringify;
+    var getCookies = react.useCallback(function () {
+        var _cookies = document.cookie.split(';');
+        var cookies = {};
+        _cookies.forEach(function (cookie) {
+            var _a = cookie.split("="), key = _a[0], value = _a[1];
+            cookies[key] = tryJSONparse(value);
+        });
+        return cookies;
+    }, []);
+    var _c = react.useState(getCookies()), cookie = _c[0], setCookie = _c[1];
+    var setItem = react.useCallback(function (_a) {
+        var key = _a.key, value = _a.value, expireDays = _a.expireDays, expireHours = _a.expireHours, expire = _a.expire, _b = _a.path, path = _b === void 0 ? "/" : _b;
+        if (!key)
+            throw new Error("No key passed");
+        var d = new Date();
+        var oneHour = 60 * 60 * 1000;
+        if (!!expireDays) {
+            d.setTime(d.getTime() + (expireDays * 24 * oneHour));
+        }
+        else if (!!expireHours) {
+            d.setTime(d.getTime() + (expireHours * oneHour));
+        }
+        document.cookie = key + "=" + tryJSONStringify(value) + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
+    }, []);
+    var getItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        return cookie[key];
+    }, [cookie]);
+    var removeItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        var invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
+        setCookie(function (old) {
+            var newCookie = __assign({}, old);
+            document.cookie = key + "= ;expires=" + invalidDate + ";";
+            delete newCookie[key];
+            return newCookie;
+        });
+    }, []);
+    return (jsxRuntime.jsx(CookieContext.Provider, __assign({ value: {
+            cookie: cookie,
+            getItem: getItem,
+            setItem: setItem,
+            removeItem: removeItem
+        } }, { children: children }), void 0));
+};
+var useCookieContext = function () {
+    var context = react.useContext(CookieContext);
+    if (context === undefined) {
+        throw new Error('useCookieContext must be used within an CookieContext.Provider');
+    }
+    return context;
+};
+
+var useCookie = function (key) {
+    var _a = useCookieContext(), _getItem = _a.getItem, _setItem = _a.setItem, _removeItem = _a.removeItem, cookie = _a.cookie;
+    var getItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _getItem(key || _key);
+    }, [_getItem]);
+    var setItem = react.useCallback(function (_params) {
+        var params = __assign({}, _params);
+        if (!!key && !params.key)
+            params.key = key;
+        return _setItem(params);
+    }, [_setItem]);
+    var removeItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _removeItem(key || _key);
+    }, [_removeItem]);
+    return { getItem: getItem, setItem: setItem, removeItem: removeItem, cookie: cookie };
+};
+
 var useTitle = function (props) {
     if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
     var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
@@ -1392,15 +1499,18 @@ var useHover = function (_a) {
 };
 
 exports.AuthProvider = AuthProvider;
+exports.CookieProvider = CookieProvider;
 exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
 exports.FetchProvider = FetchProvider;
 exports.LoadingProvider = LoadingProvider;
+exports.LocalStorageProvider = LocalStorageProvider;
 exports.SafeAreaProvider = SafeAreaProvider;
 exports.SocketProvider = SocketProvider;
 exports.createLocale = createLocale;
 exports.createTheme = createTheme;
 exports.useAuth = useAuth;
+exports.useCookie = useCookie;
 exports.useCounter = useCounter;
 exports.useDelete = useDelete;
 exports.useDimensions = useDimensions;
