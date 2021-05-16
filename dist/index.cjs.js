@@ -853,7 +853,7 @@ var useDimensions = function (payload) {
         var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
-    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, [getSizeOfWindowWidth]);
+    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(isBrowser() ? window.innerWidth : 0); }, [getSizeOfWindowWidth]);
     var _c = react.useState(isBrowser() ? {
         width: window.innerWidth,
         height: window.innerHeight,

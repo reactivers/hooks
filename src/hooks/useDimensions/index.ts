@@ -38,7 +38,7 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)]
     }, [findLastIndex, widths, sizes, takeIf])
 
-    const initialSize = useMemo(() => getSizeOfWindowWidth(window.innerWidth), [getSizeOfWindowWidth])
+    const initialSize = useMemo(() => getSizeOfWindowWidth(isBrowser() ? window.innerWidth : 0), [getSizeOfWindowWidth])
 
     const [dimensions, setDimensions] = useState<Dimensions>(isBrowser() ? {
         width: window.innerWidth,
