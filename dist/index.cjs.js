@@ -925,8 +925,6 @@ var EventListenerProvider = function (_a) {
     var children = _a.children;
     var events = react.useRef({}).current;
     var guid = useUtils().guid;
-    //@ts-ignore
-    window.hookEvents = events;
     var removeEvent = react.useCallback(function (component, name, id) {
         if (!!events)
             if (!!events[component])
