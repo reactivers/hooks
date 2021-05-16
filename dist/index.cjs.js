@@ -1257,7 +1257,7 @@ function createTheme() {
             if (isBrowser()) {
                 updateInitialTheme();
             }
-        }, [window]);
+        }, [isBrowser]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {

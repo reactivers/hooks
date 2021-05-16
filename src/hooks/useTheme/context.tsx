@@ -57,7 +57,7 @@ function createTheme<T>() {
             if (isBrowser()) {
                 updateInitialTheme()
             }
-        }, [window])
+        }, [isBrowser])
 
 
         const getCurrentTheme = useCallback((e) => {
