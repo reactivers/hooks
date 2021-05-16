@@ -1259,8 +1259,14 @@ function createTheme() {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
-            if (!isChanged.current) {
-                updateInitialTheme();
+            if (isBrowser()) {
+                if (!isChanged.current) {
+                    updateInitialTheme();
+                    document.addEventListener("DOMContentLoaded", updateInitialTheme);
+                }
+                return function () {
+                    document.removeEventListener("DOMContentLoaded", updateInitialTheme);
+                };
             }
         }, [isChanged.current, updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {
