@@ -31,7 +31,7 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ withState = true, onCha
         const cookies = {};
         _cookies.forEach(cookie => {
             const [key, value] = cookie.split("=");
-            cookies[key] = tryJSONparse(value);
+            cookies[key.trim()] = tryJSONparse(value);
         });
         return cookies;
     }, [])
@@ -49,10 +49,10 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ withState = true, onCha
             d.setTime(d.getTime() + (expireHours * oneHour));
         }
         const newCookie = tryJSONStringify(value)
-        document.cookie = `${key}=${newCookie};expires=${expire || d.toUTCString()};path=${path}`;
+        document.cookie = `${key.trim()}=${newCookie};expires=${expire || d.toUTCString()};path=${path}`;
         if (withState)
             setCookie(old => {
-                const newCookies = { ...old, [key]: newCookie };
+                const newCookies = { ...old, [key.trim()]: newCookie };
                 if (onChange) onChange(newCookies)
                 return newCookies;
             })
@@ -70,11 +70,11 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ withState = true, onCha
     const removeItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
         const invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
-        document.cookie = `${key}= ;expires=${invalidDate};`;
+        document.cookie = `${key.trim()}= ;expires=${invalidDate};`;
         if (withState)
             setCookie(old => {
                 const newCookie = { ...old };
-                delete newCookie[key];
+                delete newCookie[key.trim()];
                 if (onChange) onChange(newCookie)
                 return newCookie;
             })

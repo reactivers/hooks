@@ -1319,7 +1319,7 @@ var CookieProvider = function (_a) {
         var cookies = {};
         _cookies.forEach(function (cookie) {
             var _a = cookie.split("="), key = _a[0], value = _a[1];
-            cookies[key] = tryJSONparse(value);
+            cookies[key.trim()] = tryJSONparse(value);
         });
         return cookies;
     }, []);
@@ -1337,11 +1337,11 @@ var CookieProvider = function (_a) {
             d.setTime(d.getTime() + (expireHours * oneHour));
         }
         var newCookie = tryJSONStringify(value);
-        document.cookie = key + "=" + newCookie + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
+        document.cookie = key.trim() + "=" + newCookie + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
         if (withState)
             setCookie(function (old) {
                 var _a;
-                var newCookies = __assign(__assign({}, old), (_a = {}, _a[key] = newCookie, _a));
+                var newCookies = __assign(__assign({}, old), (_a = {}, _a[key.trim()] = newCookie, _a));
                 if (onChange)
                     onChange(newCookies);
                 return newCookies;
@@ -1361,11 +1361,11 @@ var CookieProvider = function (_a) {
         if (!key)
             throw new Error("No key passed");
         var invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
-        document.cookie = key + "= ;expires=" + invalidDate + ";";
+        document.cookie = key.trim() + "= ;expires=" + invalidDate + ";";
         if (withState)
             setCookie(function (old) {
                 var newCookie = __assign({}, old);
-                delete newCookie[key];
+                delete newCookie[key.trim()];
                 if (onChange)
                     onChange(newCookie);
                 return newCookie;
