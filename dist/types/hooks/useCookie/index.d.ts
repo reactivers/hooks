@@ -6,10 +6,11 @@ interface CookieSetItem {
     expire?: string;
     path?: string;
 }
-declare const useCookie: (key?: string) => {
-    getItem: (_key?: any) => any;
-    setItem: (_params: CookieSetItem) => void;
-    removeItem: (_key?: any) => void;
+interface IUseCookieReturn {
+    getItem: (key?: string) => any;
+    setItem: (params: CookieSetItem) => void;
+    removeItem: (key?: string) => void;
     cookie: Record<string, any>;
-};
+}
+declare const useCookie: (key?: string) => IUseCookieReturn;
 export default useCookie;

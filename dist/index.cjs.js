@@ -1398,7 +1398,7 @@ var useCookie = function (key) {
         var params = __assign({}, _params);
         if (!!key && !params.key)
             params.key = key;
-        return _setItem(params);
+        _setItem(params);
     }, [_setItem]);
     var removeItem = react.useCallback(function (_key) {
         if (_key === void 0) { _key = undefined; }

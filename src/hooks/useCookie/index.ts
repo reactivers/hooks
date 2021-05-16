@@ -10,7 +10,14 @@ interface CookieSetItem {
     path?: string
 }
 
-const useCookie = (key?: string) => {
+interface IUseCookieReturn {
+    getItem: (key?: string) => any;
+    setItem: (params: CookieSetItem) => void;
+    removeItem: (key?: string) => void;
+    cookie: Record<string, any>
+}
+
+const useCookie: (key?: string) => IUseCookieReturn = (key?: string) => {
     const { getItem: _getItem, setItem: _setItem, removeItem: _removeItem, cookie } = useCookieContext();
 
     const getItem = useCallback((_key = undefined) => {
@@ -20,7 +27,7 @@ const useCookie = (key?: string) => {
     const setItem = useCallback((_params: CookieSetItem) => {
         const params = { ..._params };
         if (!!key && !params.key) params.key = key;
-        return _setItem(params as ContextCookieSetItem)
+        _setItem(params as ContextCookieSetItem)
     }, [_setItem])
 
 

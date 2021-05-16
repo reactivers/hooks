@@ -1,6 +1,14 @@
 import { useCallback, useState } from "react";
 
-const useCounter = (params = { initial: 0 }) => {
+interface IUseCounter {
+    increase: (by?: number) => void;
+    decrease: (by?: number) => void;
+    reset: () => void;
+    setCounter: (counter: number) => void;
+    counter: number
+}
+
+const useCounter: (params?: { initial: number }) => IUseCounter = (params = { initial: 0 }) => {
     const [counter, setCounter] = useState<number>(params.initial);
 
     const increase = useCallback((by: number = 1) => {
