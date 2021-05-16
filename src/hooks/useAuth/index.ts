@@ -1,21 +1,5 @@
 import { useCallback } from 'react';
-import useLocalStorage from "../useLocalStorage";
 import { useAuthContext, UserInfo } from './context';
-
-declare global {
-    interface Window {
-        gapi: GoogleAuthApi;
-        FB: FacebookAuthApi;
-    }
-}
-
-interface GoogleAuthApi {
-    auth2: any
-}
-
-interface FacebookAuthApi {
-    logout: any
-}
 
 interface IUseAuth {
     setToken: (token: string) => void,
@@ -23,48 +7,30 @@ interface IUseAuth {
     logout: () => void,
     setUser: (user: UserInfo) => void,
     user: UserInfo,
+    isLoggedIn: boolean;
     token: string
 }
 
 const useAuth: () => IUseAuth = () => {
-    const { localStorageTokenKeyName, onLogout, onLogin, setToken, setUser, user } = useAuthContext();
+    const { onLogout, onLogin, setToken, setUser, user: contextUser } = useAuthContext();
+    const { isLoggedIn, ...user } = contextUser;
     const { token } = user;
-    const { setItem } = useLocalStorage(localStorageTokenKeyName)
 
     const logout = useCallback(() => {
-        setItem("")
-        const gapi = window.gapi;
-        if (gapi)
-            if (gapi.auth2) {
-                var auth2 = gapi.auth2.getAuthInstance();
-                if (auth2) {
-                    auth2.signOut().then(function () {
-                        console.log('User signed out.');
-                    });
-                }
-            }
-
-        const FB = window.FB;
-        if (FB) {
-            if (FB.logout) {
-                FB.logout(function (response) {
-                });
-            }
-        }
         onLogout();
-    }, [setItem, onLogout])
+    }, [onLogout])
 
     const login = useCallback((data) => {
-        setToken(data.token);
         onLogin(data)
-    }, [onLogin, setToken])
+    }, [onLogin])
 
     return {
         setToken,
         login,
         logout,
         setUser,
-        user,
+        user: contextUser,
+        isLoggedIn,
         token
     }
 }

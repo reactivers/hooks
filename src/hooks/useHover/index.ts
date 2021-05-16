@@ -52,8 +52,7 @@ const useHover: (props: HoverProps) => HoverResponse = ({
                     isInRange([boundingRect.top, boundingRect.bottom], clientY, includeBorders, includeBorders)
                     : isInRange([boundingRect.left, boundingRect.right], clientX, includeBorders, includeBorders);
 
-            if (isHover !== _isHover)
-                setIsHover(_isHover)
+            setIsHover(_isHover)
         },
         [ref.current, isHover, includeBorders, checkInVertically, checkInHorizontally, top, right, bottom, left]
     );

@@ -4,12 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var react = require('react');
 var jsxRuntime = require('react/jsx-runtime');
-var moment = require('moment');
-require('moment/min/locales.min');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -37,115 +31,41 @@ var __assign = function() {
     return __assign.apply(this, arguments);
 };
 
-var useLocalStorage = function (key, defaultValue) {
-    var getItem = react.useCallback(function (_defaultValue) {
-        try {
-            var value = JSON.parse(window.localStorage.getItem(key));
-            return value || _defaultValue || defaultValue;
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
         }
-        catch (e) {
-            return defaultValue;
-        }
-    }, [defaultValue, key]);
-    var setItem = react.useCallback(function (_value) {
-        try {
-            var value = JSON.stringify(_value);
-            window.localStorage.setItem(key, value);
-        }
-        catch (e) {
-            window.localStorage.setItem(key, defaultValue || '{}');
-        }
-    }, [defaultValue, key]);
-    var removeItem = react.useCallback(function () {
-        window.localStorage.removeItem(key);
-    }, [key]);
-    return { getItem: getItem, setItem: setItem, removeItem: removeItem };
-};
-
-var AuthContext = react.createContext({});
-var AuthProvider = function (_a) {
-    var _b = _a.localStorageTokenKeyName, localStorageTokenKeyName = _b === void 0 ? "token" : _b, _c = _a.user, _user = _c === void 0 ? {
-        isLoggedIn: false,
-        checked: false
-    } : _c, _onLogin = _a.onLogin, _onLogout = _a.onLogout, children = _a.children;
-    var _d = react.useState(_user), user = _d[0], setUser = _d[1];
-    var onLogin = react.useCallback(function (info) {
-        setUser(__assign(__assign({}, (info || {})), { isLoggedIn: true, checked: true }));
-        if (_onLogin)
-            _onLogin(info);
-    }, [_onLogin]);
-    var onLogout = react.useCallback(function () {
-        setUser({
-            isLoggedIn: false,
-            checked: true
-        });
-        if (_onLogout)
-            _onLogout();
-    }, [_onLogout]);
-    var setToken = react.useCallback(function (token) {
-        setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
-    }, []);
-    return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
-            localStorageTokenKeyName: localStorageTokenKeyName,
-            user: user,
-            setUser: setUser,
-            setToken: setToken,
-            onLogin: onLogin,
-            onLogout: onLogout
-        } }, { children: children }), void 0));
-};
-var useAuthContext = function () {
-    var context = react.useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuthContext must be used within an AuthContext.Provider');
-    }
-    return context;
-};
-
-var useAuth = function () {
-    var _a = useAuthContext(), localStorageTokenKeyName = _a.localStorageTokenKeyName, onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, user = _a.user;
-    var token = user.token;
-    var setItem = useLocalStorage(localStorageTokenKeyName).setItem;
-    var logout = react.useCallback(function () {
-        setItem("");
-        var gapi = window.gapi;
-        if (gapi)
-            if (gapi.auth2) {
-                var auth2 = gapi.auth2.getAuthInstance();
-                if (auth2) {
-                    auth2.signOut().then(function () {
-                        console.log('User signed out.');
-                    });
-                }
-            }
-        var FB = window.FB;
-        if (FB) {
-            if (FB.logout) {
-                FB.logout(function (response) {
-                });
-            }
-        }
-        onLogout();
-    }, [setItem, onLogout]);
-    var login = react.useCallback(function (data) {
-        setToken(data.token);
-        onLogin(data);
-    }, [onLogin, setToken]);
-    return {
-        setToken: setToken,
-        login: login,
-        logout: logout,
-        setUser: setUser,
-        user: user,
-        token: token
-    };
-};
+    return t;
+}
 
 var isBrowser = function () {
     return typeof window !== "undefined";
 };
 var emptyFunction = function () { };
 var setIfNotEqual = function (variable, value) {
+};
+var tryJSONparse = function (obj) {
+    try {
+        return JSON.parse(obj);
+    }
+    catch (_a) {
+        return obj;
+    }
+};
+var tryJSONStringify = function (obj) {
+    if (typeof obj === "string")
+        return obj;
+    try {
+        return JSON.stringify(obj);
+    }
+    catch (_a) {
+        return obj;
+    }
 };
 var transform = function (value, actualRange, targetRange) {
     var minActualRange = actualRange[0], maxActualRange = actualRange[1];
@@ -329,10 +249,6 @@ var ArrayToJSON = function (array, keyName, valueName) {
     });
     return json;
 };
-var formatDate = function (date, format) {
-    if (format === void 0) { format = "DD MMMM YYYY"; }
-    return moment__default['default'](date).format(format);
-};
 var isJSONEmpty = function (json) {
     if (json === void 0) { json = {}; }
     return !Object.keys(json).length;
@@ -499,20 +415,6 @@ var takeIf = function (condition, value, defaultValue) {
 var spliceString = function (string, startCount, deleteCount) {
     return string.split("").splice(startCount, deleteCount).join("");
 };
-var dateToDescription = function (date) {
-    var momentDay = moment__default['default'](date, "YYYY-MM-DD");
-    var momentToday = moment__default['default'](new Date(), "YYYY-MM-DD");
-    var dayDiff = momentToday.diff(momentDay, 'days');
-    var monthDiff = momentToday.diff(momentDay, 'month');
-    if (dayDiff === 1)
-        return "D\u00FCn";
-    else if (dayDiff) {
-        return (monthDiff || dayDiff) + " " + (monthDiff ? "ay" : "gün") + " \u00F6nce";
-    }
-    else {
-        return "Bugün";
-    }
-};
 var isNullOrUndefined = function (item) {
     return item === null || item === undefined;
 };
@@ -529,21 +431,6 @@ var getTodayYear = function () {
 };
 var getTodayMonth = function () {
     return new Date().getMonth() + 1;
-};
-var getMonthDescription = function (_month) {
-    var month = numberShouldStartWithZero(_month);
-    return moment__default['default']("2020-" + month + "-01").format("MMMM");
-};
-var getDatesOfYear = function (year) {
-    var date = moment__default['default'](year + "-01-01");
-    var currentYear = year;
-    var dates = [];
-    while (currentYear === year) {
-        dates.push(date.format("YYYY-MM-DD"));
-        date = moment__default['default'](date).add(1, 'day');
-        currentYear = date.get("year");
-    }
-    return dates;
 };
 var monthsNumberArray = Array(12).fill(0).map(function (_, index) { return ((index) % 12) + 1; });
 var isArrayContains = function (array, value, key) {
@@ -591,6 +478,8 @@ var utils = /*#__PURE__*/Object.freeze({
     isBrowser: isBrowser,
     emptyFunction: emptyFunction,
     setIfNotEqual: setIfNotEqual,
+    tryJSONparse: tryJSONparse,
+    tryJSONStringify: tryJSONStringify,
     transform: transform,
     memoComparer: memoComparer,
     isPointInRect: isPointInRect,
@@ -610,7 +499,6 @@ var utils = /*#__PURE__*/Object.freeze({
     bytesToSize: bytesToSize,
     sum: sum,
     ArrayToJSON: ArrayToJSON,
-    formatDate: formatDate,
     isJSONEmpty: isJSONEmpty,
     isArrayEmpty: isArrayEmpty,
     guid: guid,
@@ -626,14 +514,11 @@ var utils = /*#__PURE__*/Object.freeze({
     changeColor: changeColor,
     takeIf: takeIf,
     spliceString: spliceString,
-    dateToDescription: dateToDescription,
     isNullOrUndefined: isNullOrUndefined,
     coalasce: coalasce,
     numberShouldStartWithZero: numberShouldStartWithZero,
     getTodayYear: getTodayYear,
     getTodayMonth: getTodayMonth,
-    getMonthDescription: getMonthDescription,
-    getDatesOfYear: getDatesOfYear,
     monthsNumberArray: monthsNumberArray,
     isArrayContains: isArrayContains,
     JSONArrayIndexOf: JSONArrayIndexOf,
@@ -647,97 +532,300 @@ var useUtils = function () {
     return utils;
 };
 
-var ApiContext = react.createContext({});
-var ApiProvider = function (_a) {
-    var url = _a.url, onSuccess = _a.onSuccess, onError = _a.onError, children = _a.children;
-    return (jsxRuntime.jsx(ApiContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onError: onError } }, { children: children }), void 0));
+var LocalStorageContext = react.createContext({});
+var LocalStorageProvider = function (_a) {
+    var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var getLocalStorage = react.useCallback(function () {
+        var localStorageKeys = Object.keys(window.localStorage);
+        var localStorage = {};
+        localStorageKeys.forEach(function (key) {
+            var value = window.localStorage[key];
+            localStorage[key] = tryJSONparse(value);
+        });
+        return localStorage;
+    }, []);
+    var _d = react.useState(getLocalStorage()), localStorage = _d[0], setLocalStorage = _d[1];
+    var setItem = react.useCallback(function (_a) {
+        var key = _a.key, _value = _a.value;
+        if (!key)
+            throw new Error("No key passed");
+        var value = tryJSONparse(_value);
+        window.localStorage.setItem(key, tryJSONStringify(_value));
+        if (withState) {
+            setLocalStorage(function (old) {
+                var _a;
+                var newLocalStorage = __assign(__assign({}, old), (_a = {}, _a[key] = value, _a));
+                if (onChange)
+                    onChange(newLocalStorage);
+                return newLocalStorage;
+            });
+        }
+        else {
+            onChange(getLocalStorage());
+        }
+    }, [onChange, withState, getLocalStorage]);
+    var getItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        if (withState)
+            return localStorage[key];
+        else
+            return getLocalStorage()[key];
+    }, [localStorage, withState, getLocalStorage]);
+    var removeItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        window.localStorage.removeItem(key);
+        if (withState)
+            setLocalStorage(function (old) {
+                var newLocalStorage = __assign({}, old);
+                delete newLocalStorage[key];
+                if (onChange)
+                    onChange(newLocalStorage);
+                return newLocalStorage;
+            });
+        else if (onChange)
+            onChange(getLocalStorage());
+    }, [onChange, withState, getLocalStorage]);
+    return (jsxRuntime.jsx(LocalStorageContext.Provider, __assign({ value: {
+            localStorage: localStorage,
+            getItem: getItem,
+            setItem: setItem,
+            removeItem: removeItem
+        } }, { children: children }), void 0));
 };
-var useApiContext = function () {
-    var context = react.useContext(ApiContext);
+var useLocalStorageContext = function () {
+    var context = react.useContext(LocalStorageContext);
     if (context === undefined) {
-        throw new Error('useApiContext must be used within an ApiContext.Provider');
+        throw new Error('useLocalStorageContext must be used within an LocalStorageContext.Provider');
     }
     return context;
 };
 
-var useApi = function (parameterPayload) {
-    if (parameterPayload === void 0) { parameterPayload = { initialValue: {} }; }
+var useLocalStorage = function (key) {
+    var _a = useLocalStorageContext(), _getItem = _a.getItem, _setItem = _a.setItem, _removeItem = _a.removeItem, localStorage = _a.localStorage;
+    var getItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _getItem(key || _key);
+    }, [_getItem]);
+    var setItem = react.useCallback(function (value) {
+        return _setItem({ key: key, value: value });
+    }, [_setItem]);
+    var setItemWithKey = react.useCallback(function (_key, value) {
+        return _setItem({ key: key || _key, value: value });
+    }, [_setItem]);
+    var removeItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _removeItem(key || _key);
+    }, [_removeItem]);
+    return { getItem: getItem, setItem: setItem, removeItem: removeItem, setItemWithKey: setItemWithKey, localStorage: localStorage };
+};
+
+var AuthContext = react.createContext({});
+var AuthProvider = function (_a) {
+    var _b = _a.authTokenKeyName, authTokenKeyName = _b === void 0 ? 'token' : _b, _c = _a.localStorageTokenKeyName, localStorageTokenKeyName = _c === void 0 ? "token" : _c, _user = _a.user, _onLogin = _a.onLogin, _onLogout = _a.onLogout, initialCheckToken = _a.initialCheckToken, children = _a.children;
+    var _d = react.useState(_user), user = _d[0], setUser = _d[1];
+    var _e = useLocalStorage(localStorageTokenKeyName), getItem = _e.getItem, removeItem = _e.removeItem, setItem = _e.setItem;
+    var onLogin = react.useCallback(function (info) {
+        var oldToken = getItem();
+        var newToken = info[authTokenKeyName];
+        if (!oldToken || !!newToken) {
+            setItem(newToken);
+        }
+        var newUser = __assign({ token: newToken || oldToken }, (info || {}));
+        setUser(__assign(__assign({}, newUser), { isLoggedIn: true }));
+        if (_onLogin)
+            _onLogin(info);
+    }, [_onLogin, authTokenKeyName]);
+    var onLogout = react.useCallback(function () {
+        setUser({
+            isLoggedIn: false,
+        });
+        removeItem();
+        if (_onLogout)
+            _onLogout();
+    }, [_onLogout]);
+    var setToken = react.useCallback(function (token) {
+        if (token === undefined) {
+            setUser(function (old) { return (__assign(__assign({}, old), { isLoggedIn: false, token: undefined })); });
+            removeItem();
+        }
+        else {
+            setUser(function (old) { return (__assign(__assign({}, old), { token: token })); });
+            setItem(token);
+        }
+    }, []);
+    react.useEffect(function () {
+        if (initialCheckToken) {
+            var oldToken = getItem();
+            if (oldToken) {
+                setToken(oldToken);
+            }
+        }
+    }, [initialCheckToken, setToken]);
+    return (jsxRuntime.jsx(AuthContext.Provider, __assign({ value: {
+            localStorageTokenKeyName: localStorageTokenKeyName,
+            user: user,
+            setUser: setUser,
+            setToken: setToken,
+            onLogin: onLogin,
+            onLogout: onLogout
+        } }, { children: children }), void 0));
+};
+var useAuthContext = function () {
+    var context = react.useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuthContext must be used within an AuthContext.Provider');
+    }
+    return context;
+};
+AuthProvider.defaultProps = {
+    localStorageTokenKeyName: "token",
+    authTokenKeyName: "token",
+    user: { isLoggedIn: false },
+    initialCheckToken: true,
+};
+
+var useAuth = function () {
+    var _a = useAuthContext(), onLogout = _a.onLogout, onLogin = _a.onLogin, setToken = _a.setToken, setUser = _a.setUser, contextUser = _a.user;
+    var isLoggedIn = contextUser.isLoggedIn, user = __rest(contextUser, ["isLoggedIn"]);
+    var token = user.token;
+    var logout = react.useCallback(function () {
+        onLogout();
+    }, [onLogout]);
+    var login = react.useCallback(function (data) {
+        onLogin(data);
+    }, [onLogin]);
+    return {
+        setToken: setToken,
+        login: login,
+        logout: logout,
+        setUser: setUser,
+        user: contextUser,
+        isLoggedIn: isLoggedIn,
+        token: token
+    };
+};
+
+var FetchContext = react.createContext({});
+var FetchProvider = function (_a) {
+    var url = _a.url, onRequest = _a.onRequest, onSuccess = _a.onSuccess, onError = _a.onError, children = _a.children;
+    return (jsxRuntime.jsx(FetchContext.Provider, __assign({ value: { url: url, onSuccess: onSuccess, onRequest: onRequest, onError: onError } }, { children: children }), void 0));
+};
+var useFetchContext = function () {
+    var context = react.useContext(FetchContext);
+    if (context === undefined) {
+        throw new Error('useFetchContext must be used within an FetchContext.Provider');
+    }
+    return context;
+};
+
+var useFetch = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var abortOnUnmount = params.abortOnUnmount;
     var iFetch = useUtils().iFetch;
-    var payloadRef = react.useRef(parameterPayload);
-    var _a = payloadRef.current, payloadURL = _a.url, endpoint = _a.endpoint, _b = _a.method, method = _b === void 0 ? 'GET' : _b, params = _a.params, initialValue = _a.initialValue, formData = _a.formData, payloadOnSuccess = _a.onSuccess, payloadOnError = _a.onError;
-    var _c = useApiContext(), contextURL = _c.url, contextOnSuccess = _c.onSuccess, contextOnError = _c.onError;
-    var url = payloadURL || contextURL;
+    var _a = useFetchContext(), contextURL = _a.url, contextOnSuccess = _a.onSuccess, contextOnError = _a.onError, onRequest = _a.onRequest;
     var token = useAuth().token;
-    var _d = react.useState({
+    var _b = react.useState({
         success: undefined,
         firstTimeFetched: false,
         fetched: false,
         fetching: false,
-        response: initialValue
-    }), data = _d[0], setData = _d[1];
-    var fetching = data.fetching;
-    var shouldFetch = react.useRef(false);
-    var controller = react.useMemo(function () { return new AbortController(); }, [fetching]);
-    (new AbortController()).signal;
-    var onSuccess = react.useCallback(function (response) {
+        response: {}
+    }), data = _b[0], setData = _b[1];
+    var abortController = react.useMemo(function () { return new AbortController(); }, []);
+    var onSuccess = react.useCallback(function (_a) {
+        var payloadOnSuccess = _a.onSuccess, response = _a.response;
         if (contextOnSuccess)
             contextOnSuccess(response);
         if (payloadOnSuccess)
             payloadOnSuccess(response);
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: true, response: response, fetching: false, fetched: true, firstTimeFetched: true })); });
-    }, [payloadOnSuccess, contextOnSuccess]);
-    var onError = react.useCallback(function (response, responseJSON) {
-        if (responseJSON === void 0) { responseJSON = {}; }
+    }, [contextOnSuccess]);
+    var onError = react.useCallback(function (_a) {
+        var payloadOnError = _a.onError, response = _a.response, responseJSON = _a.responseJSON;
         setData(function (oldData) { return (__assign(__assign({}, oldData), { success: false, response: __assign({}, (responseJSON || response)), fetching: false, fetched: true, firstTimeFetched: true })); });
         if (contextOnError)
             contextOnError(responseJSON || response, response);
         if (payloadOnError)
             payloadOnError(responseJSON || response, response);
-    }, [payloadOnError, contextOnError]);
-    var updateData = react.useCallback(function () {
-        setData(function (oldData) { return (__assign(__assign({}, oldData), { fetching: true, fetched: false })); });
-    }, []);
-    var load = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = undefined; }
-        shouldFetch.current = true;
-        if (payload)
-            payloadRef.current = __assign({}, payload);
-        updateData();
-    }, [updateData]);
-    react.useEffect(function () {
-        if (shouldFetch.current && fetching) {
-            iFetch({
-                url: url,
-                endpoint: endpoint,
-                params: params,
-                method: method,
-                formData: formData,
-                onSuccess: onSuccess,
-                onError: onError,
-                token: token,
-                signal: controller.signal
-            });
-            shouldFetch.current = false;
-        }
-    }, [
-        shouldFetch.current,
-        url,
-        fetching,
-        endpoint,
-        params,
-        method,
-        formData,
-        onSuccess,
-        onError,
-        token,
-        controller.signal,
-    ]);
+    }, [contextOnError]);
+    var request = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        var _url = payload.url, endpoint = payload.endpoint, method = payload.method, payloadOnSuccess = payload.onSuccess, payloadOnError = payload.onError, formData = payload.formData, params = payload.params;
+        var url = _url || contextURL;
+        if (onRequest)
+            onRequest(__assign(__assign({}, payload), { url: url }));
+        setData(function (old) { return (__assign(__assign({}, old), { fetching: true, fetched: false })); });
+        iFetch({
+            url: url,
+            endpoint: endpoint,
+            method: method,
+            formData: formData,
+            params: params,
+            onSuccess: function (response) { return onSuccess({
+                onSuccess: payloadOnSuccess,
+                response: response
+            }); },
+            onError: function (response, responseJSON) {
+                onError({
+                    onError: payloadOnError,
+                    response: response,
+                    responseJSON: responseJSON
+                });
+            },
+            token: token,
+            signal: abortController.signal
+        });
+    }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal]);
     react.useEffect(function () {
         return function () {
-            controller.abort();
+            if (abortOnUnmount)
+                abortController.abort();
         };
-    }, [controller.abort]);
-    return __assign({ load: load }, data);
+    }, [abortController.abort, abortOnUnmount]);
+    return __assign({ request: request }, data);
+};
+
+var useGet = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var getRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "GET" }));
+    }, [request]);
+    return __assign({ request: getRequest }, rest);
+};
+
+var usePost = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var postRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "POST" }));
+    }, [request]);
+    return __assign({ request: postRequest }, rest);
+};
+
+var usePut = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var putRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "PUT" }));
+    }, [request]);
+    return __assign({ request: putRequest }, rest);
+};
+
+var useDelete = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var deleteRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "DELETE" }));
+    }, [request]);
+    return __assign({ request: deleteRequest }, rest);
 };
 
 var DimensionsContext = react.createContext({});
@@ -917,27 +1005,28 @@ var useEventListener = function (component) {
     return { registerEvent: registerEvent, registerEventById: registerEventById, removeEvent: removeEvent, callAllEvents: callAllEvents, callEvent: callEvent };
 };
 
+var useCounter = function (params) {
+    if (params === void 0) { params = { initial: 0 }; }
+    var _a = react.useState(params.initial), counter = _a[0], setCounter = _a[1];
+    var increase = react.useCallback(function (by) {
+        if (by === void 0) { by = 1; }
+        setCounter(function (old) { return old + by; });
+    }, []);
+    var decrease = react.useCallback(function (by) {
+        if (by === void 0) { by = 1; }
+        setCounter(function (old) { return old - by; });
+    }, []);
+    var reset = react.useCallback(function () {
+        setCounter(params.initial);
+    }, [params.initial]);
+    return { counter: counter, setCounter: setCounter, reset: reset, increase: increase, decrease: decrease };
+};
+
 var LoadingContext = react.createContext({});
 var LoadingProvider = function (_a) {
-    var onIncrease = _a.onIncrease, onDecrease = _a.onDecrease, children = _a.children;
-    var _b = react.useState(0), loading = _b[0], setLoading = _b[1];
-    var increase = react.useCallback(function () {
-        setLoading(function (old) {
-            var newLoading = old + 1;
-            if (onIncrease)
-                onIncrease(newLoading);
-            return newLoading;
-        });
-    }, [onIncrease]);
-    var decrease = react.useCallback(function () {
-        setLoading(function (old) {
-            var newLoading = old - 1;
-            if (onDecrease)
-                onDecrease(newLoading);
-            return newLoading;
-        });
-    }, [onDecrease]);
-    return (jsxRuntime.jsx(LoadingContext.Provider, __assign({ value: { loading: loading, increase: increase, decrease: decrease } }, { children: children }), void 0));
+    var children = _a.children;
+    var _b = useCounter(), counter = _b.counter, increase = _b.increase, decrease = _b.decrease;
+    return (jsxRuntime.jsx(LoadingContext.Provider, __assign({ value: { loading: counter, increase: increase, decrease: decrease } }, { children: children }), void 0));
 };
 var useLoadingContext = function () {
     var context = react.useContext(LoadingContext);
@@ -949,175 +1038,33 @@ var useLoadingContext = function () {
 
 var useLoading = function () {
     var _a = useLoadingContext(), loading = _a.loading, increase = _a.increase, decrease = _a.decrease;
-    var isLoading = loading && loading > 0;
+    var isLoading = loading > 0;
     return { isLoading: isLoading, increase: increase, decrease: decrease };
 };
 
-var trTRLocales = {
-    Back: function () { return "Geri"; },
-    New: function () { return "Yeni"; },
-    Save: function () { return "Kaydet"; },
-    Decline: function () { return "Vazgeç"; },
-    Delete: function () { return "Sil"; },
-    Edit: function () { return "Düzenle"; },
-    Update: function () { return "Güncelle"; },
-    Accept: function () { return "Kabul Et"; },
-    Stores: function () { return "Mağazalar"; },
-    Purchases: function () { return "Satın Alımlar"; },
-    Sales: function () { return "Satışlar"; },
-    Profile: function () { return "Profil"; },
-    Menu: function () { return "Menü"; },
-    Payment: function () { return "Ödeme"; },
-    Orders: function () { return "Siparişler"; },
-    Tables: function () { return "Masalar"; },
-    Username: function () { return "Kullanıcı Adı"; },
-    Password: function () { return "Şifre"; },
-    FirstName: function () { return "Ad"; },
-    LastName: function () { return "Soyad"; },
-    PhoneNumber: function () { return "Telefon"; },
-    UpdateProfile: function () { return "Profil Güncelle"; },
-    Title: function () { return "Başlık"; },
-    Color: function () { return "Renk"; },
-    NewEvent: function () { return "Yeni Etkinlik"; },
-    Invitations: function () { return "Davetiyeler"; },
-    NoInvitations: function () { return "Davetiye bulunamadı"; },
-    Home: function () { return "Ana Sayfa"; },
-    Today: function () { return "Bugün"; },
-    Tomorrow: function () { return "Yarın"; },
-    ThisWeek: function () { return "Bu Hafta"; },
-    ThisMonth: function () { return "Bu Ay"; },
-    EmptyEvents: function () { return "Etkinlik Bulunmamaktadır."; },
-    EmptyTags: function () { return "Etiket Bulunmamaktadır."; },
-    SignIn: function () { return "Giriş Yap"; },
-    SignUp: function () { return "Üye Ol"; },
-    StartTime: function () { return "Başlangıç Saati"; },
-    EndTime: function () { return "Bitiş Saati"; },
-    Descriptions: function () { return "Açıklamalar"; },
-    Shared: function () { return "Paylaşılanlar"; },
-    Search: function () { return "Ara"; },
-    Agenda: function () { return "Ajanda"; },
-    Events: function () { return "Etkinlikler"; },
-    Tags: function () { return "Etiketler"; },
-    NewTag: function () { return "Yeni Etiket"; },
-    EditTag: function () { return "Etiketi Düzenle"; },
-    Complete: function () { return "Tamamla"; },
-    ByYou: function () { return "Senin"; },
-    UploadImage: function () { return "Görsel Yükle"; },
-    DeleteConfirm: function () { return "Silmek istediğinize emin misiniz?"; },
-    AlreadyHaveAnAccount: function () { return "Zaten üyeyim?"; },
-    CancelInviteConfirm: function () { return "Davetiyeyi İptal etmek istediğinize emin misiniz?"; },
-    CompletedBy: function (_a) {
-        var username = _a.username, date = _a.date;
-        return jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [username, " taraf\u0131ndan ", date, " tarihinde tamamland\u0131."] }, void 0);
-    },
-    UpdatedBy: function (_a) {
-        var username = _a.username, date = _a.date;
-        return jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [username, " taraf\u0131ndan ", date, " tarihinde g\u00FCncellendi."] }, void 0);
-    },
-    Loading: function () { return "Yükleniyor..."; },
-};
-
-var enUSLocales = {
-    Back: function () { return "Back"; },
-    New: function () { return "New"; },
-    Decline: function () { return "Decline"; },
-    Delete: function () { return "Delete"; },
-    Edit: function () { return "Edit"; },
-    Save: function () { return "Save"; },
-    Update: function () { return "Update"; },
-    Purchases: function () { return "Purchases"; },
-    Sales: function () { return "Sales"; },
-    Profile: function () { return "Profile"; },
-    Menu: function () { return "Menu"; },
-    Payment: function () { return "Payment"; },
-    Orders: function () { return "Orders"; },
-    Tables: function () { return "Tables"; },
-    Stores: function () { return "Stores"; },
-    Loading: function () { return "Loading..."; },
-    Username: function () { return "Username"; },
-    Password: function () { return "Password"; },
-    FirstName: function () { return "First name"; },
-    LastName: function () { return "Last name"; },
-    PhoneNumber: function () { return "Phone"; },
-    UpdateProfile: function () { return "Update Profile"; },
-    Accept: function () { return "Accept"; },
-    Title: function () { return "Title"; },
-    Color: function () { return "Color"; },
-    NewEvent: function () { return "New Event"; },
-    Invitations: function () { return "Invitations"; },
-    NoInvitations: function () { return "No Invitation"; },
-    Home: function () { return "Home"; },
-    Today: function () { return "Today"; },
-    Tomorrow: function () { return "Tomorrow"; },
-    ThisWeek: function () { return "This Week"; },
-    ThisMonth: function () { return "This Month"; },
-    EmptyEvents: function () { return "No Event."; },
-    EmptyTags: function () { return "No Tag."; },
-    SignIn: function () { return "Sign In"; },
-    SignUp: function () { return "Sign Up"; },
-    StartTime: function () { return "Start Time"; },
-    EndTime: function () { return "End Time"; },
-    Descriptions: function () { return "Descriptions"; },
-    Shared: function () { return "Shared"; },
-    Search: function () { return "Search"; },
-    Agenda: function () { return "Agenda"; },
-    Events: function () { return "Events"; },
-    Tags: function () { return "Tags"; },
-    NewTag: function () { return "New Tag"; },
-    EditTag: function () { return "Edit Tag"; },
-    Complete: function () { return "Complete"; },
-    ByYou: function () { return "You"; },
-    UploadImage: function () { return "Upload Image"; },
-    DeleteConfirm: function () { return "Are you sure want to delete?"; },
-    CancelInviteConfirm: function () { return "Are you sure want to cancel?"; },
-    AlreadyHaveAnAccount: function () { return "Already a member"; },
-    CompletedBy: function (_a) {
-        var username = _a.username, date = _a.date;
-        return jsxRuntime.jsxs(jsxRuntime.Fragment, { children: ["Completed by ", username, " at ", date] }, void 0);
-    },
-    UpdatedBy: function (_a) {
-        var username = _a.username, date = _a.date;
-        return jsxRuntime.jsxs(jsxRuntime.Fragment, { children: ["Updated by ", username, " at ", date] }, void 0);
-    },
-};
-
-var AllLocales = {
-    tr: __assign({}, trTRLocales),
-    en: __assign({}, enUSLocales),
-    "en-us": __assign({}, enUSLocales),
-    "en-en": __assign({}, enUSLocales),
-};
-
-var LocalesContext = react.createContext({});
-var LocalesProvider = function (_a) {
-    var _b = _a.locales, locales = _b === void 0 ? AllLocales : _b, _c = _a.activeLanguage, _activeLanguage = _c === void 0 ? 'en' : _c, children = _a.children;
-    var _d = react.useState(_activeLanguage), activeLanguage = _d[0], setActiveLanguage = _d[1];
-    var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
-    var getLocale = react.useCallback(function (_a) {
-        var name = _a.name, params = _a.params;
-        var localeValue = locale[name];
-        if (localeValue) {
-            return localeValue(params);
+function createLocale() {
+    var LocalesContext = react.createContext({});
+    var LocalesProvider = function (_a) {
+        var locales = _a.locales, _activeLanguage = _a.activeLanguage, children = _a.children;
+        var _b = react.useState(_activeLanguage || navigator.language), activeLanguage = _b[0], setActiveLanguage = _b[1];
+        var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
+        return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
+                locale: locale,
+                setActiveLanguage: setActiveLanguage,
+            } }, { children: children }), void 0));
+    };
+    var useLocale = function () {
+        var context = react.useContext(LocalesContext);
+        if (context === undefined) {
+            throw new Error('useLocalesContext must be used within an LocalesContext.Provider');
         }
-        return name;
-    }, [locale]);
-    return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
-            locale: locale,
-            getLocale: getLocale,
-            setActiveLanguage: setActiveLanguage,
-        } }, { children: children }), void 0));
-};
-var useLocalesContext = function () {
-    var context = react.useContext(LocalesContext);
-    if (context === undefined) {
-        throw new Error('useLocalesContext must be used within an LocalesContext.Provider');
-    }
-    return context;
-};
-
-var useLocale = function () {
-    return useLocalesContext();
-};
+        return context;
+    };
+    return {
+        LocalesProvider: LocalesProvider,
+        useLocale: useLocale
+    };
+}
 
 var SocketContext = react.createContext({});
 var SocketProvider = function (_a) {
@@ -1146,25 +1093,26 @@ var useSocketContext = function () {
 var useSocket = function (_a) {
     var url = _a.url, _b = _a.wss, wss = _b === void 0 ? false : _b, _c = _a.disconnectOnUnmount, disconnectOnUnmount = _c === void 0 ? true : _c, _d = _a.onOpen, onOpen = _d === void 0 ? emptyFunction : _d, _e = _a.onClose, onClose = _e === void 0 ? emptyFunction : _e, _f = _a.onError, onError = _f === void 0 ? emptyFunction : _f, _g = _a.onMessage, onMessage = _g === void 0 ? emptyFunction : _g;
     var protocol = wss ? "wss" : "ws";
-    var path = protocol + "://" + url;
-    var connect = useSocketContext().connect;
+    var connectContext = useSocketContext().connect;
     //@ts-ignore
     var socket = react.useRef({});
     var _h = react.useState({ readyState: 0, lastData: undefined }), socketState = _h[0], setSocketState = _h[1];
     react.useEffect(function () {
-        socket.current = connect({ path: path });
-        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
         return function () {
-            console.log("on unmount");
             if (disconnectOnUnmount) {
-                console.log("disconnectOnUnmount true");
                 if (socket.current.close) {
-                    console.log("closing");
                     socket.current.close(1000, "User disconnected!");
                 }
             }
         };
-    }, [connect, path, disconnectOnUnmount]);
+    }, [disconnectOnUnmount]);
+    var connect = react.useCallback(function (_a) {
+        var _url = _a.url;
+        var path = protocol + "://" + (_url || url);
+        socket.current = connectContext({ path: path });
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
+        return socket.current;
+    }, [connectContext, protocol, url, disconnectOnUnmount]);
     var onopen = react.useCallback(function (event) {
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.OPEN })); });
         onOpen(event);
@@ -1181,7 +1129,6 @@ var useSocket = function (_a) {
         onMessage(event, data);
     }, [onMessage]);
     var onclose = react.useCallback(function (event) {
-        console.log("onclose ran");
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.CLOSED })); });
         onClose(event);
     }, [onClose]);
@@ -1190,31 +1137,35 @@ var useSocket = function (_a) {
         onError(event);
     }, [onError]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('open', onopen);
         return function () {
-            socket.current.removeEventListener('open', onopen);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('open', onopen);
         };
     }, [socket.current, onopen]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('close', onclose);
         return function () {
-            socket.current.removeEventListener('close', onclose);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('close', onclose);
         };
     }, [socket.current, onclose]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('message', onmessage);
         return function () {
-            socket.current.removeEventListener('message', onmessage);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('message', onmessage);
         };
     }, [socket.current, onmessage]);
     react.useEffect(function () {
-        if (socket.current)
+        if (socket.current.addEventListener)
             socket.current.addEventListener('error', onerror);
         return function () {
-            socket.current.removeEventListener('error', onerror);
+            if (socket.current.removeEventListener)
+                socket.current.removeEventListener('error', onerror);
         };
     }, [socket.current, onerror]);
     var sendData = react.useCallback(function (data) {
@@ -1359,6 +1310,125 @@ function createTheme() {
     };
 }
 
+var CookieContext = react.createContext({});
+var CookieProvider = function (_a) {
+    var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var getCookies = react.useCallback(function () {
+        var _cookies = document.cookie.split(';');
+        var cookies = {};
+        _cookies.forEach(function (cookie) {
+            var _a = cookie.split("="), key = _a[0], value = _a[1];
+            cookies[key.trim()] = tryJSONparse(value);
+        });
+        return cookies;
+    }, []);
+    var _d = react.useState(getCookies()), cookie = _d[0], setCookie = _d[1];
+    var setItem = react.useCallback(function (_a) {
+        var key = _a.key, value = _a.value, expireDays = _a.expireDays, expireHours = _a.expireHours, expire = _a.expire, _b = _a.path, path = _b === void 0 ? "/" : _b;
+        if (!key)
+            throw new Error("No key passed");
+        var d = new Date();
+        var oneHour = 60 * 60 * 1000;
+        if (!!expireDays) {
+            d.setTime(d.getTime() + (expireDays * 24 * oneHour));
+        }
+        else if (!!expireHours) {
+            d.setTime(d.getTime() + (expireHours * oneHour));
+        }
+        var newCookie = tryJSONStringify(value);
+        document.cookie = key.trim() + "=" + newCookie + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
+        if (withState)
+            setCookie(function (old) {
+                var _a;
+                var newCookies = __assign(__assign({}, old), (_a = {}, _a[key.trim()] = newCookie, _a));
+                if (onChange)
+                    onChange(newCookies);
+                return newCookies;
+            });
+        else if (onChange)
+            onChange(getCookies());
+    }, [onChange, withState, getCookies]);
+    var getItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        if (withState)
+            return cookie[key];
+        else
+            return getCookies()[key];
+    }, [cookie, withState, getCookies]);
+    var removeItem = react.useCallback(function (key) {
+        if (!key)
+            throw new Error("No key passed");
+        var invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = key.trim() + "= ;expires=" + invalidDate + ";";
+        if (withState)
+            setCookie(function (old) {
+                var newCookie = __assign({}, old);
+                delete newCookie[key.trim()];
+                if (onChange)
+                    onChange(newCookie);
+                return newCookie;
+            });
+        else if (onChange)
+            onChange(getCookies());
+    }, [onChange, withState, getCookies]);
+    return (jsxRuntime.jsx(CookieContext.Provider, __assign({ value: {
+            cookie: cookie,
+            getItem: getItem,
+            setItem: setItem,
+            removeItem: removeItem
+        } }, { children: children }), void 0));
+};
+var useCookieContext = function () {
+    var context = react.useContext(CookieContext);
+    if (context === undefined) {
+        throw new Error('useCookieContext must be used within an CookieContext.Provider');
+    }
+    return context;
+};
+
+var useCookie = function (key) {
+    var _a = useCookieContext(), _getItem = _a.getItem, _setItem = _a.setItem, _removeItem = _a.removeItem, cookie = _a.cookie;
+    var getItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _getItem(key || _key);
+    }, [_getItem]);
+    var setItem = react.useCallback(function (_params) {
+        var params = __assign({}, _params);
+        if (!!key && !params.key)
+            params.key = key;
+        _setItem(params);
+    }, [_setItem]);
+    var removeItem = react.useCallback(function (_key) {
+        if (_key === void 0) { _key = undefined; }
+        return _removeItem(key || _key);
+    }, [_removeItem]);
+    return { getItem: getItem, setItem: setItem, removeItem: removeItem, cookie: cookie };
+};
+
+var GlobalStateContext = react.createContext({});
+var GlobalStateProvider = function (_a) {
+    var children = _a.children;
+    var _b = react.useState({}), globalState = _b[0], setGlobalState = _b[1];
+    return (jsxRuntime.jsx(GlobalStateContext.Provider, __assign({ value: {
+            globalState: globalState,
+            setGlobalState: setGlobalState
+        } }, { children: children }), void 0));
+};
+var useGlobalStateContext = function () {
+    var context = react.useContext(GlobalStateContext);
+    if (context === undefined) {
+        throw new Error('useGlobalStateContext must be used within an GlobalStateContext.Provider');
+    }
+    return context;
+};
+
+var useGlobalState = function () {
+    var _a = useGlobalStateContext(), globalState = _a.globalState, setGlobalState = _a.setGlobalState;
+    return { globalState: globalState, setGlobalState: setGlobalState };
+};
+
 var useTitle = function (props) {
     if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
     var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
@@ -1454,8 +1524,7 @@ var useHover = function (_a) {
             checkInVertically ?
                 isInRange([boundingRect.top, boundingRect.bottom], clientY, includeBorders, includeBorders)
                 : isInRange([boundingRect.left, boundingRect.right], clientX, includeBorders, includeBorders);
-        if (isHover !== _isHover)
-            setIsHover(_isHover);
+        setIsHover(_isHover);
     }, [ref.current, isHover, includeBorders, checkInVertically, checkInHorizontally, top, right, bottom, left]);
     var onTouchEnd = react.useCallback(function () {
         setIsHover(false);
@@ -1483,24 +1552,33 @@ var useHover = function (_a) {
     return { isHover: isHover };
 };
 
-exports.ApiProvider = ApiProvider;
 exports.AuthProvider = AuthProvider;
+exports.CookieProvider = CookieProvider;
 exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
+exports.FetchProvider = FetchProvider;
+exports.GlobalStateProvider = GlobalStateProvider;
 exports.LoadingProvider = LoadingProvider;
-exports.LocalesProvider = LocalesProvider;
+exports.LocalStorageProvider = LocalStorageProvider;
 exports.SafeAreaProvider = SafeAreaProvider;
 exports.SocketProvider = SocketProvider;
+exports.createLocale = createLocale;
 exports.createTheme = createTheme;
-exports.useApi = useApi;
 exports.useAuth = useAuth;
+exports.useCookie = useCookie;
+exports.useCounter = useCounter;
+exports.useDelete = useDelete;
 exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
+exports.useFetch = useFetch;
+exports.useGet = useGet;
+exports.useGlobalState = useGlobalState;
 exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
-exports.useLocales = useLocale;
 exports.useMeasure = useMeasure;
+exports.usePost = usePost;
+exports.usePut = usePut;
 exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
 exports.useTitle = useTitle;

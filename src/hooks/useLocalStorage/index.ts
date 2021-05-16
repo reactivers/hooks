@@ -1,30 +1,35 @@
 import { useCallback } from 'react';
+import { useLocalStorageContext } from './context';
 
-const useLocalStorage = (key: string, defaultValue?: string) => {
+interface IUseLocalStorageReturn {
+    localStorage: Record<string, any>;
+    getItem: (key?: string) => any;
+    setItem: (value: any) => void;
+    setItemWithKey: (key: string, value: any) => void;
+    removeItem: (key?: string) => void;
+}
 
-    const getItem = useCallback((_defaultValue?: any) => {
-        try {
-            const value = JSON.parse(window.localStorage.getItem(key))
-            return value || _defaultValue || defaultValue
-        } catch (e) {
-            return defaultValue;
-        }
-    }, [defaultValue, key])
 
-    const setItem = useCallback((_value: any) => {
-        try {
-            const value = JSON.stringify(_value);
-            window.localStorage.setItem(key, value)
-        } catch (e) {
-            window.localStorage.setItem(key, defaultValue || '{}')
-        }
-    }, [defaultValue, key])
+const useLocalStorage: (key?: string) => IUseLocalStorageReturn = (key?: string) => {
+    const { getItem: _getItem, setItem: _setItem, removeItem: _removeItem, localStorage } = useLocalStorageContext();
 
-    const removeItem = useCallback(() => {
-        window.localStorage.removeItem(key)
-    }, [key])
+    const getItem = useCallback((_key = undefined) => {
+        return _getItem(key || _key)
+    }, [_getItem])
 
-    return { getItem, setItem, removeItem }
+    const setItem = useCallback((value) => {
+        return _setItem({ key, value })
+    }, [_setItem])
+
+    const setItemWithKey = useCallback((_key, value) => {
+        return _setItem({ key: key || _key, value })
+    }, [_setItem])
+
+    const removeItem = useCallback((_key = undefined) => {
+        return _removeItem(key || _key)
+    }, [_removeItem])
+
+    return { getItem, setItem, removeItem, setItemWithKey, localStorage }
 }
 
 export default useLocalStorage

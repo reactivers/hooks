@@ -1,5 +1,9 @@
-export { default as useApi } from "./hooks/useApi/index";
-export { default as ApiProvider } from "./hooks/useApi/context";
+export { default as useFetch } from "./hooks/useFetch/index";
+export { default as useGet } from "./hooks/useGet/index";
+export { default as usePost } from "./hooks/usePost/index";
+export { default as usePut } from "./hooks/usePut/index";
+export { default as useDelete } from "./hooks/useDelete/index";
+export { default as FetchProvider } from "./hooks/useFetch/context";
 
 export { default as useAuth } from "./hooks/useAuth/index";
 export { default as AuthProvider } from "./hooks/useAuth/context";
@@ -13,8 +17,7 @@ export { default as EventListenerProvider } from "./hooks/useEventListener/conte
 export { default as useLoading } from "./hooks/useLoading/index";
 export { default as LoadingProvider } from "./hooks/useLoading/context";
 
-export { default as useLocales } from "./hooks/useLocales/index";
-export { default as LocalesProvider } from "./hooks/useLocales/context";
+export { default as createLocale } from "./hooks/useLocales/index";
 
 export { default as useSocket } from "./hooks/useSocket";
 export { default as SocketProvider } from "./hooks/useSocket/context";
@@ -24,10 +27,18 @@ export { default as SafeAreaProvider } from "./hooks/useSafeArea/context";
 
 export { default as createTheme } from "./hooks/useTheme/context";
 
+export { default as LocalStorageProvider } from "./hooks/useLocalStorage/context";
+export { default as useLocalStorage } from "./hooks/useLocalStorage";
+
+export { default as CookieProvider } from "./hooks/useCookie/context";
+export { default as useCookie } from "./hooks/useCookie";
+
+export { default as GlobalStateProvider } from "./hooks/useGlobalState/context";
+export { default as useGlobalState } from "./hooks/useGlobalState/index";
+
 
 export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useTitle } from "./hooks/useTitle/index";
 export { default as useMeasure } from "./hooks/useMeasure";
 export { default as useHover } from "./hooks/useHover";
-
-export { default as useLocalStorage } from "./hooks/useLocalStorage";
+export { default as useCounter } from "./hooks/useCounter";
