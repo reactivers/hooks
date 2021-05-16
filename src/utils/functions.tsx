@@ -362,7 +362,7 @@ export const iFetch = (payload: FetchProps) => {
     }
 
     if (token)
-        headers["Authorization"] = "Bearer " + token;
+        headers["Authorization"] = `Bearer ${token}`;
 
     if (formData) {
         delete headers["Content-Type"]
