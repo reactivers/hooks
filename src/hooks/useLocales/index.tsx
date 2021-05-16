@@ -5,7 +5,7 @@ export interface LocalesContextProps<T> {
     setActiveLanguage: (lang: Languages) => void;
 }
 
-declare type Languages = "af" | "sq" | "ar-sa" | "ar-iq" | "ar-eg" | "ar-ly" | "ar-dz" | "ar-ma" | "ar-tn" | "ar-om" |
+declare type Languages = ("af" | "sq" | "ar-sa" | "ar-iq" | "ar-eg" | "ar-ly" | "ar-dz" | "ar-ma" | "ar-tn" | "ar-om" |
     "ar-ye" | "ar-sy" | "ar-jo" | "ar-lb" | "ar-kw" | "ar-ae" | "ar-bh" | "ar-qa" | "eu" | "bg" |
     "be" | "ca" | "zh-tw" | "zh-cn" | "zh-hk" | "zh-sg" | "hr" | "cs" | "da" | "nl" | "nl-be" | "en" |
     "en-us" | "en-eg" | "en-au" | "en-gb" | "en-ca" | "en-nz" | "en-ie" | "en-za" | "en-jm" |
@@ -16,7 +16,7 @@ declare type Languages = "af" | "sq" | "ar-sa" | "ar-iq" | "ar-eg" | "ar-ly" | "
     "es" | "es-ar" | "es-gt" | "es-cr" | "es-pa" | "es-DO" | "es-mx" | "es-ve" | "es-co" |
     "es-pe" | "es-ec" | "es-cl" | "es-uy" | "es-py" | "es-bo" | "es-sv" | "es-hn" | "es-ni" |
     "es-pr" | "sx" | "sv" | "sv-fi" | "th" | "ts" | "tn" | "tr" | "uk" | "ur" | "ve" | "vi" | "xh" |
-    "ji" | "zu" | string
+    "ji" | "zu") & string
 
 export interface LocalesProviderProps<T> {
     locales?: {
