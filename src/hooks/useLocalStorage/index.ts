@@ -1,7 +1,16 @@
 import { useCallback } from 'react';
 import { useLocalStorageContext } from './context';
 
-const useLocalStorage = (key?: string) => {
+interface IUseLocalStorageReturn {
+    localStorage: Record<string, any>;
+    getItem: (key?: string) => any;
+    setItem: (value: any) => void;
+    setItemWithKey: (key: string, value: any) => void;
+    removeItem: (key?: string) => void;
+}
+
+
+const useLocalStorage: (key?: string) => IUseLocalStorageReturn = (key?: string) => {
     const { getItem: _getItem, setItem: _setItem, removeItem: _removeItem, localStorage } = useLocalStorageContext();
 
     const getItem = useCallback((_key = undefined) => {
