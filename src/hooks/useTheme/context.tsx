@@ -63,7 +63,6 @@ function createTheme<T>() {
             }
         }, [isChanged.current, updateInitialTheme])
 
-
         const getCurrentTheme = useCallback((e) => {
             const { navigator: { userAgent } } = window;
             if (userAgent.includes(AndroidDarkMode)) {
