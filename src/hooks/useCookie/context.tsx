@@ -47,8 +47,14 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) =
         } else if (!!expireHours) {
             d.setTime(d.getTime() + (expireHours * oneHour));
         }
-        document.cookie = `${key}=${tryJSONStringify(value)};expires=${expire || d.toUTCString()};path=${path}`;
-    }, [])
+        const newCookie = tryJSONStringify(value)
+        document.cookie = `${key}=${newCookie};expires=${expire || d.toUTCString()};path=${path}`;
+        setCookie(old => {
+            const newCookies = { ...old, [key]: newCookie };
+            if (onChange) onChange(newCookies)
+            return newCookies;
+        })
+    }, [onChange])
 
     const getItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
@@ -62,9 +68,10 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) =
             const newCookie = { ...old };
             document.cookie = `${key}= ;expires=${invalidDate};`;
             delete newCookie[key];
+            if (onChange) onChange(newCookie)
             return newCookie;
         })
-    }, [])
+    }, [onChange])
 
     return (
         <CookieContext.Provider value={{

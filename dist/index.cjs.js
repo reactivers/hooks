@@ -1299,7 +1299,7 @@ function createTheme() {
 
 var CookieContext = react.createContext({});
 var CookieProvider = function (_a) {
-    _a.onChange; var children = _a.children;
+    var onChange = _a.onChange, children = _a.children;
     var _b = useUtils(), tryJSONparse = _b.tryJSONparse, tryJSONStringify = _b.tryJSONStringify;
     var getCookies = react.useCallback(function () {
         var _cookies = document.cookie.split(';');
@@ -1323,8 +1323,16 @@ var CookieProvider = function (_a) {
         else if (!!expireHours) {
             d.setTime(d.getTime() + (expireHours * oneHour));
         }
-        document.cookie = key + "=" + tryJSONStringify(value) + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
-    }, []);
+        var newCookie = tryJSONStringify(value);
+        document.cookie = key + "=" + newCookie + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
+        setCookie(function (old) {
+            var _a;
+            var newCookies = __assign(__assign({}, old), (_a = {}, _a[key] = newCookie, _a));
+            if (onChange)
+                onChange(newCookies);
+            return newCookies;
+        });
+    }, [onChange]);
     var getItem = react.useCallback(function (key) {
         if (!key)
             throw new Error("No key passed");
@@ -1338,9 +1346,11 @@ var CookieProvider = function (_a) {
             var newCookie = __assign({}, old);
             document.cookie = key + "= ;expires=" + invalidDate + ";";
             delete newCookie[key];
+            if (onChange)
+                onChange(newCookie);
             return newCookie;
         });
-    }, []);
+    }, [onChange]);
     return (jsxRuntime.jsx(CookieContext.Provider, __assign({ value: {
             cookie: cookie,
             getItem: getItem,
