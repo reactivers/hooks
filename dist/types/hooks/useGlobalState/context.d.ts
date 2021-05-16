@@ -4,9 +4,6 @@ interface GlobalStateContext {
     setGlobalState: (param: any) => void;
 }
 declare const GlobalStateContext: import("react").Context<GlobalStateContext>;
-interface GlobalStateProviderProps {
-    onChange?: (GlobalState: Record<string, any>) => void;
-}
-declare const GlobalStateProvider: FC<GlobalStateProviderProps>;
+declare const GlobalStateProvider: FC;
 export declare const useGlobalStateContext: () => GlobalStateContext;
 export default GlobalStateProvider;

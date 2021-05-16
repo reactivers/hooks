@@ -6,11 +6,8 @@ interface GlobalStateContext {
 }
 const GlobalStateContext = createContext({} as GlobalStateContext);
 
-interface GlobalStateProviderProps {
-    onChange?: (GlobalState: Record<string, any>) => void;
-}
 
-const GlobalStateProvider: FC<GlobalStateProviderProps> = ({ children }) => {
+const GlobalStateProvider: FC = ({ children }) => {
 
     const [globalState, setGlobalState] = useState({});
 

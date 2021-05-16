@@ -33,6 +33,9 @@ export { default as useLocalStorage } from "./hooks/useLocalStorage";
 export { default as CookieProvider } from "./hooks/useCookie/context";
 export { default as useCookie } from "./hooks/useCookie";
 
+export { default as GlobalStateProvider } from "./hooks/useGlobalState/context";
+export { default as useGlobalState } from "./hooks/useGlobalState/index";
+
 
 export { default as useUtils } from "./hooks/useUtils/index";
 export { default as useTitle } from "./hooks/useTitle/index";

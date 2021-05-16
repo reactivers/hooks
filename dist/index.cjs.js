@@ -1405,6 +1405,28 @@ var useCookie = function (key) {
     return { getItem: getItem, setItem: setItem, removeItem: removeItem, cookie: cookie };
 };
 
+var GlobalStateContext = react.createContext({});
+var GlobalStateProvider = function (_a) {
+    var children = _a.children;
+    var _b = react.useState({}), globalState = _b[0], setGlobalState = _b[1];
+    return (jsxRuntime.jsx(GlobalStateContext.Provider, __assign({ value: {
+            globalState: globalState,
+            setGlobalState: setGlobalState
+        } }, { children: children }), void 0));
+};
+var useGlobalStateContext = function () {
+    var context = react.useContext(GlobalStateContext);
+    if (context === undefined) {
+        throw new Error('useGlobalStateContext must be used within an GlobalStateContext.Provider');
+    }
+    return context;
+};
+
+var useGlobalState = function () {
+    var _a = useGlobalStateContext(), globalState = _a.globalState, setGlobalState = _a.setGlobalState;
+    return { globalState: globalState, setGlobalState: setGlobalState };
+};
+
 var useTitle = function (props) {
     if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
     var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
@@ -1533,6 +1555,7 @@ exports.CookieProvider = CookieProvider;
 exports.DimensionsProvider = DimensionsProvider;
 exports.EventListenerProvider = EventListenerProvider;
 exports.FetchProvider = FetchProvider;
+exports.GlobalStateProvider = GlobalStateProvider;
 exports.LoadingProvider = LoadingProvider;
 exports.LocalStorageProvider = LocalStorageProvider;
 exports.SafeAreaProvider = SafeAreaProvider;
@@ -1547,6 +1570,7 @@ exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
 exports.useFetch = useFetch;
 exports.useGet = useGet;
+exports.useGlobalState = useGlobalState;
 exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;

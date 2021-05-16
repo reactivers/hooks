@@ -1,8 +1,5 @@
-declare const useLocalStorage: (key?: string) => {
-    getItem: (_key?: any) => any;
-    setItem: (value: any) => any;
-    removeItem: (_key?: any) => any;
-    setItemWithKey: (_key: any, value: any) => any;
-    localStorage: any;
+declare const useGlobalState: () => {
+    globalState: Record<string, any>;
+    setGlobalState: (param: any) => void;
 };
-export default useLocalStorage;
+export default useGlobalState;
