@@ -10,6 +10,7 @@ interface CookieContext {
 const CookieContext = createContext({} as CookieContext);
 
 interface LocalStorateProviderProps {
+    withState?: boolean;
     onChange?: (cookie: Record<string, any>) => void;
 }
 
@@ -22,7 +23,7 @@ export interface CookieSetItem {
     path?: string
 }
 
-const CookieProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) => {
+const CookieProvider: FC<LocalStorateProviderProps> = ({ withState = true, onChange, children }) => {
     const { tryJSONparse, tryJSONStringify } = useUtils();
 
     const getCookies = useCallback(() => {
@@ -49,29 +50,36 @@ const CookieProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) =
         }
         const newCookie = tryJSONStringify(value)
         document.cookie = `${key}=${newCookie};expires=${expire || d.toUTCString()};path=${path}`;
-        setCookie(old => {
-            const newCookies = { ...old, [key]: newCookie };
-            if (onChange) onChange(newCookies)
-            return newCookies;
-        })
-    }, [onChange])
+        if (withState)
+            setCookie(old => {
+                const newCookies = { ...old, [key]: newCookie };
+                if (onChange) onChange(newCookies)
+                return newCookies;
+            })
+        else if (onChange) onChange(getCookies())
+    }, [onChange, withState, getCookies])
 
     const getItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
-        return cookie[key];
-    }, [cookie])
+        if (withState)
+            return cookie[key];
+        else
+            return getCookies()[key]
+    }, [cookie, withState, getCookies])
 
     const removeItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
         const invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
-        setCookie(old => {
-            const newCookie = { ...old };
-            document.cookie = `${key}= ;expires=${invalidDate};`;
-            delete newCookie[key];
-            if (onChange) onChange(newCookie)
-            return newCookie;
-        })
-    }, [onChange])
+        document.cookie = `${key}= ;expires=${invalidDate};`;
+        if (withState)
+            setCookie(old => {
+                const newCookie = { ...old };
+                delete newCookie[key];
+                if (onChange) onChange(newCookie)
+                return newCookie;
+            })
+        else if (onChange) onChange(getCookies())
+    }, [onChange, withState, getCookies])
 
     return (
         <CookieContext.Provider value={{

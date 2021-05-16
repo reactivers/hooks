@@ -11,13 +11,12 @@ interface LocalStorageContext {
 const LocalStorageContext = createContext({} as LocalStorageContext);
 
 interface LocalStorateProviderProps {
-    withState?: boolean;
     onChange?: (localStorage: Record<string, any>) => void;
 }
 
-const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ withState = true, onChange, children }) => {
+const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) => {
     const { tryJSONparse, tryJSONStringify } = useUtils();
-
+    
     const getLocalStorage = useCallback(() => {
         const localStorageKeys = Object.keys(window.localStorage);
         const localStorage = {};
@@ -33,41 +32,30 @@ const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ withState = true,
 
     const setItem: (params: { key: string, value: any }) => void = useCallback(({ key, value: _value }) => {
         if (!key) throw new Error("No key passed");
-
-        const value = tryJSONparse(_value);
-        window.localStorage.setItem(key, tryJSONStringify(_value));
-        if (withState) {
-            setLocalStorage(old => {
-                const newLocalStorage = { ...old, [key]: value };
-                if (onChange) onChange(newLocalStorage)
-                return newLocalStorage;
-            })
-        } else {
-            onChange(getLocalStorage())
-        }
-    }, [onChange, withState, getLocalStorage])
+        setLocalStorage(old => {
+            const value = tryJSONparse(_value);
+            window.localStorage.setItem(key, tryJSONStringify(_value));
+            const newLocalStorage = { ...old, [key]: value };
+            if (onChange) onChange(newLocalStorage)
+            return newLocalStorage;
+        })
+    }, [onChange])
 
     const getItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
-        if (withState)
-            return localStorage[key];
-        else
-            return getLocalStorage()[key]
-    }, [localStorage, withState, getLocalStorage])
+        return localStorage[key];
+    }, [localStorage])
 
     const removeItem: (key: string) => void = useCallback(key => {
         if (!key) throw new Error("No key passed");
-        window.localStorage.removeItem(key);
-        if (withState)
-            setLocalStorage(old => {
-                const newLocalStorage = { ...old };
-                delete newLocalStorage[key];
-                if (onChange) onChange(newLocalStorage)
-                return newLocalStorage;
-            })
-        else
-            if (onChange) onChange(getLocalStorage())
-    }, [onChange, withState, getLocalStorage])
+        setLocalStorage(old => {
+            const newLocalStorage = { ...old };
+            window.localStorage.removeItem(key);
+            delete newLocalStorage[key];
+            if (onChange) onChange(newLocalStorage)
+            return newLocalStorage;
+        })
+    }, [onChange])
 
     return (
         <LocalStorageContext.Provider value={{

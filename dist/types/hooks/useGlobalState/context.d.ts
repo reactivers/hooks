@@ -10,7 +10,6 @@ interface LocalStorageContext {
 }
 declare const LocalStorageContext: import("react").Context<LocalStorageContext>;
 interface LocalStorateProviderProps {
-    withState?: boolean;
     onChange?: (localStorage: Record<string, any>) => void;
 }
 declare const LocalStorageProvider: FC<LocalStorateProviderProps>;

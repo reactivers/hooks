@@ -532,8 +532,8 @@ var useUtils = function () {
 
 var LocalStorageContext = react.createContext({});
 var LocalStorageProvider = function (_a) {
-    var onChange = _a.onChange, children = _a.children;
-    var _b = useUtils(), tryJSONparse = _b.tryJSONparse, tryJSONStringify = _b.tryJSONStringify;
+    var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
     var getLocalStorage = react.useCallback(function () {
         var localStorageKeys = Object.keys(window.localStorage);
         var localStorage = {};
@@ -543,38 +543,49 @@ var LocalStorageProvider = function (_a) {
         });
         return localStorage;
     }, []);
-    var _c = react.useState(getLocalStorage()), localStorage = _c[0], setLocalStorage = _c[1];
+    var _d = react.useState(getLocalStorage()), localStorage = _d[0], setLocalStorage = _d[1];
     var setItem = react.useCallback(function (_a) {
         var key = _a.key, _value = _a.value;
         if (!key)
             throw new Error("No key passed");
-        setLocalStorage(function (old) {
-            var _a;
-            var value = tryJSONparse(_value);
-            window.localStorage.setItem(key, tryJSONStringify(_value));
-            var newLocalStorage = __assign(__assign({}, old), (_a = {}, _a[key] = value, _a));
-            if (onChange)
-                onChange(newLocalStorage);
-            return newLocalStorage;
-        });
-    }, [onChange]);
+        var value = tryJSONparse(_value);
+        window.localStorage.setItem(key, tryJSONStringify(_value));
+        if (withState) {
+            setLocalStorage(function (old) {
+                var _a;
+                var newLocalStorage = __assign(__assign({}, old), (_a = {}, _a[key] = value, _a));
+                if (onChange)
+                    onChange(newLocalStorage);
+                return newLocalStorage;
+            });
+        }
+        else {
+            onChange(getLocalStorage());
+        }
+    }, [onChange, withState, getLocalStorage]);
     var getItem = react.useCallback(function (key) {
         if (!key)
             throw new Error("No key passed");
-        return localStorage[key];
-    }, [localStorage]);
+        if (withState)
+            return localStorage[key];
+        else
+            return getLocalStorage()[key];
+    }, [localStorage, withState, getLocalStorage]);
     var removeItem = react.useCallback(function (key) {
         if (!key)
             throw new Error("No key passed");
-        setLocalStorage(function (old) {
-            var newLocalStorage = __assign({}, old);
-            window.localStorage.removeItem(key);
-            delete newLocalStorage[key];
-            if (onChange)
-                onChange(newLocalStorage);
-            return newLocalStorage;
-        });
-    }, [onChange]);
+        window.localStorage.removeItem(key);
+        if (withState)
+            setLocalStorage(function (old) {
+                var newLocalStorage = __assign({}, old);
+                delete newLocalStorage[key];
+                if (onChange)
+                    onChange(newLocalStorage);
+                return newLocalStorage;
+            });
+        else if (onChange)
+            onChange(getLocalStorage());
+    }, [onChange, withState, getLocalStorage]);
     return (jsxRuntime.jsx(LocalStorageContext.Provider, __assign({ value: {
             localStorage: localStorage,
             getItem: getItem,
@@ -1299,8 +1310,8 @@ function createTheme() {
 
 var CookieContext = react.createContext({});
 var CookieProvider = function (_a) {
-    var onChange = _a.onChange, children = _a.children;
-    var _b = useUtils(), tryJSONparse = _b.tryJSONparse, tryJSONStringify = _b.tryJSONStringify;
+    var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
     var getCookies = react.useCallback(function () {
         var _cookies = document.cookie.split(';');
         var cookies = {};
@@ -1310,7 +1321,7 @@ var CookieProvider = function (_a) {
         });
         return cookies;
     }, []);
-    var _c = react.useState(getCookies()), cookie = _c[0], setCookie = _c[1];
+    var _d = react.useState(getCookies()), cookie = _d[0], setCookie = _d[1];
     var setItem = react.useCallback(function (_a) {
         var key = _a.key, value = _a.value, expireDays = _a.expireDays, expireHours = _a.expireHours, expire = _a.expire, _b = _a.path, path = _b === void 0 ? "/" : _b;
         if (!key)
@@ -1325,32 +1336,41 @@ var CookieProvider = function (_a) {
         }
         var newCookie = tryJSONStringify(value);
         document.cookie = key + "=" + newCookie + ";expires=" + (expire || d.toUTCString()) + ";path=" + path;
-        setCookie(function (old) {
-            var _a;
-            var newCookies = __assign(__assign({}, old), (_a = {}, _a[key] = newCookie, _a));
-            if (onChange)
-                onChange(newCookies);
-            return newCookies;
-        });
-    }, [onChange]);
+        if (withState)
+            setCookie(function (old) {
+                var _a;
+                var newCookies = __assign(__assign({}, old), (_a = {}, _a[key] = newCookie, _a));
+                if (onChange)
+                    onChange(newCookies);
+                return newCookies;
+            });
+        else if (onChange)
+            onChange(getCookies());
+    }, [onChange, withState, getCookies]);
     var getItem = react.useCallback(function (key) {
         if (!key)
             throw new Error("No key passed");
-        return cookie[key];
-    }, [cookie]);
+        if (withState)
+            return cookie[key];
+        else
+            return getCookies()[key];
+    }, [cookie, withState, getCookies]);
     var removeItem = react.useCallback(function (key) {
         if (!key)
             throw new Error("No key passed");
         var invalidDate = "Thu, 01 Jan 1970 00:00:01 GMT";
-        setCookie(function (old) {
-            var newCookie = __assign({}, old);
-            document.cookie = key + "= ;expires=" + invalidDate + ";";
-            delete newCookie[key];
-            if (onChange)
-                onChange(newCookie);
-            return newCookie;
-        });
-    }, [onChange]);
+        document.cookie = key + "= ;expires=" + invalidDate + ";";
+        if (withState)
+            setCookie(function (old) {
+                var newCookie = __assign({}, old);
+                delete newCookie[key];
+                if (onChange)
+                    onChange(newCookie);
+                return newCookie;
+            });
+        else if (onChange)
+            onChange(getCookies());
+    }, [onChange, withState, getCookies]);
     return (jsxRuntime.jsx(CookieContext.Provider, __assign({ value: {
             cookie: cookie,
             getItem: getItem,

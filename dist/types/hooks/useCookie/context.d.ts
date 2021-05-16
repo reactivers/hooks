@@ -7,6 +7,7 @@ interface CookieContext {
 }
 declare const CookieContext: import("react").Context<CookieContext>;
 interface LocalStorateProviderProps {
+    withState?: boolean;
     onChange?: (cookie: Record<string, any>) => void;
 }
 export interface CookieSetItem {
