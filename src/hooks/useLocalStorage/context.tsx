@@ -16,6 +16,7 @@ interface LocalStorateProviderProps {
 
 const LocalStorageProvider: FC<LocalStorateProviderProps> = ({ onChange, children }) => {
     const { tryJSONparse, tryJSONStringify } = useUtils();
+    
     const getLocalStorage = useCallback(() => {
         const localStorageKeys = Object.keys(window.localStorage);
         const localStorage = {};

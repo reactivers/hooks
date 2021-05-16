@@ -5,7 +5,7 @@ interface CookieContext {
     cookie: Record<string, any>;
     getItem: (key: string) => any;
     removeItem: (key: string) => void;
-    setItem: (params: { key: string, value: any }) => void;
+    setItem: (params: CookieSetItem) => void;
 }
 const CookieContext = createContext({} as CookieContext);
 

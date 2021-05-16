@@ -3,10 +3,7 @@ interface CookieContext {
     cookie: Record<string, any>;
     getItem: (key: string) => any;
     removeItem: (key: string) => void;
-    setItem: (params: {
-        key: string;
-        value: any;
-    }) => void;
+    setItem: (params: CookieSetItem) => void;
 }
 declare const CookieContext: import("react").Context<CookieContext>;
 interface LocalStorateProviderProps {
