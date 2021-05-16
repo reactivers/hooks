@@ -4,26 +4,11 @@ import useAuth from "../useAuth";
 import useUtils from '../useUtils';
 import { useFetchContext } from './context';
 
-interface GenericRequestPayload {
+export interface GenericRequestPayload {
     url?: string;
     endpoint?: string;
     onSuccess?: (respose: any) => void;
     onError?: (responseJSON: any, response: any) => void;
-}
-
-interface GetRequestPayload extends GenericRequestPayload {
-}
-
-interface PostRequestPayload extends GenericRequestPayload {
-    params?: any;
-}
-
-interface DeleteRequestPayload extends GenericRequestPayload {
-    params?: any;
-}
-
-interface PutRequestPayload extends GenericRequestPayload {
-    params?: any;
 }
 
 export interface RequestPayload extends GenericRequestPayload {
@@ -32,7 +17,7 @@ export interface RequestPayload extends GenericRequestPayload {
     formData?: any;
 }
 
-interface FetchController<T extends {}> {
+export interface FetchController<T extends {}> {
     firstTimeFetched: boolean;
     fetched: boolean;
     fetching: boolean;
@@ -40,16 +25,12 @@ interface FetchController<T extends {}> {
     response: T | any;
 }
 
-interface IUseFetchProps {
+export interface IUseFetchProps {
     abortOnUnmount?: boolean
 }
 
-interface IUseFetchResponse<T extends {}> extends FetchController<T> {
+export interface IUseFetchResponse<T extends {}> extends FetchController<T> {
     request: (params: RequestPayload) => void;
-    getRequest: (params: GetRequestPayload) => void;
-    postRequest: (params: PostRequestPayload) => void;
-    deleteRequest: (params: DeleteRequestPayload) => void;
-    putRequest: (params: PutRequestPayload) => void;
 }
 
 const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
@@ -137,23 +118,6 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
     }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal])
 
 
-    const getRequest = useCallback((payload: GetRequestPayload = {}) => {
-        request({ ...payload, method: "GET" })
-    }, [request])
-
-    const postRequest = useCallback((payload: PostRequestPayload = {}) => {
-        request({ ...payload, method: "POST" })
-    }, [request])
-
-    const deleteRequest = useCallback((payload: DeleteRequestPayload = {}) => {
-        request({ ...payload, method: "DELETE" })
-    }, [request])
-
-    const putRequest = useCallback((payload: PutRequestPayload = {}) => {
-        request({ ...payload, method: "PUT" })
-    }, [request])
-
-
     useEffect(() => {
         return () => {
             if (abortOnUnmount)
@@ -163,10 +127,6 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
 
     return {
         request,
-        getRequest,
-        postRequest,
-        deleteRequest,
-        putRequest,
         ...data
     }
 }

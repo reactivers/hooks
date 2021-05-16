@@ -737,33 +737,53 @@ var useFetch = function (params) {
             signal: abortController.signal
         });
     }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal]);
-    var getRequest = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "GET" }));
-    }, [request]);
-    var postRequest = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "POST" }));
-    }, [request]);
-    var deleteRequest = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "DELETE" }));
-    }, [request]);
-    var putRequest = react.useCallback(function (payload) {
-        if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "PUT" }));
-    }, [request]);
     react.useEffect(function () {
         return function () {
             if (abortOnUnmount)
                 abortController.abort();
         };
     }, [abortController.abort, abortOnUnmount]);
-    return __assign({ request: request,
-        getRequest: getRequest,
-        postRequest: postRequest,
-        deleteRequest: deleteRequest,
-        putRequest: putRequest }, data);
+    return __assign({ request: request }, data);
+};
+
+var useGet = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var getRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "GET" }));
+    }, [request]);
+    return __assign({ request: getRequest }, rest);
+};
+
+var usePost = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var postRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "POST" }));
+    }, [request]);
+    return __assign({ request: postRequest }, rest);
+};
+
+var usePut = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var putRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "PUT" }));
+    }, [request]);
+    return __assign({ request: putRequest }, rest);
+};
+
+var useDelete = function (params) {
+    if (params === void 0) { params = { abortOnUnmount: true }; }
+    var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var deleteRequest = react.useCallback(function (payload) {
+        if (payload === void 0) { payload = {}; }
+        request(__assign(__assign({}, payload), { method: "DELETE" }));
+    }, [request]);
+    return __assign({ request: deleteRequest }, rest);
 };
 
 var DimensionsContext = react.createContext({});
@@ -1031,25 +1051,26 @@ var useSocketContext = function () {
 var useSocket = function (_a) {
     var url = _a.url, _b = _a.wss, wss = _b === void 0 ? false : _b, _c = _a.disconnectOnUnmount, disconnectOnUnmount = _c === void 0 ? true : _c, _d = _a.onOpen, onOpen = _d === void 0 ? emptyFunction : _d, _e = _a.onClose, onClose = _e === void 0 ? emptyFunction : _e, _f = _a.onError, onError = _f === void 0 ? emptyFunction : _f, _g = _a.onMessage, onMessage = _g === void 0 ? emptyFunction : _g;
     var protocol = wss ? "wss" : "ws";
-    var path = protocol + "://" + url;
-    var connect = useSocketContext().connect;
+    var connectContext = useSocketContext().connect;
     //@ts-ignore
     var socket = react.useRef({});
     var _h = react.useState({ readyState: 0, lastData: undefined }), socketState = _h[0], setSocketState = _h[1];
     react.useEffect(function () {
-        socket.current = connect({ path: path });
-        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
         return function () {
-            console.log("on unmount");
             if (disconnectOnUnmount) {
-                console.log("disconnectOnUnmount true");
                 if (socket.current.close) {
-                    console.log("closing");
                     socket.current.close(1000, "User disconnected!");
                 }
             }
         };
-    }, [connect, path, disconnectOnUnmount]);
+    }, [disconnectOnUnmount]);
+    var connect = react.useCallback(function (_a) {
+        var _url = _a.url;
+        var path = protocol + "://" + (_url || url);
+        socket.current = connectContext({ path: path });
+        setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: socket.current.readyState })); });
+        return socket.current;
+    }, [connectContext, protocol, url, disconnectOnUnmount]);
     var onopen = react.useCallback(function (event) {
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.OPEN })); });
         onOpen(event);
@@ -1066,7 +1087,6 @@ var useSocket = function (_a) {
         onMessage(event, data);
     }, [onMessage]);
     var onclose = react.useCallback(function (event) {
-        console.log("onclose ran");
         setSocketState(function (old) { return (__assign(__assign({}, old), { readyState: WebSocket.CLOSED })); });
         onClose(event);
     }, [onClose]);
@@ -1378,13 +1398,17 @@ exports.createLocale = createLocale;
 exports.createTheme = createTheme;
 exports.useAuth = useAuth;
 exports.useCounter = useCounter;
+exports.useDelete = useDelete;
 exports.useDimensions = useDimensions;
 exports.useEventListener = useEventListener;
 exports.useFetch = useFetch;
+exports.useGet = useGet;
 exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
 exports.useMeasure = useMeasure;
+exports.usePost = usePost;
+exports.usePut = usePut;
 exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
 exports.useTitle = useTitle;

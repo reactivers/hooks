@@ -3,7 +3,7 @@ import { emptyFunction } from '../../utils/functions';
 import { useSocketContext } from './context';
 
 interface SocketProps {
-    url: string;
+    url?: string;
     wss?: boolean;
     disconnectOnUnmount?: boolean;
     onOpen?: (a: any) => void,
@@ -19,35 +19,37 @@ interface SocketState {
 }
 
 interface SocketResponse extends SocketState {
-    connect: ({ path: string }) => WebSocket;
+    connect: (params: ({ url: string })) => WebSocket;
     socket: WebSocket,
     sendData: (p: any) => void;
 }
 
 const useSocket: (props: SocketProps) => SocketResponse = ({ url, wss = false, disconnectOnUnmount = true, onOpen = emptyFunction, onClose = emptyFunction, onError = emptyFunction, onMessage = emptyFunction }) => {
     const protocol = wss ? "wss" : "ws";
-    const path = `${protocol}://${url}`
-    const { connect } = useSocketContext();
+    const { connect: connectContext } = useSocketContext();
 
     //@ts-ignore
     const socket = useRef<WebSocket>({});
 
     const [socketState, setSocketState] = useState<SocketState>({ readyState: 0, lastData: undefined })
 
+
     useEffect(() => {
-        socket.current = connect({ path });
-        setSocketState(old => ({ ...old, readyState: socket.current.readyState }))
         return () => {
-            console.log("on unmount")
             if (disconnectOnUnmount) {
-                console.log("disconnectOnUnmount true")
                 if (socket.current.close) {
-                    console.log("closing")
                     socket.current.close(1000, "User disconnected!");
                 }
             }
         }
-    }, [connect, path, disconnectOnUnmount])
+    }, [disconnectOnUnmount])
+
+    const connect: (params?: { url: string }) => WebSocket = useCallback(({ url: _url }) => {
+        const path = `${protocol}://${_url || url}`
+        socket.current = connectContext({ path });
+        setSocketState(old => ({ ...old, readyState: socket.current.readyState }))
+        return socket.current;
+    }, [connectContext, protocol, url, disconnectOnUnmount])
 
     const onopen = useCallback((event) => {
         setSocketState(old => ({ ...old, readyState: WebSocket.OPEN }))
@@ -66,7 +68,6 @@ const useSocket: (props: SocketProps) => SocketResponse = ({ url, wss = false, d
     }, [onMessage])
 
     const onclose = useCallback((event) => {
-        console.log("onclose ran")
         setSocketState(old => ({ ...old, readyState: WebSocket.CLOSED }))
         onClose(event)
     }, [onClose])

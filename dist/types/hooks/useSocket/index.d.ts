@@ -1,5 +1,5 @@
 interface SocketProps {
-    url: string;
+    url?: string;
     wss?: boolean;
     disconnectOnUnmount?: boolean;
     onOpen?: (a: any) => void;
@@ -12,9 +12,9 @@ interface SocketState {
     lastData: any;
 }
 interface SocketResponse extends SocketState {
-    connect: ({ path: string }: {
-        path: any;
-    }) => WebSocket;
+    connect: (params: ({
+        url: string;
+    })) => WebSocket;
     socket: WebSocket;
     sendData: (p: any) => void;
 }
