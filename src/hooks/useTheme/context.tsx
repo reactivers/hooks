@@ -48,6 +48,7 @@ function createTheme<T>() {
         }, [])
         const isChanged = useRef(false);
         const [currentTheme, _setCurrentTheme] = useState<Themes>(getInitialTheme());
+
         const setCurrentTheme = useCallback((newTheme) => {
             isChanged.current = true;
             _setCurrentTheme(newTheme)
@@ -59,7 +60,6 @@ function createTheme<T>() {
 
         useEffect(() => {
             if (isBrowser()) {
-                document.addEventListener("DOMContentLoaded", updateInitialTheme);
                 if (!isChanged.current) {
                     updateInitialTheme()
                 }

@@ -1260,7 +1260,6 @@ function createTheme() {
         }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
             if (isBrowser()) {
-                document.addEventListener("DOMContentLoaded", updateInitialTheme);
                 if (!isChanged.current) {
                     updateInitialTheme();
                 }
