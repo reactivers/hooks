@@ -22,6 +22,7 @@ export const tryJSONparse = (obj: any) => {
     }
 }
 export const tryJSONStringify = (obj: any) => {
+    if (typeof obj === "string") return obj;
     try {
         return JSON.stringify(obj);
     } catch {

@@ -58,6 +58,8 @@ var tryJSONparse = function (obj) {
     }
 };
 var tryJSONStringify = function (obj) {
+    if (typeof obj === "string")
+        return obj;
     try {
         return JSON.stringify(obj);
     }
