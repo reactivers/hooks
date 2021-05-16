@@ -1249,13 +1249,20 @@ function createTheme() {
                 return "light";
             }
         }, []);
-        var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
+        var isChanged = react.useRef(false);
+        var _d = react.useState(getInitialTheme()), currentTheme = _d[0], _setCurrentTheme = _d[1];
+        var setCurrentTheme = react.useCallback(function (newTheme) {
+            isChanged.current = true;
+            _setCurrentTheme(newTheme);
+        }, []);
         var updateInitialTheme = react.useCallback(function () {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
-            updateInitialTheme();
-        }, [updateInitialTheme]);
+            if (!isChanged.current) {
+                updateInitialTheme();
+            }
+        }, [isChanged.current, updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {

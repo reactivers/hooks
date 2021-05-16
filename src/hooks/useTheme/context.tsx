@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import useUtils from "../useUtils";
 
 declare type Themes = "light" | "dark";
@@ -46,16 +46,22 @@ function createTheme<T>() {
                 return "light"
             }
         }, [])
-
-        const [currentTheme, setCurrentTheme] = useState<Themes>(getInitialTheme());
+        const isChanged = useRef(false);
+        const [currentTheme, _setCurrentTheme] = useState<Themes>(getInitialTheme());
+        const setCurrentTheme = useCallback((newTheme) => {
+            isChanged.current = true;
+            _setCurrentTheme(newTheme)
+        }, [])
 
         const updateInitialTheme = useCallback(() => {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme])
 
         useEffect(() => {
-            updateInitialTheme()
-        }, [updateInitialTheme])
+            if (!isChanged.current) {
+                updateInitialTheme()
+            }
+        }, [isChanged.current, updateInitialTheme])
 
 
         const getCurrentTheme = useCallback((e) => {
