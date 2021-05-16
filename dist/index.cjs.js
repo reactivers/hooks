@@ -1251,16 +1251,13 @@ function createTheme() {
         }, []);
         var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
         var updateInitialTheme = react.useCallback(function () {
-            if (currentTheme === "system") {
-                setCurrentTheme(getInitialTheme());
-            }
+            setCurrentTheme(getInitialTheme());
         }, [currentTheme, setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
-            window.addEventListener('load', updateInitialTheme);
-            return function () {
-                window.removeEventListener('load', updateInitialTheme);
-            };
-        }, [updateInitialTheme]);
+            if (isBrowser()) {
+                updateInitialTheme();
+            }
+        }, [window]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {

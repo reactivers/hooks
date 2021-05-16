@@ -50,17 +50,14 @@ function createTheme<T>() {
         const [currentTheme, setCurrentTheme] = useState<Themes>(getInitialTheme());
 
         const updateInitialTheme = useCallback(() => {
-            if (currentTheme === "system") {
-                setCurrentTheme(getInitialTheme());
-            }
+            setCurrentTheme(getInitialTheme());
         }, [currentTheme, setCurrentTheme, getInitialTheme])
 
         useEffect(() => {
-            window.addEventListener('load', updateInitialTheme);
-            return () => {
-                window.removeEventListener('load', updateInitialTheme)
+            if (isBrowser()) {
+                updateInitialTheme()
             }
-        }, [updateInitialTheme])
+        }, [window])
 
 
         const getCurrentTheme = useCallback((e) => {
