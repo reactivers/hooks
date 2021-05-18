@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const useMounted = () => {
+const useMounted: () => boolean = () => {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
