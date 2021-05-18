@@ -1,4 +1,2 @@
-declare const useMounted: () => {
-    mounted: boolean;
-};
+declare const useMounted: () => boolean;
 export default useMounted;

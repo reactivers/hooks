@@ -10,10 +10,7 @@ const useMounted = () => {
         }
     }, [])
 
-    return {
-        mounted
-    }
-        ;
+    return mounted
 }
 
 export default useMounted;

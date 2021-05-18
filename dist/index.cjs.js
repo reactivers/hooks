@@ -1441,9 +1441,7 @@ var useMounted = function () {
             setMounted(false);
         };
     }, []);
-    return {
-        mounted: mounted
-    };
+    return mounted;
 };
 
 var useTitle = function (props) {
