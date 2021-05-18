@@ -22,8 +22,6 @@ const EventListenerContext = createContext({} as EventListenerContextProps);
 const EventListenerProvider: React.FC = ({ children }) => {
     const events = useRef<Event>({}).current;
     const { guid } = useUtils();
-    //@ts-ignore
-    window.hookEvents = events;
 
     const removeEvent = useCallback(
         (component: string, name: string, id: string) => {

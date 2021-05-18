@@ -848,16 +848,18 @@ var useDimensions = function (payload) {
     var breakpoints = react.useMemo(function () { return payload.breakpoints || defaultBreakPoints; }, [payload.breakpoints]);
     var watchWindowSize = react.useMemo(function () { return payload.watchWindowSize; }, [payload.watchWindowSize]);
     var _a = useDimensionsContext(), sizes = _a.sizes, widths = _a.widths;
-    var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON;
+    var _b = useUtils(), findLastIndex = _b.findLastIndex, takeIf = _b.takeIf, isEqualJSON = _b.isEqualJSON, isBrowser = _b.isBrowser;
     var getSizeOfWindowWidth = react.useCallback(function (width) {
         var indexOfWidth = findLastIndex(widths, function (c) { return width >= c; });
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)];
     }, [findLastIndex, widths, sizes, takeIf]);
-    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(window.innerWidth); }, [getSizeOfWindowWidth]);
-    var _c = react.useState({
+    var initialSize = react.useMemo(function () { return getSizeOfWindowWidth(isBrowser() ? window.innerWidth : 0); }, [getSizeOfWindowWidth]);
+    var _c = react.useState(isBrowser() ? {
         width: window.innerWidth,
         height: window.innerHeight,
         size: initialSize
+    } : {
+        width: 0, height: 0, size: 'xxl'
     }), dimensions = _c[0], setDimensions = _c[1];
     var size = dimensions.size;
     var updateDimensions = react.useCallback(function (width, height) {
@@ -925,8 +927,6 @@ var EventListenerProvider = function (_a) {
     var children = _a.children;
     var events = react.useRef({}).current;
     var guid = useUtils().guid;
-    //@ts-ignore
-    window.hookEvents = events;
     var removeEvent = react.useCallback(function (component, name, id) {
         if (!!events)
             if (!!events[component])
@@ -1246,21 +1246,25 @@ function createTheme() {
                     return theme;
             }
             else {
-                return "system";
+                return "light";
             }
         }, []);
-        var _d = react.useState(getInitialTheme()), currentTheme = _d[0], setCurrentTheme = _d[1];
+        var isChanged = react.useRef(false);
+        var _d = react.useState(getInitialTheme()), currentTheme = _d[0], _setCurrentTheme = _d[1];
+        var setCurrentTheme = react.useCallback(function (newTheme) {
+            isChanged.current = true;
+            _setCurrentTheme(newTheme);
+        }, []);
         var updateInitialTheme = react.useCallback(function () {
-            if (currentTheme === "system") {
-                setCurrentTheme(getInitialTheme());
-            }
-        }, [currentTheme, setCurrentTheme, getInitialTheme]);
+            setCurrentTheme(getInitialTheme());
+        }, [setCurrentTheme, getInitialTheme]);
         react.useEffect(function () {
-            window.addEventListener('load', updateInitialTheme);
-            return function () {
-                window.removeEventListener('load', updateInitialTheme);
-            };
-        }, [updateInitialTheme]);
+            if (isBrowser()) {
+                if (!isChanged.current) {
+                    updateInitialTheme();
+                }
+            }
+        }, [isChanged.current, updateInitialTheme]);
         var getCurrentTheme = react.useCallback(function (e) {
             var userAgent = window.navigator.userAgent;
             if (userAgent.includes(AndroidDarkMode)) {
@@ -1429,6 +1433,17 @@ var useGlobalState = function () {
     return { globalState: globalState, setGlobalState: setGlobalState };
 };
 
+var useMounted = function () {
+    var _a = react.useState(false), mounted = _a[0], setMounted = _a[1];
+    react.useEffect(function () {
+        setMounted(true);
+        return function () {
+            setMounted(false);
+        };
+    }, []);
+    return mounted;
+};
+
 var useTitle = function (props) {
     if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
     var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
@@ -1577,6 +1592,7 @@ exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
 exports.useMeasure = useMeasure;
+exports.useMounted = useMounted;
 exports.usePost = usePost;
 exports.usePut = usePut;
 exports.useSafeArea = useSafeArea;

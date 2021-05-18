@@ -31,19 +31,21 @@ const useDimensions: (payload?: DimensionProps) => DimensionResponse = (payload:
     const watchWindowSize = useMemo(() => payload.watchWindowSize, [payload.watchWindowSize])
 
     const { sizes, widths } = useDimensionsContext()
-    const { findLastIndex, takeIf, isEqualJSON } = useUtils();
+    const { findLastIndex, takeIf, isEqualJSON, isBrowser } = useUtils();
 
     const getSizeOfWindowWidth = useCallback((width) => {
         const indexOfWidth = findLastIndex(widths, (c: number) => width >= c);
         return sizes[takeIf(indexOfWidth > -1, indexOfWidth, 0)]
     }, [findLastIndex, widths, sizes, takeIf])
 
-    const initialSize = useMemo(() => getSizeOfWindowWidth(window.innerWidth), [getSizeOfWindowWidth])
+    const initialSize = useMemo(() => getSizeOfWindowWidth(isBrowser() ? window.innerWidth : 0), [getSizeOfWindowWidth])
 
-    const [dimensions, setDimensions] = useState<Dimensions>({
+    const [dimensions, setDimensions] = useState<Dimensions>(isBrowser() ? {
         width: window.innerWidth,
         height: window.innerHeight,
         size: initialSize
+    } : {
+        width: 0, height: 0, size: 'xxl'
     });
     const { size } = dimensions;
 

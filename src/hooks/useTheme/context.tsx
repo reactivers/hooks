@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import useUtils from "../useUtils";
 
 declare type Themes = "light" | "dark";
@@ -43,25 +43,28 @@ function createTheme<T>() {
                 else
                     return theme
             } else {
-                return "system"
+                return "light"
             }
         }, [])
+        const isChanged = useRef(false);
+        const [currentTheme, _setCurrentTheme] = useState<Themes>(getInitialTheme());
 
-        const [currentTheme, setCurrentTheme] = useState<Themes>(getInitialTheme());
+        const setCurrentTheme = useCallback((newTheme) => {
+            isChanged.current = true;
+            _setCurrentTheme(newTheme)
+        }, [])
 
         const updateInitialTheme = useCallback(() => {
-            if (currentTheme === "system") {
-                setCurrentTheme(getInitialTheme());
-            }
-        }, [currentTheme, setCurrentTheme, getInitialTheme])
+            setCurrentTheme(getInitialTheme());
+        }, [setCurrentTheme, getInitialTheme])
 
         useEffect(() => {
-            window.addEventListener('load', updateInitialTheme);
-            return () => {
-                window.removeEventListener('load', updateInitialTheme)
+            if (isBrowser()) {
+                if (!isChanged.current) {
+                    updateInitialTheme()
+                }
             }
-        }, [updateInitialTheme])
-
+        }, [isChanged.current, updateInitialTheme])
 
         const getCurrentTheme = useCallback((e) => {
             const { navigator: { userAgent } } = window;
