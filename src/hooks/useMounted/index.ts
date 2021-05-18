@@ -4,9 +4,9 @@ const useMounted = () => {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(false)
+        setMounted(true)
         return () => {
-            setMounted(true);
+            setMounted(false);
         }
     }, [])
 

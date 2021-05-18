@@ -1436,9 +1436,9 @@ var useGlobalState = function () {
 var useMounted = function () {
     var _a = react.useState(false), mounted = _a[0], setMounted = _a[1];
     react.useEffect(function () {
-        setMounted(false);
+        setMounted(true);
         return function () {
-            setMounted(true);
+            setMounted(false);
         };
     }, []);
     return mounted;
