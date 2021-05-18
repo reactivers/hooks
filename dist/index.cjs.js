@@ -1433,6 +1433,17 @@ var useGlobalState = function () {
     return { globalState: globalState, setGlobalState: setGlobalState };
 };
 
+var useMounted = function () {
+    var _a = react.useState(false), mounted = _a[0], setMounted = _a[1];
+    react.useEffect(function () {
+        setMounted(false);
+        return function () {
+            setMounted(true);
+        };
+    }, []);
+    return mounted;
+};
+
 var useTitle = function (props) {
     if (props === void 0) { props = { title: undefined, setOldTitleOnUnmount: false }; }
     var title = props.title, setOldTitleOnUnmount = props.setOldTitleOnUnmount;
@@ -1581,6 +1592,7 @@ exports.useHover = useHover;
 exports.useLoading = useLoading;
 exports.useLocalStorage = useLocalStorage;
 exports.useMeasure = useMeasure;
+exports.useMounted = useMounted;
 exports.usePost = usePost;
 exports.usePut = usePut;
 exports.useSafeArea = useSafeArea;
