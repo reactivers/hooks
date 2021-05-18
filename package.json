@@ -1,7 +1,7 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React!. Fetch, Socket, Measure, LocalStorage and so much more...",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "keywords": [
     "hooks",
     "react",
@@ -30,14 +30,16 @@
     "cookie",
     "local storage",
     "web socket",
-    "event listener"
+    "event listener",
+    "react hook",
+    "fetch"
   ],
   "bugs": {
     "url": "https://github.com/reactivers/hooks/issues",
     "email": "support@reactivers.com"
   },
-  "license": "(MIT OR Apache-2.0)",
-  "homepage": "http://hooks.reactivers.com",
+  "license": "MIT",
+  "homepage": "https://hooks.reactivers.com",
   "private": false,
   "repository": {
     "type": "git",
