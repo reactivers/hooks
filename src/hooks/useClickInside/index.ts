@@ -10,18 +10,24 @@ const useClickInside: (params: IUseClickInside) => boolean = ({ ref, callback, w
     const [clickedState, setClickedState] = useState(false);
     const clickedRef = useRef(false);
 
+    const updateSwitch = useCallback((newValue) => {
+        if (withState) {
+            setClickedState(true)
+        } else {
+            clickedRef.current = true;
+        }
+    }, [withState])
+
     const onClick = useCallback((event) => {
         if (ref.current) {
             if (ref.current.contains(event.target)) {
-                if (withState) {
-                    setClickedState(true)
-                } else {
-                    clickedRef.current = true;
-                }
+                updateSwitch(true)
                 callback(event)
+            } else {
+                updateSwitch(false)
             }
         }
-    }, [ref.current, callback, withState])
+    }, [ref.current, callback, updateSwitch])
 
     useEffect(() => {
         document.addEventListener("click", onClick);
