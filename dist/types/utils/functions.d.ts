@@ -82,6 +82,9 @@ export interface IFetch extends RequestInit {
     stringify?: boolean;
     responseContentType?: ResponseContentType;
 }
+export declare const applicationJSONHeader: {
+    "Content-Type": string;
+};
 export declare const iFetch: (payload: IFetch) => Promise<Response>;
 export declare const changeColor: (color: any, amt: any) => string;
 export declare const takeIf: (condition: any, value: any, defaultValue?: any) => any;

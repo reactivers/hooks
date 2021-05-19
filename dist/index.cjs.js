@@ -354,6 +354,7 @@ var destructArray = function (array) {
 var takeUndefinedAsTrue = function (parameter) {
     return parameter === undefined ? true : parameter;
 };
+var applicationJSONHeader = { "Content-Type": "application/json" };
 var iFetch = function (payload) { return __awaiter(void 0, void 0, void 0, function () {
     var url, _body, _a, stringify, onSuccess, onError, _b, responseContentType, _c, method, rest, body, httpResponse, _d, responseJson, responseBlob, responseFormData, responseText, responseArrayBuffer, error_1;
     return __generator(this, function (_e) {
@@ -555,6 +556,7 @@ var utils = /*#__PURE__*/Object.freeze({
     generatedColorFromString: generatedColorFromString,
     destructArray: destructArray,
     takeUndefinedAsTrue: takeUndefinedAsTrue,
+    applicationJSONHeader: applicationJSONHeader,
     iFetch: iFetch,
     changeColor: changeColor,
     takeIf: takeIf,
@@ -874,9 +876,10 @@ var useGet = function (params) {
 var usePost = function (params) {
     if (params === void 0) { params = { abortOnUnmount: true }; }
     var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var applicationJSONHeader = useUtils().applicationJSONHeader;
     var postRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "POST" }));
+        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "POST" }));
     }, [request]);
     return __assign({ request: postRequest }, rest);
 };
@@ -884,9 +887,10 @@ var usePost = function (params) {
 var usePut = function (params) {
     if (params === void 0) { params = { abortOnUnmount: true }; }
     var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var applicationJSONHeader = useUtils().applicationJSONHeader;
     var putRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "PUT" }));
+        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "PUT" }));
     }, [request]);
     return __assign({ request: putRequest }, rest);
 };
@@ -894,9 +898,10 @@ var usePut = function (params) {
 var useDelete = function (params) {
     if (params === void 0) { params = { abortOnUnmount: true }; }
     var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
+    var applicationJSONHeader = useUtils().applicationJSONHeader;
     var deleteRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "DELETE" }));
+        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "DELETE" }));
     }, [request]);
     return __assign({ request: deleteRequest }, rest);
 };

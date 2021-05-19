@@ -350,6 +350,8 @@ export interface IFetch extends RequestInit {
     responseContentType?: ResponseContentType,
 }
 
+export const applicationJSONHeader = { "Content-Type": "application/json" }
+
 export const iFetch = async (payload: IFetch) => {
     const {
         url,
