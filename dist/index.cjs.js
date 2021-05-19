@@ -1588,6 +1588,7 @@ exports.SocketProvider = SocketProvider;
 exports.createLocale = createLocale;
 exports.createTheme = createTheme;
 exports.useAuth = useAuth;
+exports.useClickInside = useUtils;
 exports.useCookie = useCookie;
 exports.useCounter = useCounter;
 exports.useDelete = useDelete;
