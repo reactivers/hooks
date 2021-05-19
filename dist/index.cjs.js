@@ -1433,6 +1433,70 @@ var useGlobalState = function () {
     return { globalState: globalState, setGlobalState: setGlobalState };
 };
 
+var useClickInside = function (_a) {
+    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b;
+    var _c = react.useState(false), clickedState = _c[0], setClickedState = _c[1];
+    var clickedRef = react.useRef(false);
+    var updateSwitch = react.useCallback(function (newValue) {
+        if (withState) {
+            setClickedState(true);
+        }
+        else {
+            clickedRef.current = true;
+        }
+    }, [withState]);
+    var onClick = react.useCallback(function (event) {
+        if (ref.current) {
+            if (ref.current.contains(event.target)) {
+                updateSwitch(true);
+                callback(event);
+            }
+            else {
+                updateSwitch(false);
+            }
+        }
+    }, [ref.current, callback, updateSwitch]);
+    react.useEffect(function () {
+        document.addEventListener("click", onClick);
+        return function () {
+            document.removeEventListener("click", onClick);
+        };
+    }, [onClick]);
+    return withState ? clickedState : clickedRef.current;
+};
+
+var useClickOutside = function (_a) {
+    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b;
+    var _c = react.useState(false), clickedState = _c[0], setClickedState = _c[1];
+    var clickedRef = react.useRef(false);
+    var updateSwitch = react.useCallback(function (newValue) {
+        if (withState) {
+            setClickedState(true);
+        }
+        else {
+            clickedRef.current = true;
+        }
+    }, [withState]);
+    var onClick = react.useCallback(function (event) {
+        if (ref.current) {
+            if (!ref.current.contains(event.target)) {
+                updateSwitch(true);
+                callback(event);
+            }
+            else {
+                updateSwitch(false);
+            }
+        }
+    }, [ref.current, callback, updateSwitch]);
+    react.useEffect(function () {
+        document.addEventListener("click", onClick);
+        return function () {
+            document.removeEventListener("click", onClick);
+        };
+    }, [onClick]);
+    return withState ? clickedState : clickedRef.current;
+};
+
 var usePrevious = function (current) {
     var previous = react.useRef(current);
     react.useEffect(function () {
@@ -1588,7 +1652,8 @@ exports.SocketProvider = SocketProvider;
 exports.createLocale = createLocale;
 exports.createTheme = createTheme;
 exports.useAuth = useAuth;
-exports.useClickInside = useUtils;
+exports.useClickInside = useClickInside;
+exports.useClickOutside = useClickOutside;
 exports.useCookie = useCookie;
 exports.useCounter = useCounter;
 exports.useDelete = useDelete;

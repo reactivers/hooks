@@ -38,7 +38,8 @@ export { default as useGlobalState } from "./hooks/useGlobalState/index";
 
 
 export { default as useUtils } from "./hooks/useUtils/index";
-export { default as useClickInside } from "./hooks/useUtils/index";
+export { default as useClickInside } from "./hooks/useClickInside/index";
+export { default as useClickOutside } from "./hooks/useClickOutside/index";
 export { default as usePrevious } from "./hooks/usePrevious/index";
 export { default as useMounted } from "./hooks/useMounted/index";
 export { default as useTitle } from "./hooks/useTitle/index";
