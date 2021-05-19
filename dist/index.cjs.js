@@ -869,7 +869,7 @@ var useGet = function (params) {
     var _a = useFetch(params), request = _a.request, rest = __rest(_a, ["request"]);
     var getRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({}, payload), { method: "GET" }));
+        return request(__assign(__assign({}, payload), { method: "GET" }));
     }, [request]);
     return __assign({ request: getRequest }, rest);
 };
@@ -880,7 +880,7 @@ var usePost = function (params) {
     var applicationJSONHeader = useUtils().applicationJSONHeader;
     var postRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "POST" }));
+        return request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "POST" }));
     }, [request]);
     return __assign({ request: postRequest }, rest);
 };
@@ -891,7 +891,7 @@ var usePut = function (params) {
     var applicationJSONHeader = useUtils().applicationJSONHeader;
     var putRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "PUT" }));
+        return request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "PUT" }));
     }, [request]);
     return __assign({ request: putRequest }, rest);
 };
@@ -902,7 +902,7 @@ var useDelete = function (params) {
     var applicationJSONHeader = useUtils().applicationJSONHeader;
     var deleteRequest = react.useCallback(function (payload) {
         if (payload === void 0) { payload = {}; }
-        request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "DELETE" }));
+        return request(__assign(__assign({ headers: applicationJSONHeader }, payload), { method: "DELETE" }));
     }, [request]);
     return __assign({ request: deleteRequest }, rest);
 };

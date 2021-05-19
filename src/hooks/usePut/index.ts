@@ -11,7 +11,7 @@ const usePut: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = 
     const { applicationJSONHeader } = useUtils();
 
     const putRequest = useCallback((payload: PutRequestPayload = {}) => {
-        request({ headers: applicationJSONHeader, ...payload, method: "PUT" })
+        return request({ headers: applicationJSONHeader, ...payload, method: "PUT" })
     }, [request])
 
     return {

@@ -8,7 +8,7 @@ const useGet: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = 
     const { request, ...rest } = useFetch<T>(params)
 
     const getRequest = useCallback((payload: GetRequestPayload = {}) => {
-        request({ ...payload, method: "GET" })
+        return request({ ...payload, method: "GET" })
     }, [request])
 
     return {

@@ -10,7 +10,7 @@ const useDelete: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T>
     const { request, ...rest } = useFetch<T>(params)
     const { applicationJSONHeader } = useUtils();
     const deleteRequest = useCallback((payload: DeleteRequestPayload = {}) => {
-        request({ headers: applicationJSONHeader, ...payload, method: "DELETE" })
+        return request({ headers: applicationJSONHeader, ...payload, method: "DELETE" })
     }, [request])
 
     return {

@@ -9,7 +9,7 @@ const usePost: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> =
     const { request, ...rest } = useFetch<T>(params)
     const { applicationJSONHeader } = useUtils();
     const postRequest = useCallback((payload: PostRequestPayload = {}) => {
-        request({ headers: applicationJSONHeader, ...payload, method: "POST" })
+        return request({ headers: applicationJSONHeader, ...payload, method: "POST" })
     }, [request])
 
     return {
