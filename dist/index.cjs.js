@@ -356,7 +356,7 @@ var takeUndefinedAsTrue = function (parameter) {
 };
 var applicationJSONHeader = { "Content-Type": "application/json" };
 var iFetch = function (payload) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, _body, _a, stringify, onSuccess, onError, _b, responseContentType, _c, method, rest, body, httpResponse, clonedHttpResponse, _d, responseJson, responseBlob, responseFormData, responseText, responseArrayBuffer, error_1;
+    var url, _body, _a, stringify, onSuccess, onError, _b, responseContentType, _c, method, rest, body, httpResponse, _d, responseJson, responseBlob, responseFormData, responseText, responseArrayBuffer, error_1;
     return __generator(this, function (_e) {
         switch (_e.label) {
             case 0:
@@ -372,7 +372,6 @@ var iFetch = function (payload) { return __awaiter(void 0, void 0, void 0, funct
                         method: method }, rest))];
             case 2:
                 httpResponse = _e.sent();
-                clonedHttpResponse = httpResponse.clone();
                 _d = responseContentType;
                 switch (_d) {
                     case "JSON": return [3 /*break*/, 3];
@@ -410,7 +409,7 @@ var iFetch = function (payload) { return __awaiter(void 0, void 0, void 0, funct
             case 13:
                 onSuccess(httpResponse);
                 _e.label = 14;
-            case 14: return [2 /*return*/, clonedHttpResponse];
+            case 14: return [2 /*return*/, httpResponse];
             case 15:
                 error_1 = _e.sent();
                 onError(error_1);
