@@ -1433,6 +1433,14 @@ var useGlobalState = function () {
     return { globalState: globalState, setGlobalState: setGlobalState };
 };
 
+var usePrevious = function (current) {
+    var previous = react.useRef(current);
+    react.useEffect(function () {
+        previous.current = current;
+    }, [current]);
+    return previous.current;
+};
+
 var useMounted = function () {
     var _a = react.useState(false), mounted = _a[0], setMounted = _a[1];
     react.useEffect(function () {
@@ -1594,6 +1602,7 @@ exports.useLocalStorage = useLocalStorage;
 exports.useMeasure = useMeasure;
 exports.useMounted = useMounted;
 exports.usePost = usePost;
+exports.usePrevious = usePrevious;
 exports.usePut = usePut;
 exports.useSafeArea = useSafeArea;
 exports.useSocket = useSocket;
