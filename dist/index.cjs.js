@@ -355,52 +355,65 @@ var takeUndefinedAsTrue = function (parameter) {
     return parameter === undefined ? true : parameter;
 };
 var iFetch = function (payload) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, _body, _a, stringify, onSuccess, onError, _b, responseContentType, _c, method, rest, body, httpResponse, responseJson, responseBlob, responseFormData, responseText, responseArrayBuffer, error_1;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var url, _body, _a, stringify, onSuccess, onError, _b, responseContentType, _c, method, rest, body, httpResponse, _d, responseJson, responseBlob, responseFormData, responseText, responseArrayBuffer, error_1;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
                 url = payload.url, _body = payload.body, _a = payload.stringify, stringify = _a === void 0 ? true : _a, onSuccess = payload.onSuccess, onError = payload.onError, _b = payload.responseContentType, responseContentType = _b === void 0 ? "JSON" : _b, _c = payload.method, method = _c === void 0 ? "GET" : _c, rest = __rest(payload, ["url", "body", "stringify", "onSuccess", "onError", "responseContentType", "method"]);
                 if (url === undefined) {
                     throw new Error("No URL Found in the request");
                 }
                 body = stringify ? JSON.stringify(_body) : _body;
-                _d.label = 1;
+                _e.label = 1;
             case 1:
-                _d.trys.push([1, 3, , 4]);
+                _e.trys.push([1, 15, , 16]);
                 return [4 /*yield*/, fetch(url, __assign({ body: body,
                         method: method }, rest))];
             case 2:
-                httpResponse = _d.sent();
-                switch (responseContentType) {
-                    case "JSON":
-                        responseJson = httpResponse.json();
-                        onSuccess(responseJson);
-                        break;
-                    case "BLOB":
-                        responseBlob = httpResponse.blob();
-                        onSuccess(responseBlob);
-                        break;
-                    case "FORM-DATA":
-                        responseFormData = httpResponse.formData();
-                        onSuccess(responseFormData);
-                        break;
-                    case "TEXT":
-                        responseText = httpResponse.text();
-                        onSuccess(responseText);
-                        break;
-                    case "ARRAY-BUFFER":
-                        responseArrayBuffer = httpResponse.arrayBuffer();
-                        onSuccess(responseArrayBuffer);
-                        break;
-                    default:
-                        onSuccess(httpResponse);
+                httpResponse = _e.sent();
+                _d = responseContentType;
+                switch (_d) {
+                    case "JSON": return [3 /*break*/, 3];
+                    case "BLOB": return [3 /*break*/, 5];
+                    case "FORM-DATA": return [3 /*break*/, 7];
+                    case "TEXT": return [3 /*break*/, 9];
+                    case "ARRAY-BUFFER": return [3 /*break*/, 11];
                 }
-                return [2 /*return*/, httpResponse];
-            case 3:
-                error_1 = _d.sent();
+                return [3 /*break*/, 13];
+            case 3: return [4 /*yield*/, httpResponse.json()];
+            case 4:
+                responseJson = _e.sent();
+                onSuccess(responseJson);
+                return [3 /*break*/, 14];
+            case 5: return [4 /*yield*/, httpResponse.blob()];
+            case 6:
+                responseBlob = _e.sent();
+                onSuccess(responseBlob);
+                return [3 /*break*/, 14];
+            case 7: return [4 /*yield*/, httpResponse.formData()];
+            case 8:
+                responseFormData = _e.sent();
+                onSuccess(responseFormData);
+                return [3 /*break*/, 14];
+            case 9: return [4 /*yield*/, httpResponse.text()];
+            case 10:
+                responseText = _e.sent();
+                onSuccess(responseText);
+                return [3 /*break*/, 14];
+            case 11: return [4 /*yield*/, httpResponse.arrayBuffer()];
+            case 12:
+                responseArrayBuffer = _e.sent();
+                onSuccess(responseArrayBuffer);
+                return [3 /*break*/, 14];
+            case 13:
+                onSuccess(httpResponse);
+                _e.label = 14;
+            case 14: return [2 /*return*/, httpResponse];
+            case 15:
+                error_1 = _e.sent();
                 onError(error_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 16];
+            case 16: return [2 /*return*/];
         }
     });
 }); };

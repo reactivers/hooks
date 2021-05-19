@@ -377,23 +377,23 @@ export const iFetch = async (payload: IFetch) => {
 
         switch (responseContentType) {
             case "JSON":
-                const responseJson = httpResponse.json();
+                const responseJson = await httpResponse.json();
                 onSuccess(responseJson);
                 break;
             case "BLOB":
-                const responseBlob = httpResponse.blob();
+                const responseBlob = await httpResponse.blob();
                 onSuccess(responseBlob);
                 break;
             case "FORM-DATA":
-                const responseFormData = httpResponse.formData();
+                const responseFormData = await httpResponse.formData();
                 onSuccess(responseFormData);
                 break;
             case "TEXT":
-                const responseText = httpResponse.text();
+                const responseText = await httpResponse.text();
                 onSuccess(responseText);
                 break;
             case "ARRAY-BUFFER":
-                const responseArrayBuffer = httpResponse.arrayBuffer();
+                const responseArrayBuffer = await httpResponse.arrayBuffer();
                 onSuccess(responseArrayBuffer);
                 break;
             default:
