@@ -377,6 +377,8 @@ export const iFetch = async (payload: IFetch) => {
             ...rest
         })
 
+        const clonedHttpResponse = httpResponse.clone();
+
         switch (responseContentType) {
             case "JSON":
                 const responseJson = await httpResponse.json();
@@ -402,7 +404,7 @@ export const iFetch = async (payload: IFetch) => {
                 onSuccess(httpResponse);
         }
 
-        return httpResponse;
+        return clonedHttpResponse;
 
     } catch (error) {
         onError(error)
