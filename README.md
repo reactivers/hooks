@@ -25,6 +25,8 @@ yarn add @reactivers/hooks
 ## Content
 
 - [useAuth](https://hooks.reactivers.com/use-auth)
+- [useClickInside](https://hooks.reactivers.com/use-click-inside)
+- [useClickOutside](https://hooks.reactivers.com/use-click-outside)
 - [useCookie](https://hooks.reactivers.com/use-cookie)
 - [useCounter](https://hooks.reactivers.com/use-counter)
 - [useDelete](https://hooks.reactivers.com/use-fetch)
@@ -40,6 +42,7 @@ yarn add @reactivers/hooks
 - [useMeasure](https://hooks.reactivers.com/use-measure)
 - [useMounted](https://hooks.reactivers.com/use-mounted)
 - [usePost](https://hooks.reactivers.com/use-fetch)
+- [usePrevious](https://hooks.reactivers.com/use-previous)
 - [usePut](https://hooks.reactivers.com/use-fetch)
 - [useSafeArea](https://hooks.reactivers.com/use-safe-area)
 - [useSocket](https://hooks.reactivers.com/use-socket)

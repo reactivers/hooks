@@ -72,19 +72,20 @@ export declare const hashCode: (str: any) => number;
 export declare const generatedColorFromString: (_i: any) => string;
 export declare const destructArray: (array?: any[]) => any[];
 export declare const takeUndefinedAsTrue: (parameter: any) => any;
-export declare type HTTPMethods = 'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE';
-interface FetchProps {
+export declare type ResponseContentType = "JSON" | "BLOB" | "FORM-DATA" | "TEXT" | "ARRAY-BUFFER" | "RAW";
+export interface IFetch extends RequestInit {
     url: string;
-    endpoint: string;
-    params?: any;
-    method: HTTPMethods;
-    formData?: any;
+    body?: any;
+    method?: string;
     onSuccess: (response: any) => void;
-    onError: (error: any, errorJSON?: any) => void;
-    token?: string;
-    signal: AbortSignal;
+    onError: (error: any) => void;
+    stringify?: boolean;
+    responseContentType?: ResponseContentType;
 }
-export declare const iFetch: (payload: FetchProps) => void;
+export declare const applicationJSONHeader: {
+    "Content-Type": string;
+};
+export declare const iFetch: (payload: IFetch) => Promise<Response>;
 export declare const changeColor: (color: any, amt: any) => string;
 export declare const takeIf: (condition: any, value: any, defaultValue?: any) => any;
 export declare const spliceString: (string: any, startCount: any, deleteCount: any) => any;

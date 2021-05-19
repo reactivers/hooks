@@ -1,11 +1,14 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React!. Fetch, Socket, Measure, LocalStorage and so much more...",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "keywords": [
     "hooks",
     "react",
+    "awesome hooks",
     "useAuth",
+    "useClickInside",
+    "useClickOutside",
     "useCookie",
     "useCounter",
     "useDelete",
@@ -20,6 +23,7 @@
     "useLocalStorage",
     "useMeasure",
     "usePost",
+    "usePrevious",
     "usePut",
     "useSafeArea",
     "useSocket",

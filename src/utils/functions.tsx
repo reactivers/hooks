@@ -338,76 +338,76 @@ export const takeUndefinedAsTrue = (parameter: any) => {
     return parameter === undefined ? true : parameter;
 }
 
-export declare type HTTPMethods = 'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE'
+export declare type ResponseContentType = "JSON" | "BLOB" | "FORM-DATA" | "TEXT" | "ARRAY-BUFFER" | "RAW"
 
-interface FetchProps {
+export interface IFetch extends RequestInit {
     url: string,
-    endpoint: string,
-    params?: any,
-    method: HTTPMethods,
-    formData?: any,
+    body?: any,
+    method?: string,
     onSuccess: (response: any) => void,
-    onError: (error: any, errorJSON?: any) => void,
-    token?: string
-    signal: AbortSignal
+    onError: (error: any) => void,
+    stringify?: boolean;
+    responseContentType?: ResponseContentType,
 }
 
-export const iFetch = (payload: FetchProps) => {
-    const { url: _url, signal, endpoint, method, params, formData, token, onSuccess, onError } = payload;
-    const url = `${_url}${endpoint}`;
-    const body = params ? JSON.stringify(params) : formData;
+export const applicationJSONHeader = { "Content-Type": "application/json" }
 
-    const headers: HeadersInit = {
-        "Content-Type": "application/json"
+export const iFetch = async (payload: IFetch) => {
+    const {
+        url,
+        body: _body,
+        stringify = true,
+        onSuccess,
+        onError,
+        responseContentType = "JSON",
+        method = "GET",
+        ...rest
+    } = payload;
+
+    if (url === undefined) {
+        throw new Error("No URL Found in the request");
     }
 
-    if (token)
-        headers["Authorization"] = `Bearer ${token}`;
+    const body = stringify ? JSON.stringify(_body) : _body;
 
-    if (formData) {
-        delete headers["Content-Type"]
+    try {
+        const httpResponse = await fetch(url, {
+            body,
+            method,
+            ...rest
+        })
+
+        switch (responseContentType) {
+            case "JSON":
+                const responseJson = await httpResponse.json();
+                onSuccess(responseJson);
+                break;
+            case "BLOB":
+                const responseBlob = await httpResponse.blob();
+                onSuccess(responseBlob);
+                break;
+            case "FORM-DATA":
+                const responseFormData = await httpResponse.formData();
+                onSuccess(responseFormData);
+                break;
+            case "TEXT":
+                const responseText = await httpResponse.text();
+                onSuccess(responseText);
+                break;
+            case "ARRAY-BUFFER":
+                const responseArrayBuffer = await httpResponse.arrayBuffer();
+                onSuccess(responseArrayBuffer);
+                break;
+            default:
+                onSuccess(httpResponse);
+        }
+
+        return httpResponse;
+
+    } catch (error) {
+        onError(error)
     }
 
-    fetch(url, {
-        signal,
-        method: method || (params || formData ? "POST" : "GET"),
-        body,
-        headers
-    })
-        .then(i => {
-            const contentType = (i.headers.get('Content-Type') || '').split(";")[0];
-            if (i.ok) {
-                switch (contentType) {
-                    case 'application/json':
-                        i.json().then(i2 => {
-                            if (i2 instanceof Array)
-                                onSuccess(i2)
-                            else if (i2.success !== undefined && !i2.success)
-                                onError(i, i2)
-                            else onSuccess(i2)
-                        }, (error) => {
-                            console.error(url, error)
-                            onSuccess({})
-                        });
-                        break;
-                    default:
-                        i.blob().then(blob => {
-                            onSuccess(new Blob([blob], { type: contentType }));
-                        })
-                        break;
-                }
-            } else if (i.status === 400) {
-                console.error("status 400 error", url, i)
-                i.json().then(i2 => {
-                    onError(i, i2)
-                })
-            } else {
-                onError(i)
-            }
-        }).catch(e => {
-            console.error("e", e)
-            onError(e)
-        });
 }
 
 export const changeColor = (color, amt) => {
