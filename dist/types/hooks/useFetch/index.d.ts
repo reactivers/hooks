@@ -1,14 +1,14 @@
-import { HTTPMethods } from '../../utils/functions';
-export interface GenericRequestPayload {
+import { ResponseContentType } from '../../utils/functions';
+export interface GenericRequestPayload extends RequestInit {
     url?: string;
     endpoint?: string;
     onSuccess?: (respose: any) => void;
-    onError?: (responseJSON: any, response: any) => void;
+    onError?: (error: any) => void;
+    responseContentType?: ResponseContentType;
 }
 export interface RequestPayload extends GenericRequestPayload {
-    method?: HTTPMethods;
-    params?: any;
-    formData?: any;
+    body?: any;
+    bodyStringify?: boolean;
 }
 export interface FetchController<T extends {}> {
     firstTimeFetched: boolean;

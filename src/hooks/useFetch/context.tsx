@@ -3,23 +3,21 @@ import { RequestPayload } from ".";
 
 interface FetchContextProps {
     url?: string;
-    onRequest?: (response: RequestPayload) => void;
+    credentials?: RequestCredentials;
+    transformResponse?: (response: any) => any;
+    isSuccess?: (response: any) => boolean;
+    isError?: (response: any) => boolean;
+    onRequest?: (request: RequestPayload) => void;
     onSuccess?: (response: any) => void;
-    onError?: (response: any, responseJSON?: any) => void;
-}
-
-interface FetchProviderProps {
-    url?: string;
-    onRequest?: (response: RequestPayload) => void;
-    onSuccess?: (response: any) => void;
-    onError?: (response: any, responseJSON?: any) => void;
+    onError?: (error: any) => void;
+    getAuthorizationHeader?: (token: string) => string;
 }
 
 const FetchContext = createContext({} as FetchContextProps);
 
-const FetchProvider: FC<FetchProviderProps> = ({ url, onRequest, onSuccess, onError, children }) => {
+const FetchProvider: FC<FetchContextProps> = ({ children, getAuthorizationHeader = (token) => token ? `Bearer ${token}` : "", ...rest }) => {
     return (
-        <FetchContext.Provider value={{ url, onSuccess, onRequest, onError }}>
+        <FetchContext.Provider value={rest}>
             {children}
         </FetchContext.Provider>
     )

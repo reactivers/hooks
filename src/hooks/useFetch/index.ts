@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { HTTPMethods } from '../../utils/functions';
+import { ResponseContentType } from '../../utils/functions';
 import useAuth from "../useAuth";
 import useUtils from '../useUtils';
 import { useFetchContext } from './context';
 
-export interface GenericRequestPayload {
+export interface GenericRequestPayload extends RequestInit {
     url?: string;
     endpoint?: string;
     onSuccess?: (respose: any) => void;
-    onError?: (responseJSON: any, response: any) => void;
+    onError?: (error: any) => void;
+    responseContentType?: ResponseContentType,
 }
 
 export interface RequestPayload extends GenericRequestPayload {
-    method?: HTTPMethods;
-    params?: any;
-    formData?: any;
+    body?: any;
+    bodyStringify?: boolean;
 }
 
 export interface FetchController<T extends {}> {
@@ -37,7 +37,17 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
     const { abortOnUnmount } = params;
     const { iFetch } = useUtils();
 
-    const { url: contextURL, onSuccess: contextOnSuccess, onError: contextOnError, onRequest } = useFetchContext();
+    const {
+        url: contextURL,
+        onSuccess: contextOnSuccess,
+        onError: contextOnError,
+        onRequest,
+        isError,
+        isSuccess,
+        credentials,
+        transformResponse,
+        getAuthorizationHeader
+    } = useFetchContext();
 
     const { token } = useAuth()
 
@@ -52,6 +62,9 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
     const abortController = useMemo(() => new AbortController(), []);
 
     const onSuccess = useCallback(({ onSuccess: payloadOnSuccess, response }) => {
+        if (transformResponse)
+            response = transformResponse(response)
+
         if (contextOnSuccess) contextOnSuccess(response)
         if (payloadOnSuccess) payloadOnSuccess(response)
 
@@ -63,59 +76,96 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
             fetched: true,
             firstTimeFetched: true
         }))
-    }, [contextOnSuccess])
+    }, [contextOnSuccess, transformResponse])
 
-    const onError = useCallback(({ onError: payloadOnError, response, responseJSON }) => {
+    const onError = useCallback(({ onError: payloadOnError, response }) => {
+        if (transformResponse)
+            response = transformResponse(response)
+
+        if (contextOnError) contextOnError(response)
+        if (payloadOnError) payloadOnError(response)
+
         setData(oldData => ({
             ...oldData,
             success: false,
-            response: { ...(responseJSON || response) },
+            response,
             fetching: false,
             fetched: true,
             firstTimeFetched: true
         }))
 
-        if (contextOnError) contextOnError(responseJSON || response, response)
-        if (payloadOnError) payloadOnError(responseJSON || response, response)
-    }, [contextOnError])
+    }, [contextOnError, transformResponse])
 
     const request = useCallback((payload: RequestPayload = {}) => {
         const {
             url: _url,
             endpoint,
-            method,
             onSuccess: payloadOnSuccess,
             onError: payloadOnError,
-            formData,
-            params
+            headers: payloadHeaders,
+            credentials: _credentials,
+            ...rest
         } = payload;
-        const url = _url || contextURL;
+        const url = `${_url || contextURL}${endpoint}`;
 
         if (onRequest) onRequest({ ...payload, url })
 
         setData(old => ({ ...old, fetching: true, fetched: false }))
 
+        const authorizationHeader = getAuthorizationHeader(token);
+        const headers = {
+            "Authorization": authorizationHeader,
+            ...(payloadHeaders || {}),
+        };
+
+        if (!headers["Authorization"]) delete headers["Authorization"];
+
         iFetch({
+            ...rest,
             url,
-            endpoint,
-            method,
-            formData,
-            params,
-            onSuccess: (response) => onSuccess({
-                onSuccess: payloadOnSuccess,
-                response
-            }),
-            onError: (response, responseJSON) => {
-                onError({
-                    onError: payloadOnError,
-                    response,
-                    responseJSON
-                })
+            headers,
+            credentials: _credentials || credentials,
+            onSuccess: (response) => {
+                if (!isSuccess || isSuccess(response)) {
+                    onSuccess({
+                        onSuccess: payloadOnSuccess,
+                        response
+                    })
+                } else {
+                    onError({
+                        onError: payloadOnError,
+                        response,
+                    })
+                }
             },
-            token,
+            onError: (response) => {
+                if (!isError || isError(response)) {
+                    onError({
+                        onError: payloadOnError,
+                        response,
+                    })
+                } else {
+                    onSuccess({
+                        onSuccess: payloadOnSuccess,
+                        response
+                    })
+                }
+            },
             signal: abortController.signal
         })
-    }, [token, contextURL, onSuccess, onError, setData, onRequest, abortController.signal])
+    }, [
+        isError,
+        isSuccess,
+        credentials,
+        getAuthorizationHeader,
+        token,
+        contextURL,
+        onSuccess,
+        onError,
+        setData,
+        onRequest,
+        abortController.signal
+    ])
 
 
     useEffect(() => {

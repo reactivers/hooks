@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import useFetch, { GenericRequestPayload, IUseFetchProps, IUseFetchResponse } from '../useFetch';
+import useFetch, { RequestPayload, IUseFetchProps, IUseFetchResponse } from '../useFetch';
 
-interface PutRequestPayload extends GenericRequestPayload {
+interface PutRequestPayload extends RequestPayload {
     params?: any;
 }
 

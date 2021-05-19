@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import useFetch, { GenericRequestPayload, IUseFetchProps, IUseFetchResponse } from '../useFetch';
+import useFetch, { RequestPayload, IUseFetchProps, IUseFetchResponse } from '../useFetch';
 
-interface PostRequestPayload extends GenericRequestPayload {
-    params?: any;
+interface PostRequestPayload extends RequestPayload {
 }
 
 const usePost: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
