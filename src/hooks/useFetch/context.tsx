@@ -17,7 +17,10 @@ const FetchContext = createContext({} as FetchContextProps);
 
 const FetchProvider: FC<FetchContextProps> = ({ children, getAuthorizationHeader = (token) => token ? `Bearer ${token}` : "", ...rest }) => {
     return (
-        <FetchContext.Provider value={rest}>
+        <FetchContext.Provider value={{
+            getAuthorizationHeader,
+            ...rest
+        }}>
             {children}
         </FetchContext.Provider>
     )

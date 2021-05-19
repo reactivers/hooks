@@ -742,8 +742,8 @@ var useAuth = function () {
 
 var FetchContext = react.createContext({});
 var FetchProvider = function (_a) {
-    var children = _a.children; _a.getAuthorizationHeader; var rest = __rest(_a, ["children", "getAuthorizationHeader"]);
-    return (jsxRuntime.jsx(FetchContext.Provider, __assign({ value: rest }, { children: children }), void 0));
+    var children = _a.children, _b = _a.getAuthorizationHeader, getAuthorizationHeader = _b === void 0 ? function (token) { return token ? "Bearer " + token : ""; } : _b, rest = __rest(_a, ["children", "getAuthorizationHeader"]);
+    return (jsxRuntime.jsx(FetchContext.Provider, __assign({ value: __assign({ getAuthorizationHeader: getAuthorizationHeader }, rest) }, { children: children }), void 0));
 };
 var useFetchContext = function () {
     var context = react.useContext(FetchContext);
