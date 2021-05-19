@@ -30,7 +30,7 @@ export interface IUseFetchProps {
 }
 
 export interface IUseFetchResponse<T extends {}> extends FetchController<T> {
-    request: (params: RequestPayload) => void;
+    request: (params: RequestPayload) => Promise<Response>;
 }
 
 const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> = <T extends {}>(params = { abortOnUnmount: true }) => {
@@ -120,7 +120,7 @@ const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T> 
 
         if (!headers["Authorization"]) delete headers["Authorization"];
 
-        iFetch({
+        return iFetch({
             ...rest,
             url,
             headers,

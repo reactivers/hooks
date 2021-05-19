@@ -21,7 +21,7 @@ export interface IUseFetchProps {
     abortOnUnmount?: boolean;
 }
 export interface IUseFetchResponse<T extends {}> extends FetchController<T> {
-    request: (params: RequestPayload) => void;
+    request: (params: RequestPayload) => Promise<Response>;
 }
 declare const useFetch: <T extends {}>(params?: IUseFetchProps) => IUseFetchResponse<T>;
 export default useFetch;

@@ -813,7 +813,7 @@ var useFetch = function (params) {
         var headers = __assign({ "Authorization": authorizationHeader }, (payloadHeaders || {}));
         if (!headers["Authorization"])
             delete headers["Authorization"];
-        iFetch(__assign(__assign({}, rest), { url: url,
+        return iFetch(__assign(__assign({}, rest), { url: url,
             headers: headers, credentials: _credentials || credentials, onSuccess: function (response) {
                 if (!isSuccess || isSuccess(response)) {
                     onSuccess({
