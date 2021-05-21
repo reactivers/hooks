@@ -1,11 +1,19 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React!. Fetch, Socket, Measure, LocalStorage and so much more...",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "keywords": [
     "hooks",
     "react",
     "awesome hooks",
+    "theme hook",
+    "cookie hook",
+    "local storage hook",
+    "web socket hook",
+    "event listener hook",
+    "react hook",
+    "fetch hook",
+    "safe area hook",
     "useAuth",
     "useClickInside",
     "useClickOutside",
@@ -29,14 +37,7 @@
     "useSocket",
     "useTheme",
     "useTitle",
-    "useUtils",
-    "theme",
-    "cookie",
-    "local storage",
-    "web socket",
-    "event listener",
-    "react hook",
-    "fetch"
+    "useUtils"
   ],
   "bugs": {
     "url": "https://github.com/reactivers/hooks/issues",
