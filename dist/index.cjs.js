@@ -2212,14 +2212,16 @@ var SafeAreaProvider = function (_a) {
     react.useEffect(function () {
         update();
         var body = new index(update);
-        window.visualViewport.addEventListener("resize", update);
+        if (window.visualViewport)
+            window.visualViewport.addEventListener("resize", update);
         window.addEventListener("orientationchange", update);
         if (body)
             body.observe(document.body);
         return function () {
             if (body)
                 body.disconnect();
-            window.visualViewport.removeEventListener("resize", update);
+            if (window.visualViewport)
+                window.visualViewport.removeEventListener("resize", update);
             window.removeEventListener("orientationchange", update);
         };
     }, [update]);
