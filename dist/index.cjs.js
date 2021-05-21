@@ -2289,17 +2289,24 @@ function createTheme() {
         }, [onChange]);
         react.useEffect(function () {
             var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-            var lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
+            window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
-                darkMedia.addEventListener("change", getCurrentTheme);
-                lightMedia.addEventListener("change", getCurrentTheme);
+                if (darkMedia.addEventListener) {
+                    darkMedia.addEventListener("change", getCurrentTheme);
+                }
+                else if (darkMedia.addListener) {
+                    darkMedia.addListener(getCurrentTheme);
+                }
             }
             else {
                 setCurrentTheme(_theme);
             }
             return function () {
-                darkMedia.removeEventListener("change", getCurrentTheme);
-                lightMedia.removeEventListener("change", getCurrentTheme);
+                if (darkMedia.removeEventListener)
+                    darkMedia.removeEventListener("change", getCurrentTheme);
+                else if (darkMedia.removeListener) {
+                    darkMedia.removeListener(getCurrentTheme);
+                }
             };
         }, [_theme, getCurrentTheme]);
         var theme = styles[currentTheme];
