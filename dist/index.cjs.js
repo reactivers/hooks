@@ -1123,9 +1123,40 @@ var useLoading = function () {
 function createLocale() {
     var LocalesContext = react.createContext({});
     var LocalesProvider = function (_a) {
-        var locales = _a.locales, _activeLanguage = _a.activeLanguage, children = _a.children;
-        var _b = react.useState(_activeLanguage || navigator.language), activeLanguage = _b[0], setActiveLanguage = _b[1];
+        var locales = _a.locales, _activeLanguage = _a.activeLanguage, _b = _a.defaultLanguage, defaultLanguage = _b === void 0 ? "en-us" : _b, children = _a.children;
+        var isBrowser = useUtils().isBrowser;
+        var fallbacked = react.useRef(false);
+        var getValidLanguage = react.useCallback(function (activeLanguage) {
+            fallbacked.current = false;
+            if (locales[activeLanguage]) {
+                return activeLanguage;
+            }
+            else {
+                if (isBrowser()) {
+                    var language = (navigator.language || "").toLowerCase();
+                    var primLanguage = language.substring(0, 2);
+                    if (locales[language])
+                        return language;
+                    else if (locales[primLanguage]) {
+                        return locales[primLanguage];
+                    }
+                    else {
+                        return defaultLanguage;
+                    }
+                }
+                else {
+                    fallbacked.current = true;
+                    return defaultLanguage;
+                }
+            }
+        }, [locales, defaultLanguage]);
+        var _c = react.useState(getValidLanguage(_activeLanguage)), activeLanguage = _c[0], setActiveLanguage = _c[1];
         var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
+        react.useLayoutEffect(function () {
+            if (fallbacked.current) {
+                setActiveLanguage(getValidLanguage(_activeLanguage));
+            }
+        }, [getValidLanguage, _activeLanguage, fallbacked.current]);
         return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
                 locale: locale,
                 setActiveLanguage: setActiveLanguage,
