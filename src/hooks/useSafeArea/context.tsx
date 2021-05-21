@@ -1,6 +1,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import useUtils from '../useUtils';
+import ResizeObserver from "resize-observer-polyfill"
 
 export interface ISafeArea {
     top: number;
