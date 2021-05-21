@@ -84,7 +84,6 @@ function createTheme<T>() {
 
         useEffect(() => {
             const darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-            const lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
                 if (darkMedia.addEventListener) {
                     darkMedia.addEventListener("change", getCurrentTheme);

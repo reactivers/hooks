@@ -582,8 +582,10 @@ var useUtils = function () {
 var LocalStorageContext = react.createContext({});
 var LocalStorageProvider = function (_a) {
     var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
-    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify, isBrowser = _c.isBrowser;
     var getLocalStorage = react.useCallback(function () {
+        if (!isBrowser())
+            return {};
         var localStorageKeys = Object.keys(window.localStorage);
         var localStorage = {};
         localStorageKeys.forEach(function (key) {
@@ -2268,7 +2270,6 @@ var useSafeArea = function () {
 };
 
 var DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
-var LIGHT_MEDIA_QUERY = "(prefers-color-scheme: light)";
 var AndroidDarkMode = "AndroidDarkMode";
 function createTheme() {
     var ThemeContext = react.createContext({});
@@ -2322,7 +2323,6 @@ function createTheme() {
         }, [onChange]);
         react.useEffect(function () {
             var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-            window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
                 if (darkMedia.addEventListener) {
                     darkMedia.addEventListener("change", getCurrentTheme);
@@ -2362,8 +2362,10 @@ function createTheme() {
 var CookieContext = react.createContext({});
 var CookieProvider = function (_a) {
     var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
-    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify, isBrowser = _c.isBrowser;
     var getCookies = react.useCallback(function () {
+        if (!isBrowser())
+            return {};
         var _cookies = document.cookie.split(';');
         var cookies = {};
         _cookies.forEach(function (cookie) {

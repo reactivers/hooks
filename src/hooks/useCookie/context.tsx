@@ -25,9 +25,10 @@ export interface CookieSetItem {
 }
 
 const CookieProvider: FC<CookieProviderProps> = ({ withState = true, onChange, children }) => {
-    const { tryJSONparse, tryJSONStringify } = useUtils();
+    const { tryJSONparse, tryJSONStringify, isBrowser } = useUtils();
 
     const getCookies = useCallback(() => {
+        if (!isBrowser()) return {}
         const _cookies = document.cookie.split(';');
         const cookies = {};
         _cookies.forEach(cookie => {

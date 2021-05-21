@@ -16,9 +16,10 @@ interface LocalStorageProviderProps {
 }
 
 const LocalStorageProvider: FC<LocalStorageProviderProps> = ({ withState = true, onChange, children }) => {
-    const { tryJSONparse, tryJSONStringify } = useUtils();
+    const { tryJSONparse, tryJSONStringify, isBrowser } = useUtils();
 
     const getLocalStorage = useCallback(() => {
+        if (!isBrowser()) return {}
         const localStorageKeys = Object.keys(window.localStorage);
         const localStorage = {};
         localStorageKeys.forEach(key => {
