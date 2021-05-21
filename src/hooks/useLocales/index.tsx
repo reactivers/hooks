@@ -3,6 +3,7 @@ import useUtils from "../useUtils";
 
 export interface LocalesContextProps<T> {
     locale: T;
+    activeLanguage: Languages,
     setActiveLanguage: (lang: Languages) => void;
 }
 
@@ -58,6 +59,7 @@ function createLocale<T>() {
         return (
             <LocalesContext.Provider value={{
                 locale,
+                activeLanguage,
                 setActiveLanguage,
             }}>
                 {children}

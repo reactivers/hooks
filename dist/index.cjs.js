@@ -1161,6 +1161,7 @@ function createLocale() {
         }, [getValidLanguage, _activeLanguage, fallbacked.current]);
         return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
                 locale: locale,
+                activeLanguage: activeLanguage,
                 setActiveLanguage: setActiveLanguage,
             } }, { children: children }), void 0));
     };
