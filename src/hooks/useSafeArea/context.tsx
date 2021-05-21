@@ -1,6 +1,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import useUtils from '../useUtils';
+import ResizeObserver from "resize-observer-polyfill"
 
 export interface ISafeArea {
     top: number;
@@ -46,12 +47,14 @@ const SafeAreaProvider = ({ children }) => {
     useEffect(() => {
         update();
         const body = new ResizeObserver(update);
-        window.visualViewport.addEventListener("resize", update)
+        if (window.visualViewport)
+            window.visualViewport.addEventListener("resize", update)
         window.addEventListener("orientationchange", update)
         if (body) body.observe(document.body);
         return () => {
             if (body) body.disconnect();
-            window.visualViewport.removeEventListener("resize", update)
+            if (window.visualViewport)
+                window.visualViewport.removeEventListener("resize", update)
             window.removeEventListener("orientationchange", update);
         };
     }, [update]);
