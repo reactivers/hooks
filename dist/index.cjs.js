@@ -1140,7 +1140,7 @@ function createLocale() {
                     if (locales[language])
                         return language;
                     else if (locales[primLanguage]) {
-                        return locales[primLanguage];
+                        return primLanguage;
                     }
                     else {
                         return defaultLanguage;
