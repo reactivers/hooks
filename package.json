@@ -1,7 +1,7 @@
 {
   "name": "@reactivers/hooks",
   "description": "Awesome hooks for React!. Fetch, Socket, Measure, LocalStorage and so much more...",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "keywords": [
     "hooks",
     "react",

@@ -5,7 +5,8 @@ declare type Themes = "light" | "dark";
 
 interface ThemeContextProps<T> {
     theme: T;
-    current: Themes
+    current: Themes;
+    setCurrentTheme: (current: Themes | "system") => void;
 }
 
 interface ThemeStyle<T> {
@@ -51,8 +52,12 @@ function createTheme<T>() {
 
         const setCurrentTheme = useCallback((newTheme) => {
             isChanged.current = true;
-            _setCurrentTheme(newTheme)
-        }, [])
+            if (newTheme === 'system') {
+                _setCurrentTheme(getInitialTheme())
+            } else {
+                _setCurrentTheme(newTheme)
+            }
+        }, [getInitialTheme])
 
         const updateInitialTheme = useCallback(() => {
             setCurrentTheme(getInitialTheme());
@@ -109,7 +114,7 @@ function createTheme<T>() {
         }, [_theme, getCurrentTheme])
 
         const theme = styles[currentTheme];
-        const value: ThemeContextProps<T> = { theme, current: currentTheme };
+        const value: ThemeContextProps<T> = { theme, current: currentTheme, setCurrentTheme };
 
         return (
             <ThemeContext.Provider value={value}>

@@ -3,6 +3,7 @@ declare type Themes = "light" | "dark";
 interface ThemeContextProps<T> {
     theme: T;
     current: Themes;
+    setCurrentTheme: (current: Themes | "system") => void;
 }
 interface ThemeStyle<T> {
     light: T;

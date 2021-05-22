@@ -13,9 +13,9 @@ const useClickOutside: (params: IUseClickOutside) => boolean = ({ ref, callback,
 
     const updateSwitch = useCallback((newValue) => {
         if (withState) {
-            setClickedState(true)
+            setClickedState(newValue)
         } else {
-            clickedRef.current = true;
+            clickedRef.current = newValue;
         }
     }, [withState])
 
@@ -34,7 +34,6 @@ const useClickOutside: (params: IUseClickOutside) => boolean = ({ ref, callback,
         document.addEventListener("click", onClick, { passive });
         return () => {
             document.removeEventListener("click", onClick);
-
         }
     }, [onClick, passive])
 

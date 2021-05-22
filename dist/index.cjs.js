@@ -2294,8 +2294,13 @@ function createTheme() {
         var _d = react.useState(getInitialTheme()), currentTheme = _d[0], _setCurrentTheme = _d[1];
         var setCurrentTheme = react.useCallback(function (newTheme) {
             isChanged.current = true;
-            _setCurrentTheme(newTheme);
-        }, []);
+            if (newTheme === 'system') {
+                _setCurrentTheme(getInitialTheme());
+            }
+            else {
+                _setCurrentTheme(newTheme);
+            }
+        }, [getInitialTheme]);
         var updateInitialTheme = react.useCallback(function () {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme]);
@@ -2351,7 +2356,7 @@ function createTheme() {
             };
         }, [_theme, getCurrentTheme]);
         var theme = styles[currentTheme];
-        var value = { theme: theme, current: currentTheme };
+        var value = { theme: theme, current: currentTheme, setCurrentTheme: setCurrentTheme };
         return (jsxRuntime.jsx(ThemeContext.Provider, __assign({ value: value }, { children: children }), void 0));
     };
     var useTheme = function () {
@@ -2526,10 +2531,10 @@ var useClickOutside = function (_a) {
     var clickedRef = react.useRef(false);
     var updateSwitch = react.useCallback(function (newValue) {
         if (withState) {
-            setClickedState(true);
+            setClickedState(newValue);
         }
         else {
-            clickedRef.current = true;
+            clickedRef.current = newValue;
         }
     }, [withState]);
     var onClick = react.useCallback(function (event) {
