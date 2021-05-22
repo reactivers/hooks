@@ -35,7 +35,7 @@ function createLocale<T>() {
                     if (locales[language])
                         return language as Languages
                     else if (locales[primLanguage]) {
-                        return locales[primLanguage];
+                        return primLanguage as Languages;
                     } else {
                         return defaultLanguage
                     }
