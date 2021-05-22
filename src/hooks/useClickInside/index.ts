@@ -3,10 +3,11 @@ import { MutableRefObject, useCallback, useEffect, useRef, useState } from "reac
 interface IUseClickInside {
     ref: MutableRefObject<any>;
     callback: (event: MouseEvent | TouchEvent) => void;
+    passive?: boolean;
     withState?: boolean;
 }
 
-const useClickInside: (params: IUseClickInside) => boolean = ({ ref, callback, withState = false }) => {
+const useClickInside: (params: IUseClickInside) => boolean = ({ ref, callback, withState = false, passive = true }) => {
     const [clickedState, setClickedState] = useState(false);
     const clickedRef = useRef(false);
 
@@ -30,12 +31,11 @@ const useClickInside: (params: IUseClickInside) => boolean = ({ ref, callback, w
     }, [ref.current, callback, updateSwitch])
 
     useEffect(() => {
-        document.addEventListener("click", onClick);
+        document.addEventListener("click", onClick, { passive });
         return () => {
             document.removeEventListener("click", onClick);
-
         }
-    }, [onClick])
+    }, [onClick, passive])
 
     return withState ? clickedState : clickedRef.current;
 }

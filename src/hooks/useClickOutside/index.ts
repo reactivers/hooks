@@ -4,9 +4,10 @@ interface IUseClickOutside {
     ref: MutableRefObject<any>;
     callback: (event: MouseEvent | TouchEvent) => void;
     withState?: boolean;
+    passive?: boolean;
 }
 
-const useClickOutside: (params: IUseClickOutside) => boolean = ({ ref, callback, withState = false }) => {
+const useClickOutside: (params: IUseClickOutside) => boolean = ({ ref, callback, withState = false, passive = true }) => {
     const [clickedState, setClickedState] = useState(false);
     const clickedRef = useRef(false);
 
@@ -30,12 +31,12 @@ const useClickOutside: (params: IUseClickOutside) => boolean = ({ ref, callback,
     }, [ref.current, callback, updateSwitch])
 
     useEffect(() => {
-        document.addEventListener("click", onClick);
+        document.addEventListener("click", onClick, { passive });
         return () => {
             document.removeEventListener("click", onClick);
 
         }
-    }, [onClick])
+    }, [onClick, passive])
 
     return withState ? clickedState : clickedRef.current;
 }

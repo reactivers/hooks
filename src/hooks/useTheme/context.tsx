@@ -84,26 +84,20 @@ function createTheme<T>() {
 
         useEffect(() => {
             const darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-            const lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
                 if (darkMedia.addEventListener) {
                     darkMedia.addEventListener("change", getCurrentTheme);
-                    lightMedia.addEventListener("change", getCurrentTheme);
                 } else if (darkMedia.addListener) {
                     darkMedia.addListener(getCurrentTheme)
-                    lightMedia.addListener(getCurrentTheme);
                 }
             } else {
                 setCurrentTheme(_theme as Themes)
             }
             return () => {
-                if (darkMedia.removeEventListener) {
+                if (darkMedia.removeEventListener)
                     darkMedia.removeEventListener("change", getCurrentTheme);
-                    lightMedia.removeEventListener("change", getCurrentTheme);
-                }
                 else if (darkMedia.removeListener) {
                     darkMedia.removeListener(getCurrentTheme);
-                    lightMedia.removeListener(getCurrentTheme);
                 }
             }
         }, [_theme, getCurrentTheme])

@@ -582,8 +582,10 @@ var useUtils = function () {
 var LocalStorageContext = react.createContext({});
 var LocalStorageProvider = function (_a) {
     var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
-    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify, isBrowser = _c.isBrowser;
     var getLocalStorage = react.useCallback(function () {
+        if (!isBrowser())
+            return {};
         var localStorageKeys = Object.keys(window.localStorage);
         var localStorage = {};
         localStorageKeys.forEach(function (key) {
@@ -1123,11 +1125,43 @@ var useLoading = function () {
 function createLocale() {
     var LocalesContext = react.createContext({});
     var LocalesProvider = function (_a) {
-        var locales = _a.locales, _activeLanguage = _a.activeLanguage, children = _a.children;
-        var _b = react.useState(_activeLanguage || navigator.language), activeLanguage = _b[0], setActiveLanguage = _b[1];
+        var locales = _a.locales, _activeLanguage = _a.activeLanguage, _b = _a.defaultLanguage, defaultLanguage = _b === void 0 ? "en-us" : _b, children = _a.children;
+        var isBrowser = useUtils().isBrowser;
+        var fallbacked = react.useRef(false);
+        var getValidLanguage = react.useCallback(function (activeLanguage) {
+            fallbacked.current = false;
+            if (locales[activeLanguage]) {
+                return activeLanguage;
+            }
+            else {
+                if (isBrowser()) {
+                    var language = (navigator.language || "").toLowerCase();
+                    var primLanguage = language.substring(0, 2);
+                    if (locales[language])
+                        return language;
+                    else if (locales[primLanguage]) {
+                        return locales[primLanguage];
+                    }
+                    else {
+                        return defaultLanguage;
+                    }
+                }
+                else {
+                    fallbacked.current = true;
+                    return defaultLanguage;
+                }
+            }
+        }, [locales, defaultLanguage]);
+        var _c = react.useState(getValidLanguage(_activeLanguage)), activeLanguage = _c[0], setActiveLanguage = _c[1];
         var locale = react.useMemo(function () { return locales[activeLanguage]; }, [locales, activeLanguage]);
+        react.useLayoutEffect(function () {
+            if (fallbacked.current) {
+                setActiveLanguage(getValidLanguage(_activeLanguage));
+            }
+        }, [getValidLanguage, _activeLanguage, fallbacked.current]);
         return (jsxRuntime.jsx(LocalesContext.Provider, __assign({ value: {
                 locale: locale,
+                activeLanguage: activeLanguage,
                 setActiveLanguage: setActiveLanguage,
             } }, { children: children }), void 0));
     };
@@ -2237,7 +2271,6 @@ var useSafeArea = function () {
 };
 
 var DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
-var LIGHT_MEDIA_QUERY = "(prefers-color-scheme: light)";
 var AndroidDarkMode = "AndroidDarkMode";
 function createTheme() {
     var ThemeContext = react.createContext({});
@@ -2291,28 +2324,22 @@ function createTheme() {
         }, [onChange]);
         react.useEffect(function () {
             var darkMedia = window.matchMedia(DARK_MEDIA_QUERY);
-            var lightMedia = window.matchMedia(LIGHT_MEDIA_QUERY);
             if (_theme === "system") {
                 if (darkMedia.addEventListener) {
                     darkMedia.addEventListener("change", getCurrentTheme);
-                    lightMedia.addEventListener("change", getCurrentTheme);
                 }
                 else if (darkMedia.addListener) {
                     darkMedia.addListener(getCurrentTheme);
-                    lightMedia.addListener(getCurrentTheme);
                 }
             }
             else {
                 setCurrentTheme(_theme);
             }
             return function () {
-                if (darkMedia.removeEventListener) {
+                if (darkMedia.removeEventListener)
                     darkMedia.removeEventListener("change", getCurrentTheme);
-                    lightMedia.removeEventListener("change", getCurrentTheme);
-                }
                 else if (darkMedia.removeListener) {
                     darkMedia.removeListener(getCurrentTheme);
-                    lightMedia.removeListener(getCurrentTheme);
                 }
             };
         }, [_theme, getCurrentTheme]);
@@ -2336,8 +2363,10 @@ function createTheme() {
 var CookieContext = react.createContext({});
 var CookieProvider = function (_a) {
     var _b = _a.withState, withState = _b === void 0 ? true : _b, onChange = _a.onChange, children = _a.children;
-    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify;
+    var _c = useUtils(), tryJSONparse = _c.tryJSONparse, tryJSONStringify = _c.tryJSONStringify, isBrowser = _c.isBrowser;
     var getCookies = react.useCallback(function () {
+        if (!isBrowser())
+            return {};
         var _cookies = document.cookie.split(';');
         var cookies = {};
         _cookies.forEach(function (cookie) {
@@ -2453,8 +2482,8 @@ var useGlobalState = function () {
 };
 
 var useClickInside = function (_a) {
-    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b;
-    var _c = react.useState(false), clickedState = _c[0], setClickedState = _c[1];
+    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b, _c = _a.passive, passive = _c === void 0 ? true : _c;
+    var _d = react.useState(false), clickedState = _d[0], setClickedState = _d[1];
     var clickedRef = react.useRef(false);
     var updateSwitch = react.useCallback(function (newValue) {
         if (withState) {
@@ -2476,17 +2505,17 @@ var useClickInside = function (_a) {
         }
     }, [ref.current, callback, updateSwitch]);
     react.useEffect(function () {
-        document.addEventListener("click", onClick);
+        document.addEventListener("click", onClick, { passive: passive });
         return function () {
             document.removeEventListener("click", onClick);
         };
-    }, [onClick]);
+    }, [onClick, passive]);
     return withState ? clickedState : clickedRef.current;
 };
 
 var useClickOutside = function (_a) {
-    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b;
-    var _c = react.useState(false), clickedState = _c[0], setClickedState = _c[1];
+    var ref = _a.ref, callback = _a.callback, _b = _a.withState, withState = _b === void 0 ? false : _b, _c = _a.passive, passive = _c === void 0 ? true : _c;
+    var _d = react.useState(false), clickedState = _d[0], setClickedState = _d[1];
     var clickedRef = react.useRef(false);
     var updateSwitch = react.useCallback(function (newValue) {
         if (withState) {
@@ -2508,11 +2537,11 @@ var useClickOutside = function (_a) {
         }
     }, [ref.current, callback, updateSwitch]);
     react.useEffect(function () {
-        document.addEventListener("click", onClick);
+        document.addEventListener("click", onClick, { passive: passive });
         return function () {
             document.removeEventListener("click", onClick);
         };
-    }, [onClick]);
+    }, [onClick, passive]);
     return withState ? clickedState : clickedRef.current;
 };
 
