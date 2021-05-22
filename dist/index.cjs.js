@@ -2294,8 +2294,13 @@ function createTheme() {
         var _d = react.useState(getInitialTheme()), currentTheme = _d[0], _setCurrentTheme = _d[1];
         var setCurrentTheme = react.useCallback(function (newTheme) {
             isChanged.current = true;
-            _setCurrentTheme(newTheme);
-        }, []);
+            if (newTheme === 'system') {
+                _setCurrentTheme(getInitialTheme());
+            }
+            else {
+                _setCurrentTheme(newTheme);
+            }
+        }, [getInitialTheme]);
         var updateInitialTheme = react.useCallback(function () {
             setCurrentTheme(getInitialTheme());
         }, [setCurrentTheme, getInitialTheme]);
