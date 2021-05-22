@@ -2351,7 +2351,7 @@ function createTheme() {
             };
         }, [_theme, getCurrentTheme]);
         var theme = styles[currentTheme];
-        var value = { theme: theme, current: currentTheme };
+        var value = { theme: theme, current: currentTheme, setCurrentTheme: setCurrentTheme };
         return (jsxRuntime.jsx(ThemeContext.Provider, __assign({ value: value }, { children: children }), void 0));
     };
     var useTheme = function () {
