@@ -13,9 +13,9 @@ const useClickInside: (params: IUseClickInside) => boolean = ({ ref, callback, w
 
     const updateSwitch = useCallback((newValue) => {
         if (withState) {
-            setClickedState(true)
+            setClickedState(newValue)
         } else {
-            clickedRef.current = true;
+            clickedRef.current = newValue;
         }
     }, [withState])
 

@@ -2499,10 +2499,10 @@ var useClickInside = function (_a) {
     var clickedRef = react.useRef(false);
     var updateSwitch = react.useCallback(function (newValue) {
         if (withState) {
-            setClickedState(true);
+            setClickedState(newValue);
         }
         else {
-            clickedRef.current = true;
+            clickedRef.current = newValue;
         }
     }, [withState]);
     var onClick = react.useCallback(function (event) {
