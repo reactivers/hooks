@@ -8,6 +8,11 @@
 
 > ```@reactivers/hooks``` provides some awesome hooks that may make development easier for you.
 It contains the hooks which are probably doesn't exist in the libraries that you use.
+All hooks are separated libraries.
+
+```bash
+npm install --save @reactivers/[hook-name]
+```
 
 ## Docs
 You can find detailed docs [here](https://hooks.reactivers.com)
